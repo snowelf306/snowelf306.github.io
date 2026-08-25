@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五城月度天气对比</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;background:#eef2f7;color:#1e2430;min-height:100vh}
+
+  header{background:linear-gradient(135deg,#2563eb,#0891b2);color:#fff;padding:22px clamp(14px,3vw,32px) 20px;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+  h1{font-size:clamp(18px,2.4vw,26px);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  form.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .fieldset{display:flex;flex-direction:column;font-size:11.5px;opacity:.92;gap:4px}
+  .cities{display:flex;gap:8px;flex-wrap:wrap}
+  .cities .fieldset input{width:104px}
+  input[type=text],input[type=number],select{padding:7px 9px;border:none;border-radius:8px;font-size:13.5px;background:rgba(255,255,255,.95);color:#1e2430;outline:none}
+  input:focus,select:focus{box-shadow:0 0 0 2.5px rgba(255,255,255,.55)}
+  #go{padding:8px 24px;border:none;border-radius:8px;background:#fff;color:#075985;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  #go:hover{transform:translateY(-1px)}
+  #go:active{transform:none}
+  .controls .nav{padding:8px 13px;border:none;border-radius:8px;background:rgba(255,255,255,.28);color:#fff;font-size:13px;cursor:pointer}
+  .controls .nav:hover{background:rgba(255,255,255,.42)}
+  .hint{margin-top:11px;font-size:11.5px;opacity:.85;line-height:1.6}
+
+  main{padding:18px clamp(10px,2vw,28px) 46px;max-width:1720px;margin:0 auto}
+  .board{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr));gap:14px}
+  @media (max-width:1330px){.board{display:flex;overflow-x:auto;padding-bottom:12px}.card{min-width:244px;flex:0 0 auto}}
+
+  .card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(30,40,60,.09);overflow:hidden;display:flex;flex-direction:column}
+  .card-head{padding:12px 14px 10px;color:#fff}
+  .card-head h2{font-size:17.5px;display:flex;justify-content:space-between;align-items:baseline}
+  .card-head h2 small{font-weight:400;font-size:11px;opacity:.85}
+  .card-head .sub{font-size:11.5px;opacity:.92;margin-top:2px}
+
+  .days{flex:1;padding:6px 8px}
+  .day{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:8px;font-size:13px}
+  .day.band-a{background:#ffffff}
+  .day.band-b{background:#ebf2fa}
+  .day.gstart{box-shadow:inset 0 2.5px 0 #c6d3e2}
+  .day.today{outline:2px solid #2563eb;background:#eff6ff !important}
+  .d-date{width:32px;flex:none;font-size:12px;color:#475569;font-variant-numeric:tabular-nums}
+  .ic{width:20px;flex:none;font-size:16px;text-align:center;line-height:1}
+  .bar{flex:1;height:4.5px;min-width:24px;background:#eaeef4;border-radius:3px;margin-right:2px;overflow:hidden;position:relative}
+  .bar i{position:absolute;top:0;left:0;height:100%;border-radius:3px}
+  .tcol{margin-left:auto;font-size:15.5px;font-weight:600;color:#1e2430;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.2px}
+  .tcol .ext{color:#dc2626;font-weight:700}
+  .tcol .sep{color:#94a3b8;font-weight:400;margin:0 3px;font-size:13.5px}
+  .tcol .na{color:#cbd5e1;font-weight:400}
+  .uvwrap{flex:none;display:inline-flex;align-items:center;gap:3px;margin-left:6px}
+  .uvgauge{width:20px;height:9px;border-radius:5px;background:#e6ebf2;overflow:hidden}
+  .uvgauge i{display:block;height:100%;border-radius:4px}
+  .uvnum{font-size:10.5px;font-weight:700;line-height:1}
+
+  .stats{border-top:1px dashed #e2e8f0;padding:9px 13px 10px;font-size:11.5px;color:#475569;line-height:1.75}
+  .err,.empty{padding:30px 16px;text-align:center;color:#94a3b8;font-size:13px;line-height:1.8}
+  .loading{padding:40px 16px;text-align:center;color:#94a3b8;font-size:13px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+
+  .legend{margin-top:18px;font-size:12px;color:#64748b;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
+  .legend .demo{display:inline-flex;align-items:center;gap:6px}
+  .legend .grad{width:56px;height:7px;border-radius:4px;background:linear-gradient(90deg,hsl(212 70% 50%),hsl(140 70% 45%),hsl(50 80% 50%),hsl(0 72% 50%))}
+  .legend .red{color:#dc2626}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌤️ 五城月度天气对比</h1>
+  <form class="controls" id="f">
+    <div class="cities" id="cityInputs"></div>
+    <button id="prevM" class="nav" type="button" title="查询上一月">‹ 上月</button>
+    <div class="fieldset">
+      年份
+      <input type="number" id="year" min="1940" max="2100" step="1" style="width:84px">
+    </div>
+    <div class="fieldset">
+      月份
+      <select id="month" style="width:78px"></select>
+    </div>
+    <button id="nextM" class="nav" type="button" title="查询下一月">下月 ›</button>
+    <button id="go" type="submit">查询</button>
+  </form>
+  <p class="hint">数据来源 Open-Meteo / Nominatim（免费、无需密钥）；常用城市已内置坐标，无需在线定位 · 历史数据延迟约 5 天；未来日期最多可查 16 天内的预报</p>
+</header>
+
+<main>
+  <div class="board" id="board"></div>
+  <div class="legend">
+    <span class="demo"><span class="grad"></span>温度条：蓝→红 = 冷→热（五城统一标尺）</span>
+    <span class="demo">温度格式：<b>低温 / 高温</b>；<b class="red">红色</b> = 低于 0&nbsp;°C 或高于 30&nbsp;°C</span>
+    <span class="demo">行末彩色短线 + 数字 = 当日最大紫外线指数（无数据则不显示）</span>
+    <span class="demo">每 5 天一组：交替底色 + 分隔线，方便跨城市对齐同一天</span>
+    <span class="demo">悬停任意一行可查看天气详情</span>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+/* ---------- 常量与工具 ---------- */
+const WMO = {
+  0:["晴","☀️"],1:["基本晴","🌤️"],2:["局部多云","⛅"],3:["阴","☁️"],
+  45:["雾","🌫️"],48:["雾凇","🌫️"],
+  51:["小毛毛雨","🌦️"],53:["毛毛雨","🌦️"],55:["大毛毛雨","🌧️"],
+  56:["冻毛毛雨","🌧️"],57:["强冻毛毛雨","🌧️"],
+  61:["小雨","🌦️"],63:["中雨","🌧️"],65:["大雨","🌧️"],
+  66:["冻雨","🌧️"],67:["强冻雨","🌧️"],
+  71:["小雪","🌨️"],73:["中雪","❄️"],75:["大雪","❄️"],77:["雪粒","🌨️"],
+  80:["小阵雨","🌦️"],81:["阵雨","🌧️"],82:["强阵雨","⛈️"],
+  85:["小阵雪","🌨️"],86:["大阵雪","❄️"],
+  95:["雷暴","⛈️"],96:["雷暴伴冰雹","⛈️"],99:["强雷暴冰雹","⛈️"]
+};
+const wmo = c => WMO[c] || ["未知","❓"];
+
+function uvLevel(v){
+  if(v==null||isNaN(v)) return null;
+  return v<3 ? {t:"低",c:"#22c55e"}
+       : v<6 ? {t:"中等",c:"#f59e0b"}
+       : v<8 ? {t:"高",c:"#ef4444"}
+       : v<11? {t:"很高",c:"#a855f7"}
+       :       {t:"极高",c:"#7e22ce"};
+}
+
+const HEAD_GRADS = [
+  ["#2563eb","#38bdf8"],["#7c3aed","#c084fc"],["#059669","#34d399"],
+  ["#ea580c","#fbbf24"],["#db2777","#fb7185"]
+];
+
+const pad = n => String(n).padStart(2,"0");
+const localISO = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const addDaysISO = (iso,n)=>{ const d=new Date(iso+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+
+async function fetchJSON(url){
+  const ctl = new AbortController();
+  const timer = setTimeout(()=>ctl.abort(), 25000);
+  try{
+    const res = await fetch(url,{signal:ctl.signal});
+    const json = await res.json();
+    if(json && json.error) throw new Error(json.reason || ("请求出错 ("+res.status+")"));
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    return json;
+  } finally { clearTimeout(timer); }
+}
+const safe = p => p.catch(e=>{ console.warn("[weather]",e.message); return null; });
+
+/* ---------- 地理编码（多级回退） ---------- */
+function geoUrl(q,lang){
+  let u="https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(q)+"&count=5&format=json";
+  if(lang) u+="&language="+lang;
+  return u;
+}
+function pickResult(j,q){
+  if(!j||!j.results||!j.results.length) return null;
+  const rs=j.results;
+  return rs.find(r=>r.name===q)
+      || rs.find(r=>typeof r.name==="string"&&(r.name.indexOf(q)>=0||q.indexOf(r.name)>=0))
+      || rs[0];
+}
+async function nominatim(q){
+  const url="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&accept-language=zh&q="+encodeURIComponent(q);
+  const j=await fetchJSON(url);
+  if(!Array.isArray(j)||!j.length) throw new Error("找不到城市「"+q+"」（可尝试拼音或英文名）");
+  const r=j[0];
+  const parts=String(r.display_name||"").split(",").map(s=>s.trim()).filter(Boolean);
+  return {
+    name: r.name || parts[0] || q,
+    latitude: parseFloat(r.lat),
+    longitude: parseFloat(r.lon),
+    admin1: parts.length>2 ? parts[parts.length-2] : "",
+    country: parts.length ? parts[parts.length-1] : ""
+  };
+}
+/* ---------- 内置城市坐标库（命中即本地解析，不依赖在线定位） ---------- */
+/* [纬度, 经度, 省份/地区, 国家(默认中国)] */
+const CITY_DB={
+  "北京":[39.9042,116.4074,""],"上海":[31.2304,121.4737,""],"天津":[39.3434,117.3616,""],"重庆":[29.5630,106.5516,""],
+  "广州":[23.1291,113.2644,"广东"],"深圳":[22.5431,114.0579,"广东"],
+  "成都":[30.5728,104.0668,"四川"],"杭州":[30.2741,120.1551,"浙江"],"武汉":[30.5928,114.3055,"湖北"],"西安":[34.3416,108.9398,"陕西"],
+  "南京":[32.0603,118.7969,"江苏"],"苏州":[31.2989,120.5853,"江苏"],"无锡":[31.4912,120.3119,"江苏"],
+  "郑州":[34.7466,113.6254,"河南"],"济南":[36.6512,117.1201,"山东"],"青岛":[36.0671,120.3826,"山东"],
+  "福州":[26.0745,119.2965,"福建"],"厦门":[24.4798,118.0894,"福建"],"长沙":[28.2282,112.9388,"湖南"],"南昌":[28.6820,115.8579,"江西"],
+  "合肥":[31.8206,117.2272,"安徽"],"石家庄":[38.0428,114.5149,"河北"],"太原":[37.8706,112.5489,"山西"],"呼和浩特":[40.8424,111.7500,"内蒙古"],
+  "沈阳":[41.8057,123.4315,"辽宁"],"大连":[38.9140,121.6147,"辽宁"],"长春":[43.8171,125.3235,"吉林"],"哈尔滨":[45.8038,126.5349,"黑龙江"],
+  "兰州":[36.0611,103.8343,"甘肃"],"银川":[38.4872,106.2309,"宁夏"],"西宁":[36.6171,101.7782,"青海"],"乌鲁木齐":[43.8256,87.6168,"新疆"],
+  "拉萨":[29.6520,91.1721,"西藏"],"昆明":[24.8801,102.8329,"云南"],"南宁":[22.8170,108.3665,"广西"],
+  "海口":[20.0444,110.1999,"海南"],"三亚":[18.2528,109.5119,"海南"],"贵阳":[26.6470,106.6302,"贵州"],
+  /* 云南 */
+  "玉溪":[24.3517,102.5450,"云南"],"临沧":[23.8867,100.0927,"云南"],"普洱":[22.8256,100.9671,"云南"],"保山":[25.1120,99.1617,"云南"],
+  "昭通":[27.3400,103.7170,"云南"],"曲靖":[25.4900,103.7960,"云南"],"大理":[25.6065,100.2676,"云南"],"丽江":[26.8721,100.2300,"云南"],"景洪":[22.0017,100.7979,"云南"],
+  /* 贵州 */
+  "安顺":[26.2456,105.9462,"贵州"],"凯里":[26.5834,107.9829,"贵州"],"遵义":[27.7255,106.9274,"贵州"],"都匀":[26.2582,107.5172,"贵州"],
+  "兴义":[25.0884,104.8956,"贵州"],"六盘水":[26.5928,104.8307,"贵州"],"铜仁":[27.7311,109.1894,"贵州"],
+  /* 港澳台 */
+  "香港":[22.3193,114.1694,"","香港"],"澳门":[22.1987,113.5439,"","澳门"],"台北":[25.0330,121.5654,"","台湾"],
+  /* 国际 */
+  "东京":[35.6895,139.6917,"","日本"],"首尔":[37.5665,126.9780,"","韩国"],"新加坡":[1.3521,103.8198,"","新加坡"],"曼谷":[13.7563,100.5018,"","泰国"],
+  "伦敦":[51.5074,-0.1278,"","英国"],"巴黎":[48.8566,2.3522,"","法国"],"莫斯科":[55.7558,37.6173,"","俄罗斯"],
+  "纽约":[40.7128,-74.0060,"","美国"],"旧金山":[37.7749,-122.4194,"","美国"],"悉尼":[-33.8688,151.2093,"","澳大利亚"]
+};
+function lookupLocal(raw){
+  const k=String(raw).trim().replace(/市$/,"");
+  const hit=CITY_DB[k];
+  if(!hit) return null;
+  return {name:k,latitude:hit[0],longitude:hit[1],admin1:hit[2]||"",country:hit[3]||"中国"};
+}
+async function geocode(raw){
+  const name=String(raw).trim();
+  // ① 内置城市库优先
+  const local=lookupLocal(name);
+  if(local) return local;
+  // ② 在线：原样 → 去“市” → 加“市”，各配中英文两种语言；③ 最后 Nominatim 兜底
+  const variants=[...new Set([name, name.replace(/市$/,""), name+"市"].filter(Boolean))];
+  for(const q of variants){
+    for(const lang of ["zh","en"]){
+      const j=await safe(()=>fetchJSON(geoUrl(q,lang)));
+      const hit=pickResult(j,q);
+      if(hit) return hit;
+    }
+  }
+  return nominatim(name);
+}
+
+/* ---------- 数据获取 ---------- */
+const DAILY = "temperature_2m_max,temperature_2m_min,weather_code,uv_index_max";
+const commonQ = (g,s,e)=>"latitude="+g.latitude+"&longitude="+g.longitude+"&start_date="+s+"&end_date="+e+"&daily="+DAILY+"&timezone=auto";
+
+const fetchArchive  = async (g,s,e)=> fetchJSON("https://archive-api.open-meteo.com/v1/archive?"+commonQ(g,s,e));
+const fetchForecast = async (g,s,e)=> fetchJSON("https://api.open-meteo.com/v1/forecast?"+commonQ(g,s,e));
+
+function indexByDate(j){
+  const map=new Map(); if(!j||!j.daily||!j.daily.time) return map;
+  const d=j.daily;
+  d.time.forEach((t,i)=>{
+    map.set(t,{
+      max: d.temperature_2m_max?.[i] ?? null,
+      min: d.temperature_2m_min?.[i] ?? null,
+      code: d.weather_code?.[i] ?? null,
+      uv:   d.uv_index_max?.[i] ?? null
+    });
+  });
+  return map;
+}
+
+function listDates(s,e){
+  const out=[]; let cur=s;
+  while(cur<=e){ out.push(cur); cur=addDaysISO(cur,1); }
+  return out;
+}
+
+function mergeDays(s,e,archJ,fcJ){
+  const A=indexByDate(archJ), F=indexByDate(fcJ);
+  return listDates(s,e).map(date=>{
+    const a=A.get(date)||{}, f=F.get(date)||{};
+    const pick=k=> a[k]!=null ? a[k] : f[k];
+    return {date, max:pick("max"), min:pick("min"), code:(a.code!=null?a.code:f.code), uv:pick("uv")};
+  });
+}
+
+async function withRetry(fn,tries){
+  tries=tries||1;
+  let err;
+  for(let i=0;i<=tries;i++){
+    try{ return await fn(); }catch(e){ err=e; }
+  }
+  throw err;
+}
+async function loadCity(name,start,end,todayISO){
+  let g;
+  try{ g=await geocode(name); }
+  catch(e){ throw new Error("定位失败："+(e&&e.message||e)); }
+  // 归档数据约延迟 5~6 天；预报覆盖过去 ~90 天到未来 16 天
+  const needForecast = end >= addDaysISO(todayISO,-6) && start <= addDaysISO(todayISO,16);
+  const [arch, fc] = await Promise.all([
+    safe(withRetry(()=>fetchArchive(g,start,end),1)),
+    needForecast ? safe(withRetry(()=>fetchForecast(g,start,end),1)) : Promise.resolve(null)
+  ]);
+  if(!arch && !fc) throw new Error("该月暂无可用数据（历史归档延迟约 5 天、预报仅覆盖未来 16 天内；也可能是网络波动）");
+  const elevation=(arch&&arch.elevation!=null)?arch.elevation:(fc?fc.elevation:null);
+  return { place:g, elevation:elevation, days: mergeDays(start,end,arch,fc) };
+}
+
+/* ---------- 渲染 ---------- */
+function tempColor(t,scale){
+  let r=(t-scale.min)/(scale.max-scale.min||1);
+  r=Math.min(Math.max(r,0),1);
+  const hue=Math.round(212-212*r);
+  return "hsl("+hue+" 70% 48%)";
+}
+const pct=(t,scale)=>Math.round(((t-scale.min)/(scale.max-scale.min||1))*100);
+
+function tempHTML(v){
+  if(v==null) return '<span class="na">—</span>';
+  const ext=(v<0||v>30)?' ext':'';
+  return '<span class="'+ext.trim()+'">'+Math.round(v)+'°</span>';
+}
+
+function uvChip(v){
+  if(v==null) return "";
+  const u=uvLevel(v);
+  const w=Math.min(Math.max(v,0),12)/12*100;
+  return '<span class="uvwrap" title="当日最大紫外线指数 '+(Math.round(v*10)/10)+'（'+u.t+'）">'+
+         '<span class="uvgauge"><i style="width:'+w.toFixed(0)+'%;background:'+u.c+'"></i></span>'+
+         '<span class="uvnum" style="color:'+u.c+'">'+Math.round(v)+'</span></span>';
+}
+
+function dayRow(day,todayISO,scale){
+  const d=new Date(day.date+"T00:00:00");
+  const [desc,icon]=wmo(day.code);
+  const dom=d.getDate();
+  const band=(Math.floor((dom-1)/5)%2)?"band-b":"band-a";       // 每5天一组交替底色
+  const gline=((dom-1)%5===0&&dom>1)?"gstart":"";               // 每组首行加分隔线
+  const cls=["day",band,gline,day.date===todayISO?"today":""].filter(Boolean).join(" ");
+  let barInner="";
+  if(day.min!=null&&day.max!=null){
+    const l=pct(day.min,scale), r=Math.max(pct(day.max,scale),l+2);
+    barInner='<i style="left:'+l+'%;width:'+(r-l)+'%;background:linear-gradient(90deg,'+tempColor(day.min,scale)+','+tempColor(day.max,scale)+')"></i>';
+  }
+  const el=document.createElement("div");
+  el.className=cls;
+  el.title=(d.getMonth()+1)+"月"+d.getDate()+"日 · "+desc;
+  el.innerHTML=
+    '<span class="d-date">'+d.getDate()+'日</span>'+
+    '<span class="ic">'+icon+'</span>'+
+    '<span class="bar">'+barInner+'</span>'+
+    '<span class="tcol">'+tempHTML(day.min)+'<span class="sep">/</span>'+tempHTML(day.max)+'</span>'+
+    uvChip(day.uv);
+  return el;
+}
+
+function statsBlock(days){
+  const withT=days.filter(x=>x.max!=null&&x.min!=null);
+  if(!withT.length) return "";
+  const avg=a=>Math.round(a.reduce((s,x)=>s+x,0)/a.length);
+  const hot=withT.reduce((p,c)=>c.max>p.max?c:p);
+  const cold=withT.reduce((p,c)=>c.min<p.min?c:p);
+  return '<div class="stats">📊 平均 '+avg(withT.map(x=>x.min))+'° / '+avg(withT.map(x=>x.max))+'°　'+
+    '🔥 '+hot.date.slice(5).replace("-","/")+'（'+Math.round(hot.max)+'°）　'+
+    '🧊 '+cold.date.slice(5).replace("-","/")+'（'+Math.round(cold.min)+'°）</div>';
+}
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+
+function renderCard(res,idx,todayISO,scale){
+  const card=document.createElement("section");
+  card.className="card";
+  const grad=HEAD_GRADS[idx % HEAD_GRADS.length];
+  if(!res.ok){
+    card.innerHTML='<div class="card-head" style="background:linear-gradient(135deg,#64748b,#94a3b8)"><h2>'+esc(res.name)+'</h2></div>'+
+      '<div class="err">⚠️ '+esc(String(res.reason&&res.reason.message||res.reason||"加载失败"))+'</div>';
+    return card;
+  }
+  const g=res.value.place, days=res.value.days;
+  let sub="主城区";
+  const region=[g.admin1,g.country].filter(Boolean).join(" · ");
+  if(region) sub+=" · "+region;
+  if(res.value.elevation!=null&&!isNaN(res.value.elevation)) sub+="　⛰ 海拔 "+Math.round(res.value.elevation)+" m";
+  card.innerHTML='<div class="card-head" style="background:linear-gradient(135deg,'+grad[0]+','+grad[1]+')">'+
+      '<h2>'+esc(g.name)+'<small>'+(idx+1)+'#</small></h2>'+
+      '<div class="sub">'+esc(sub)+'　'+g.latitude.toFixed(2)+"°, "+g.longitude.toFixed(2)+"°"+'</div>'+
+    '</div><div class="days"></div>';
+  const box=card.querySelector(".days");
+  days.forEach(d=>box.appendChild(dayRow(d,todayISO,scale)));
+  card.insertAdjacentHTML("beforeend",statsBlock(days));
+  return card;
+}
+
+/* ---------- 主流程 ---------- */
+const board=document.getElementById("board");
+
+function showLoading(names){
+  board.innerHTML="";
+  names.forEach(name=>{
+    const c=document.createElement("section");
+    c.className="card";
+    c.innerHTML='<div class="card-head" style="background:linear-gradient(135deg,#94a3b8,#cbd5e1)"><h2>'+esc(name)+'</h2></div>'+
+      '<div class="loading">⏳ 正在加载…</div>';
+    board.appendChild(c);
+  });
+}
+
+function computeScale(results){
+  let mn=Infinity,mx=-Infinity;
+  results.forEach(r=>{
+    if(!r.ok) return;
+    r.value.days.forEach(d=>{
+      [d.max,d.min].forEach(t=>{ if(t!=null){ mn=Math.min(mn,t); mx=Math.max(mx,t);} });
+    });
+  });
+  if(mn===Infinity) return {min:0,max:40};
+  if(mx-mn<5){mx=mn+5;}
+  return {min:mn,max:mx};
+}
+
+async function run(){
+  const inputs=[...document.querySelectorAll("#cityInputs input")];
+  const names=inputs.map(i=>i.value.trim());
+  const active=names.filter(Boolean);
+
+  const y=parseInt(document.getElementById("year").value,10);
+  const m=parseInt(document.getElementById("month").value,10);
+  if(!(y>=1940&&y<=2100)){ alert("请输入 1940–2100 之间的年份"); return; }
+
+  const s=y+"-"+pad(m)+"-01";
+  const e=y+"-"+pad(m)+"-"+pad(new Date(y,m,0).getDate());
+  const todayISO=localISO(new Date());
+
+  if(!active.length){ board.innerHTML='<div class="empty" style="grid-column:1/-1">请至少填写一个城市名</div>'; return; }
+  showLoading(active);
+
+  const tasks=active.map(name=>loadCity(name,s,e,todayISO).then(
+    value=>({ok:true,value}),
+    reason=>({ok:false,name,reason})
+  ));
+  const results=await Promise.all(tasks);
+  const scale=computeScale(results);
+
+  board.innerHTML="";
+  results.forEach((r,i)=>board.appendChild(renderCard(r,i,todayISO,scale)));
+}
+
+/* ---------- 控件初始化 ---------- */
+(function init(){
+  const wrap=document.getElementById("cityInputs");
+  ["南京","玉溪","临沧","安顺","凯里"].forEach((def,i)=>{
+    const lb=document.createElement("label");
+    lb.className="fieldset";
+    lb.textContent=["①","②","③","④","⑤"][i]+" 城市";
+    const inp=document.createElement("input");
+    inp.type="text"; inp.value=def; inp.placeholder="城市名";
+    lb.appendChild(inp); wrap.appendChild(lb);
+  });
+
+  const yEl=document.getElementById("year");
+  yEl.value=2026;                                    // 默认 2026 年 1 月
+
+  const mEl=document.getElementById("month");
+  for(let i=1;i<=12;i++){
+    const o=document.createElement("option");
+    o.value=i; o.textContent=i+" 月";
+    if(i===1)o.selected=true;
+    mEl.appendChild(o);
+  }
+
+  function shiftMonth(d){
+    let y=parseInt(yEl.value,10)||2026, m=parseInt(mEl.value,10)||1;
+    m+=d;
+    if(m<1){m=12;y--;} else if(m>12){m=1;y++;}
+    yEl.value=y; mEl.value=m; run();
+  }
+  document.getElementById("prevM").addEventListener("click",()=>shiftMonth(-1));
+  document.getElementById("nextM").addEventListener("click",()=>shiftMonth(1));
+
+  document.getElementById("f").addEventListener("submit",ev=>{ev.preventDefault();run();});
+  run();  // 首次自动查询
+})();
+</script>
+</body>
+</html>
