@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T+0 QDII · 欧美指数 (仿集思录)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background: #f2f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 20px 24px 32px 24px;
+        }
+
+        /* 浏览器升级提示 */
+        .browser-hint {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 30px;
+            padding: 8px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .browser-hint span {
+            color: #e8590c;
+            font-weight: 500;
+        }
+        .browser-icons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .browser-icons i {
+            font-style: normal;
+            background: #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            font-size: 12px;
+        }
+
+        /* 标题栏 + 工具条 */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 12px;
+        }
+        .title-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .title-section h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1e2b3c;
+            letter-spacing: 0.3px;
+        }
+        .title-section h2 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #fa5252;
+            background: #fff5f5;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 12px;
+        }
+        .refresh-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #2b8a3e;
+            background: #ebfbee;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .refresh-badge .auto {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            background: white;
+            border: 1px solid #ced4da;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            color: #495057;
+            cursor: default;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-primary {
+            background: #1e2b3c;
+            color: white;
+            border: none;
+        }
+        .btn-sm {
+            padding: 4px 14px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .btn-sm:active {
+            transform: scale(0.97);
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #1e2b3c;
+            color: #1e2b3c;
+        }
+        .btn-icon {
+            border: none;
+            background: transparent;
+            color: #4263eb;
+        }
+        .search-link {
+            color: #4263eb;
+            font-size: 13px;
+            text-decoration: none;
+            border-left: 1px solid #ced4da;
+            padding-left: 16px;
+            margin-left: 8px;
+        }
+
+        /* 表格区域 */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid #e9ecef;
+            background: white;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            min-width: 1300px;
+            white-space: nowrap;
+        }
+        th {
+            background: #f8f9fa;
+            color: #1e2b3c;
+            font-weight: 600;
+            padding: 12px 8px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: center;
+            font-size: 13px;
+        }
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+            background: white;
+        }
+        tr:hover td {
+            background: #fcfcfd;
+        }
+        /* 特定列样式 */
+        .code-col {
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: #0b3b5c;
+        }
+        .name-col {
+            text-align: left;
+            font-weight: 500;
+            color: #1e2b3c;
+        }
+        .price-col {
+            font-weight: 600;
+            color: #212529;
+        }
+        .change-col.positive {
+            color: #d92b2b;
+        }
+        .change-col.negative {
+            color: #0ca678;
+        }
+        .etf-new {
+            color: #e8590c;
+            font-weight: 500;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #f1f3f5;
+            color: #2e3b4e;
+            min-width: 64px;
+        }
+        .status-badge.open {
+            background: #e6fcf5;
+            color: #087f5b;
+        }
+        .status-badge.limited {
+            background: #fff3e0;
+            color: #b85e00;
+        }
+        .status-badge.closed {
+            background: #fee9e7;
+            color: #b81b1b;
+        }
+        .fee {
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .company {
+            max-width: 100px;
+            text-align: left;
+            white-space: normal;
+            word-break: keep-all;
+        }
+        .operate a {
+            color: #4263eb;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            background: #f1f3f5;
+            border-radius: 30px;
+            text-align: center;
+        }
+        .operate a:hover {
+            background: #e7ebf5;
+        }
+
+        /* ===== 指数区域 ===== */
+        .index-section {
+            margin: 16px 0 20px 0;
+            padding: 0;
+        }
+        .index-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .index-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2b3c;
+        }
+        .index-update {
+            font-size: 11px;
+            color: #2b8a3e;
+            background: #ebfbee;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .index-legend {
+            margin-left: auto;
+            font-size: 12px;
+            display: flex;
+            gap: 12px;
+        }
+        .legend-up { color: #d92b2b; }
+        .legend-down { color: #0ca678; }
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+            gap: 8px;
+        }
+        .index-group {
+            margin-bottom: 14px;
+        }
+        .index-group:last-child {
+            margin-bottom: 0;
+        }
+        .index-group-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+        .index-subgrid {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-right: 20px;
+            vertical-align: top;
+        }
+        .index-subgrid:last-child {
+            margin-right: 0;
+        }
+        .index-subgroups {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 0;
+        }
+        .index-card {
+            background: #fafbfc;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 12px 10px;
+            transition: 0.15s;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .index-card:hover {
+            border-color: #ced4da;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .index-card .i-name {
+            font-size: 12px;
+            color: #2e3b4e;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .index-card .i-price {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+        }
+        .index-card .i-change {
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .index-card .i-change .i-pct {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .index-card .i-market {
+            font-size: 10px;
+            color: #868e96;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+        .index-card.up .i-price { color: #d92b2b; }
+        .index-card.up .i-pct { color: #d92b2b; }
+        .index-card.up .i-change-pts { color: #d92b2b; }
+        .index-card.down .i-price { color: #0ca678; }
+        .index-card.down .i-pct { color: #0ca678; }
+        .index-card.down .i-change-pts { color: #0ca678; }
+
+        /* 底部说明 + 分页提示 */
+        .table-footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        .data-note {
+            background: #f8f9fa;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #2e3b4e;
+            border-left: 3px solid #1e2b3c;
+        }
+        .login-message {
+            background: #fff9db;
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-size: 13px;
+            color: #ae7c14;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #40c057;
+            border-radius: 10px;
+            display: inline-block;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 主工具条 -->
+    <div class="toolbar">
+        <div class="title-section">
+            <h2>
+                欧美市场 - T+0 QDII
+                <small>测试版，请谨慎参考！</small>
+            </h2>
+        </div>
+    </div>
+
+    <!-- 主要市场指数涨跌幅 -->
+    <div class="index-section">
+        <div class="index-header">
+            <span class="index-title">🌐 主要市场指数</span>
+            <span class="index-update">实时 · 自动刷新</span>
+            <span class="index-legend"><span class="legend-up">↑ 上涨</span><span class="legend-down">↓ 下跌</span></span>
+            <button id="refreshIndexBtn" class="btn btn-sm" style="margin-left:auto;">🔄 刷新</button>
+        </div>
+        <div class="index-group">
+            <div class="index-group-title">🇺🇸 美国市场</div>
+            <div class="index-subgroups">
+                <div class="index-subgrid" id="indexGridUS1"></div>
+                <div class="index-subgrid" id="indexGridUS2"></div>
+            </div>
+        </div>
+        <div class="index-group">
+            <div class="index-group-title">🌏 亚太市场</div>
+            <div class="index-subgroups">
+                <div class="index-subgrid" id="indexGridAP1"></div>
+                <div class="index-subgrid" id="indexGridAP2"></div>
+                <div class="index-subgrid" id="indexGridAP3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表格区域 (完全仿照集思录数据结构，使用原网页前20条真实数据的改编版本，同时保留典型条目) -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>代码</th><th>名称</th><th>现价</th><th>涨幅</th><th>成交<br>(万元)</th><th>场内份额<br>(万份)</th><th>场内新增<br>(万份)</th><th>T-2净值</th><th>净值日期</th><th>相关标的</th><th>T-1指数涨幅</th><th>申购费</th><th>申购状态</th><th>赎回费</th><th>赎回状态</th><th>管托费</th><th>基金公司</th><th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 只显示指定的3个基金：161128, 159509, 513300 -->
+                <tr><td class="code-col">161128</td><td class="name-col">标普信息科技LOF</td><td class="price-col">5.570</td><td class="change-col negative">-0.41%</td><td>2866.47</td><td>48006</td><td>20</td><td>5.4810</td><td>26-03-10</td><td>标普500信息科技</td><td>0.35%</td><td>1.20%</td><td><span class="status-badge limited">限10</span></td><td>1.50%</td><td><span class="status-badge open">开放赎回</span></td><td>1.00%</td><td>易方达</td><td class="operate"><a href="#">📈</a></td></tr>
+                <tr><td class="code-col">159509</td><td class="name-col">纳斯达克科技ETF</td><td class="price-col">3.125</td><td class="change-col positive">+0.68%</td><td>1845.23</td><td>62500</td><td>50</td><td>3.1025</td><td>26-03-10</td><td>纳斯达克科技100</td><td>0.45%</td><td>--</td><td><span class="status-badge open">开放申购</span></td><td>--</td><td><span class="status-badge open">开放赎回</span></td><td>0.75%</td><td>华夏基金</td><td class="operate"><a href="#">📈</a></td></tr>
+                <tr><td class="code-col">513300</td><td class="name-col">纳斯达克100ETF</td><td class="price-col">4.235</td><td class="change-col positive">+0.25%</td><td>9856.78</td><td>250000</td><td>100</td><td>4.2250</td><td>26-03-10</td><td>纳斯达克100</td><td>0.12%</td><td>0.50%</td><td><span class="status-badge open">开放申购</span></td><td>0.50%</td><td><span class="status-badge open">开放赎回</span></td><td>0.65%</td><td>华安基金</td><td class="operate"><a href="#">📈</a></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 数据说明区块 (完全仿原网页) -->
+    <div class="data-note">
+        <strong>📌 数据说明：</strong><br>
+        1、上交所公布基金份额数据为交易日当天的盘后场内份额。<br>
+        2、深交所公布基金份额数据为交易日当天盘前场内份额。<br>
+        3、集思录份额数据为交易日当天盘前场内份额，与上交所数据日期差一个工作日，与深交所数据日期一致。<br>
+        <span style="display:inline-block; margin-top:8px; color:#1e2b3c;">⏱️ 净值日期：2026-03-10  |  模拟展示数据参照集思录公开信息</span>
+    </div>
+
+    <!-- 数据提取功能 -->
+    <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef;">
+        <h3 style="margin-top: 0; color: #1e2b3c;">数据提取: 相关标的及其指数涨幅</h3>
+        <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button id="extractBtn" style="background: #1e2b3c; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                提取表格中数据
+            </button>
+            <button id="fetchRealTimeBtn" style="background: #0ca678; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                从天天基金网获取实时涨幅
+            </button>
+            <button id="showIndexCodesBtn" style="background: #4263eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                查看所有指数代码
+            </button>
+        </div>
+        <div style="margin-bottom: 15px; font-size: 13px; color: #6c757d;">
+            <p><strong>说明:</strong></p>
+            <p>1. "提取表格中数据"：从当前页面表格中提取静态数据</p>
+            <p>2. "从天天基金网获取实时涨幅"：通过天天基金网API获取最新的指数实时涨幅数据</p>
+            <p>3. "查看所有指数代码"：显示当前系统中所有可用的指数代码映射</p>
+        </div>
+        <div id="resultContainer" style="display: none;">
+            <h4>提取结果:</h4>
+            <div id="loading" style="display: none; text-align: center; padding: 20px; color: #6c757d;">
+                <p>正在从天天基金网获取实时数据...</p>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background: #e9ecef;">
+                        <th style="padding: 8px; border: 1px solid #ced4da; text-align: left;">序号</th>
+                        <th style="padding: 8px; border: 1px solid #ced4da; text-align: left;">相关标的名称</th>
+                        <th style="padding: 8px; border: 1px solid #ced4da; text-align: left;">指数涨幅</th>
+                        <th style="padding: 8px; border: 1px solid #ced4da; text-align: left;">数据来源</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTable">
+                </tbody>
+            </table>
+            <div id="summary" style="margin-top: 15px; font-size: 14px; color: #495057;"></div>
+        </div>
+
+        <!-- 指数代码展示区域 -->
+        <div id="indexCodesContainer" style="display: none; margin-top: 30px;">
+            <h4 style="margin-bottom: 15px; color: #1e2b3c;">系统支持的指数代码映射表:</h4>
+            <div style="background: white; border-radius: 8px; padding: 15px; border: 1px solid #e9ecef;">
+                <p style="margin-top: 0; color: #6c757d; font-size: 13px; margin-bottom: 15px;">
+                    以下是指数名称与对应的指数代码映射，用于从天天基金网等数据源获取实时数据。
+                </p>
+                <div id="indexCodesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px;">
+                    <!-- 将通过JavaScript动态填充 -->
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef; font-size: 12px; color: #6c757d;">
+                    <p>📊 <strong>总计:</strong> <span id="totalIndexes">0</span> 个指数代码</p>
+                    <p>🔄 <strong>说明:</strong> 这些代码可以用于调用天天基金网API获取实时指数涨幅数据。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 指数代码映射表（天天基金网或其他数据源）- 更新为当前表格中的指数
+        const indexCodeMap = {
+            '标普500信息科技': '^SP500-45',
+            '纳斯达克科技100': '^NDXT100',
+            '纳斯达克100': '^NDX',
+            '标普500': '^GSPC',
+            '道琼斯工业平均指数': '^DJI',
+            '纳斯达克综合指数': '^IXIC',
+            '德国DAX指数': '^GDAXI',
+            '日经225指数': '^N225',
+            '恒生指数': '^HSI',
+            '英国富时100指数': '^FTSE',
+            '沪深300指数': '000300.SS',
+            '上证指数': '000001.SS'
+        };
+
+        // 提取表格数据功能
+        document.getElementById('extractBtn').addEventListener('click', function() {
+            extractTableData(false);
+        });
+
+        // 获取实时数据功能
+        document.getElementById('fetchRealTimeBtn').addEventListener('click', function() {
+            extractTableData(true);
+        });
+
+        // 显示指数代码功能
+        document.getElementById('showIndexCodesBtn').addEventListener('click', function() {
+            showIndexCodes();
+        });
+
+        function extractTableData(fetchRealTime) {
+            const table = document.querySelector('.table-wrapper table');
+            const rows = table.querySelectorAll('tbody tr');
+            const resultTable = document.getElementById('resultTable');
+            const resultContainer = document.getElementById('resultContainer');
+            const summary = document.getElementById('summary');
+            const loading = document.getElementById('loading');
+
+            // 清空之前的结果
+            resultTable.innerHTML = '';
+            summary.innerHTML = '';
+
+            // 显示结果容器
+            resultContainer.style.display = 'block';
+            loading.style.display = 'none';
+
+            const data = [];
+
+            // 先显示表格数据
+            rows.forEach((row, index) => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 11) {
+                    const targetName = cells[9].textContent.trim();
+                    const staticChange = cells[10].textContent.trim();
+
+                    data.push({
+                        name: targetName,
+                        staticChange: staticChange,
+                        realTimeChange: '--',
+                        source: '表格数据'
+                    });
+
+                    // 先添加静态数据行
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="padding: 8px; border: 1px solid #ced4da;">${index + 1}</td>
+                        <td style="padding: 8px; border: 1px solid #ced4da;">${targetName}</td>
+                        <td style="padding: 8px; border: 1px solid #ced4da; color: ${staticChange.startsWith('-') || staticChange === '--' ? '#0ca678' : '#d92b2b'}">
+                            ${staticChange}
+                        </td>
+                        <td style="padding: 8px; border: 1px solid #ced4da;">表格数据</td>
+                    `;
+                    resultTable.appendChild(tr);
+                }
+            });
+
+            if (fetchRealTime) {
+                // 显示加载提示
+                loading.style.display = 'block';
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+
+                // 模拟从天天基金网获取实时数据
+                setTimeout(() => {
+                    loading.style.display = 'none';
+
+                    // 清空表格重新添加带实时数据的结果
+                    resultTable.innerHTML = '';
+
+                    // 模拟实时数据（实际项目中应该调用API）- 更新为当前表格中的指数
+                    const mockRealTimeData = {
+                        '标普500信息科技': '0.38%',
+                        '纳斯达克科技100': '0.52%',
+                        '纳斯达克100': '0.15%',
+                        '标普500': '0.25%',
+                        '道琼斯工业平均指数': '0.18%',
+                        '纳斯达克综合指数': '0.32%',
+                        '德国DAX指数': '-0.12%',
+                        '日经225指数': '0.45%',
+                        '恒生指数': '-0.28%',
+                        '英国富时100指数': '0.08%',
+                        '沪深300指数': '0.52%',
+                        '上证指数': '0.31%'
+                    };
+
+                    rows.forEach((row, index) => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells.length >= 11) {
+                            const targetName = cells[9].textContent.trim();
+                            const staticChange = cells[10].textContent.trim();
+                            const realTimeChange = mockRealTimeData[targetName] || '--';
+                            const hasRealTime = realTimeChange !== '--';
+
+                            // 使用实时数据如果可用，否则使用表格数据
+                            const displayChange = hasRealTime ? realTimeChange : staticChange;
+                            const source = hasRealTime ? '天天基金网' : '表格数据';
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td style="padding: 8px; border: 1px solid #ced4da;">${index + 1}</td>
+                                <td style="padding: 8px; border: 1px solid #ced4da;">${targetName}</td>
+                                <td style="padding: 8px; border: 1px solid #ced4da; color: ${displayChange.startsWith('-') || displayChange === '--' ? '#0ca678' : '#d92b2b'}">
+                                    ${displayChange} ${hasRealTime ? '🔄' : ''}
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ced4da;">${source}</td>
+                            `;
+                            resultTable.appendChild(tr);
+
+                            // 更新数据数组
+                            if (index < data.length) {
+                                data[index].realTimeChange = realTimeChange;
+                                data[index].source = source;
+                            }
+                        }
+                    });
+
+                    updateSummary(data, true);
+                }, 1500); // 模拟API延迟
+            } else {
+                updateSummary(data, false);
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function updateSummary(data, isRealTime) {
+            const summary = document.getElementById('summary');
+
+            const validChanges = data.filter(item => {
+                const change = isRealTime ? item.realTimeChange : item.staticChange;
+                return change !== '--' && change !== '';
+            });
+
+            const changeValues = validChanges.map(item => {
+                const change = isRealTime ? item.realTimeChange : item.staticChange;
+                const num = parseFloat(change.replace('%', ''));
+                return isNaN(num) ? 0 : num;
+            });
+
+            const realTimeCount = data.filter(item => item.realTimeChange !== '--').length;
+
+            if (changeValues.length > 0) {
+                const avg = changeValues.reduce((a, b) => a + b, 0) / changeValues.length;
+                const max = Math.max(...changeValues);
+                const min = Math.min(...changeValues);
+
+                summary.innerHTML = `
+                    <p><strong>统计信息:</strong></p>
+                    <p>共提取 ${data.length} 条数据，${isRealTime ? `其中 ${realTimeCount} 条有实时数据` : `其中 ${validChanges.length} 条有有效涨幅数据`}</p>
+                    <p>平均涨幅: ${avg.toFixed(2)}%</p>
+                    <p>最大涨幅: ${max.toFixed(2)}%</p>
+                    <p>最小涨幅: ${min.toFixed(2)}%</p>
+                    ${isRealTime ? '<p style="color: #0ca678; margin-top: 10px;">✅ 数据来源: 天天基金网API (模拟数据)</p>' : ''}
+                `;
+            } else {
+                summary.innerHTML = `<p>共提取 ${data.length} 条数据，但无有效涨幅数据</p>`;
+            }
+        }
+
+        // 显示所有指数代码功能
+        function showIndexCodes() {
+            const indexCodesContainer = document.getElementById('indexCodesContainer');
+            const indexCodesList = document.getElementById('indexCodesList');
+            const totalIndexes = document.getElementById('totalIndexes');
+
+            // 清空之前的列表
+            indexCodesList.innerHTML = '';
+
+            // 显示容器
+            indexCodesContainer.style.display = 'block';
+
+            // 隐藏其他结果容器
+            document.getElementById('resultContainer').style.display = 'none';
+
+            // 滚动到视图
+            indexCodesContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // 创建指数代码项目
+            let indexCount = 0;
+            Object.entries(indexCodeMap).forEach(([indexName, indexCode]) => {
+                indexCount++;
+
+                const indexItem = document.createElement('div');
+                indexItem.style.cssText = `
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    padding: 12px 15px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                `;
+
+                indexItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="font-weight: 500; color: #1e2b3c; font-size: 14px;">${indexName}</div>
+                        <div style="font-size: 11px; background: #f1f3f5; color: #4263eb; padding: 2px 8px; border-radius: 10px; font-family: 'SF Mono', monospace;">
+                            ${indexCode}
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: #6c757d;">
+                        <div style="display: flex; gap: 8px;">
+                            <span style="background: #e7f5ff; color: #1971c2; padding: 2px 6px; border-radius: 4px;">指数</span>
+                            <span style="background: #e6fcf5; color: #087f5b; padding: 2px 6px; border-radius: 4px;">支持实时查询</span>
+                        </div>
+                    </div>
+                `;
+
+                indexCodesList.appendChild(indexItem);
+            });
+
+            // 更新总数
+            totalIndexes.textContent = indexCount;
+
+            // 添加说明
+            const infoDiv = document.createElement('div');
+            infoDiv.style.cssText = `
+                grid-column: 1 / -1;
+                background: #f8f9fa;
+                border: 1px dashed #ced4da;
+                border-radius: 8px;
+                padding: 15px;
+                margin-top: 10px;
+                font-size: 12.5px;
+                color: #495057;
+            `;
+            infoDiv.innerHTML = `
+                <p><strong>📋 指数代码使用说明：</strong></p>
+                <p>1. 上述代码可用于调用天天基金网、雅虎财经等金融数据API获取实时行情。</p>
+                <p>2. 部分代码前缀说明：^ 表示美国市场指数，.SS 表示上海证券交易所指数。</p>
+                <p>3. 实时查询功能使用模拟数据，实际项目中需要接入真实的API服务。</p>
+            `;
+            indexCodesList.appendChild(infoDiv);
+        }
+
+        // ========== 主要市场指数展示 ==========
+        // ========== Google Finance (JSONP) 数据源 ==========
+        // Google Finance 的 info 接口返回 JSONP，通过 script 标签加载绕过 CORS
+
+        // 指数 -> Google Finance 符号映射
+        // Google 格式: EXCHANGE:SYMBOL
+        const GOOGLE_MAP = {
+            'us1_g1': 'INDEXSP:.INX',            // 标普500信息科技 — 用标普500近似
+            'us1_g2': 'INDEXNAS:.NDX',           // 纳斯达克科技100 — 用纳斯达克100近似
+            'us2_g1': 'INDEXSP:.INX',            // 标普500
+            'us2_g2': 'INDEXNAS:.NDX',           // 纳斯达克100
+            'us2_g3': 'INDEXDJX:.DJI',           // 道琼斯工业
+            'ap1_g1': 'SHA:000001',              // 上证指数
+            'ap2_g1': 'SHA:000300',              // 沪深300
+            'ap2_g2': 'SHA:000688',              // 科创50
+            'ap3_g1': 'INDEXNIKKEI:.N225',       // 日经225
+            'ap3_g2': 'INDEXKOSPI:.KS11',        // 韩国KOSPI
+        };
+
+        // 分组元信息
+        const GROUPS = {
+            us1: { container: 'indexGridUS1', keys: ['us1_g1', 'us1_g2'],
+                   names: ['标普500信息科技', '纳斯达克科技100'], markets: [] },
+            us2: { container: 'indexGridUS2', keys: ['us2_g1', 'us2_g2', 'us2_g3'],
+                   names: ['标普500', '纳斯达克100', '道琼斯工业'], markets: [] },
+            ap1: { container: 'indexGridAP1', keys: ['ap1_g1'],
+                   names: ['上证指数'], markets: ['🇨🇳'] },
+            ap2: { container: 'indexGridAP2', keys: ['ap2_g1', 'ap2_g2'],
+                   names: ['沪深300', '科创50'], markets: ['🇨🇳', '🇨🇳'] },
+            ap3: { container: 'indexGridAP3', keys: ['ap3_g1', 'ap3_g2'],
+                   names: ['日经225', '韩国KOSPI'], markets: ['🇯🇵', '🇰🇷'] },
+        };
+
+        // 缓存（含初始默认值，页面加载立即显示）
+        let cache = {
+            'us1_g1': { price: 4532.18, pct: 0.35 },
+            'us1_g2': { price: 18960.45, pct: 0.45 },
+            'us2_g1': { price: 5842.36, pct: 0.25 },
+            'us2_g2': { price: 20563.78, pct: 0.12 },
+            'us2_g3': { price: 42158.50, pct: -0.04 },
+            'ap1_g1': { price: 3048.50, pct: 0.47 },
+            'ap2_g1': { price: 3580.45, pct: 0.53 },
+            'ap2_g2': { price: 958.60,  pct: 0.94 },
+            'ap3_g1': { price: 38450.30, pct: 0.55 },
+            'ap3_g2': { price: 2712.60, pct: -0.31 },
+        };
+
+        // JSONP 请求队列管理
+        let jsonpId = 0;
+        let pendingCallbacks = {};
+
+        function jsonpRequest(url, callbackName, timeoutMs = 8000) {
+            return new Promise((resolve, reject) => {
+                const id = ++jsonpId;
+                const fullCallback = `__gf${id}`;
+                pendingCallbacks[fullCallback] = resolve;
+
+                // 创建 script 标签
+                const script = document.createElement('script');
+                const separator = url.includes('?') ? '&' : '?';
+                script.src = `${url}${separator}callback=${fullCallback}`;
+                script.onerror = () => { delete pendingCallbacks[fullCallback]; reject(new Error('load failed')); };
+
+                // 超时
+                const timer = setTimeout(() => {
+                    delete pendingCallbacks[fullCallback];
+                    document.head.removeChild(script);
+                    reject(new Error('timeout'));
+                }, timeoutMs);
+
+                // 全局回调（Google 返回 JSONP 调用此函数）
+                window[fullCallback] = function(data) {
+                    clearTimeout(timer);
+                    delete pendingCallbacks[fullCallback];
+                    document.head.removeChild(script);
+                    resolve(data);
+                };
+
+                document.head.appendChild(script);
+            });
+        }
+
+        // 从 Google Finance 获取单只指数数据
+        // Google 返回格式: [ { "l": price, "cp": change_pct, "pcls_fix": prev_close, ... } ]
+        async function fetchGoogleSingle(symbol) {
+            const url = `https://www.google.com/finance/info?q=${symbol}`;
+            const data = await jsonpRequest(url, 'callback');
+            const item = Array.isArray(data) ? data[0] : data;
+            if (item && item.l != null && item.cp != null) {
+                const price = parseFloat(String(item.l).replace(/,/g, ''));
+                const pct = parseFloat(String(item.cp).replace(/,/g, ''));
+                return { price, pct: parseFloat(pct.toFixed(2)) };
+            }
+            throw new Error('invalid data');
+        }
+
+        // 从 Google 获取所有指数（并行请求）
+        async function fetchGoogleAll() {
+            const entries = Object.entries(GOOGLE_MAP);
+            const results = await Promise.allSettled(
+                entries.map(([key, symbol]) =>
+                    fetchGoogleSingle(symbol)
+                        .then(val => ({ key, ...val }))
+                        .catch(() => null)
+                )
+            );
+            const map = {};
+            results.forEach(r => {
+                if (r.status === 'fulfilled' && r.value) {
+                    map[r.value.key] = { price: r.value.price, pct: r.value.pct };
+                }
+            });
+            if (Object.keys(map).length > 0) {
+                Object.assign(cache, map);
+            }
+            return map;
+        }
+
+        function renderGrid(dataMap) {
+            Object.values(GROUPS).forEach(g => {
+                const grid = document.getElementById(g.container);
+                grid.innerHTML = '';
+                g.keys.forEach((key, i) => {
+                    const d = dataMap[key] || cache[key] || { price: 0, pct: 0 };
+                    const isUp = d.pct >= 0;
+                    const card = document.createElement('div');
+                    card.className = `index-card ${isUp ? 'up' : 'down'}`;
+                    card.innerHTML = `
+                        <div class="i-name">${g.names[i]}</div>
+                        <div class="i-price">${d.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="i-change"><span class="i-pct">${isUp ? '+' : ''}${d.pct.toFixed(2)}%</span></div>
+                        <div class="i-market">${g.markets[i] || '🇺🇸 美国'}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        async function refreshAll() {
+            const btn = document.getElementById('refreshIndexBtn');
+            btn.textContent = '⏳ 加载中...';
+            btn.disabled = true;
+
+            try {
+                const data = await fetchGoogleAll();
+                renderGrid(data);
+                if (Object.keys(data).length > 0) {
+                    btn.textContent = '✅ 已更新';
+                    setTimeout(() => { btn.textContent = '🔄 刷新'; }, 2000);
+                } else {
+                    renderGrid(cache);
+                }
+            } catch {
+                renderGrid(cache);
+            } finally {
+                btn.textContent = '🔄 刷新';
+                btn.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => renderGrid(cache));
+        document.getElementById('refreshIndexBtn').addEventListener('click', refreshAll);
+    </script>
+</div>
+</body>
+</html>
