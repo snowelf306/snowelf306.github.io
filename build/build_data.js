@@ -91,17 +91,58 @@ const FUNDS = [
 const ALL_US = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market === 'US').map(h => h.ticker)))];
 const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market === 'CN').map(h => h.symbol)))];
 
-/* ---- 指数条：表格上方的市场基准（腾讯实时行情） ---- */
-// 标普信息科技/纳指科技/标普生物 无直接指数代码，分别以 XLK/QTEC/XBI 行业 ETF 表征
+/* ---- 指数条：表格上方的市场基准 ---- */
+// 用户指定代码：SP500-45(S&P500信息技术)、NDXTMC(纳指100科技市值加权)、
+// SPSIBI(S&P生物科技精选行业)、NBI(纳斯达克生物技术)、SPX、NDX、DJI。
+// 数据源可用性(2026-08实测)：NBI/SPX/NDX/DJI=腾讯实时；NDXTMC=CNBC接口；
+// SP500-45与SPSIBI无公开免费源(Yahoo/TradingView/Stooq/CNBC均不可用)，以跟踪同一指数的 XLK / XBI 表征。
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'usXLK', proxy: 'XLK ETF' },
-  { key: 'ndx_tech', label: '纳指科技',     code: 'usQTEC', proxy: 'QTEC ETF' },
-  { key: 'sp_bio',   label: '标普生物',     code: 'usXBI', proxy: 'XBI ETF' },
-  { key: 'nbi',      label: '纳指生物',     code: 'usNBI', index: true },
-  { key: 'spx',      label: '标普500',      code: 'usINX', index: true },
-  { key: 'ndx',      label: '纳指100',      code: 'usNDX', index: true },
-  { key: 'dji',      label: '道琼斯',       code: 'usDJI', index: true },
+  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
+  { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
+  { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
+  { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
+  { key: 'dji',      label: '道琼斯',       code: 'DJI',      rtCode: 'usDJI' },
 ];
+
+async function fetchCnbcIndex(sym) {
+  const url = 'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols='
+    + encodeURIComponent(sym) + '&requestMethod=itv&noform=1&partnerId=2&output=json';
+  const r = await getRetry(url, { headers: { Referer: 'https://www.cnbc.com/', 'User-Agent': BROWSER_UA } });
+  const j = JSON.parse(r.body);
+  const item = [].concat((j.FormattedQuoteResult || {}).FormattedQuote || [])[0];
+  const pct = parseFloat(String((item && item.change_pct) || '').replace('%', '').replace('+', ''));
+  if (!item || !isFinite(pct)) throw new Error('cnbc empty for ' + sym);
+  return { chgPct: Math.round(pct * 100) / 100 };
+}
+
+function assembleIndices(rt) {
+  return Promise.all(INDICES.map(async ix => {
+    // 1) 腾讯实时（真实指数）
+    let out = null;
+    if (ix.rtCode) {
+      const q = rt[ix.rtCode];
+      if (q && isFinite(q.price) && isFinite(q.prevClose) && q.prevClose)
+        out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.rtCode, source: 'tencent-index' };
+    }
+    // 2) CNBC（真实指数，仅收盘口径）
+    if (!out && ix.cnbcSym) {
+      try {
+        const c = await fetchCnbcIndex(ix.cnbcSym);
+        out = { chgPct: c.chgPct, rtCode: null, source: 'cnbc-index' };
+      } catch (e) { log('WARN cnbc failed for', ix.label, e.message.slice(0, 60)); }
+    }
+    // 3) 行业ETF表征（跟踪同一指数）
+    if (!out && ix.etfCode) {
+      const q = rt[ix.etfCode];
+      if (q && isFinite(q.chgPct)) out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.etfCode, source: 'etf-proxy', viaEtf: true, etfName: ix.etfName };
+    }
+    if (!out) { log('WARN index missing:', ix.label); return null; }
+    return { key: ix.key, label: ix.label, code: ix.code, chgPct: out.chgPct, price: out.price ?? null,
+      rtCode: out.rtCode || null, viaEtf: !!out.viaEtf, etfName: ix.etfName || null, source: out.source };
+  })).then(a => a.filter(Boolean));
+}
 
 /* ---------------- fetchers ---------------- */
 
@@ -272,18 +313,13 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
   log('fx usdcny 6/30=', usdcny0, 'latest(', latestFxDate, ')=', usdcnyLast, '| jpycny 6/30=', jp100_0 / 100, 'latest=', jp100Last / 100);
 
   log('fetching realtime quotes...');
-  const rtCodes = [...ALL_US.map(t => 'us' + t), ...ALL_CN, ...INDICES.map(i => i.code)];
+  const rtCodes = [...ALL_US.map(t => 'us' + t), ...ALL_CN,
+    ...INDICES.flatMap(i => [i.rtCode, i.etfCode]).filter(Boolean)];
   const rt = await fetchRealtimeQuotes(rtCodes);
   const rtSample = rt['usARKK'];
   log('rt sample usARKK:', JSON.stringify(rtSample));
-  const indicesOut = INDICES.map(ix => {
-    const q = rt[ix.code];
-    if (!q || !isFinite(q.price) || !isFinite(q.prevClose) || !q.prevClose) { log('WARN index missing:', ix.label, ix.code); return null; }
-    const chg = isFinite(q.chgPct) ? Math.round(q.chgPct * 100) / 100 : +((q.price / q.prevClose - 1) * 100).toFixed(2);
-    return { key: ix.key, label: ix.label, code: ix.code, proxy: ix.proxy || null,
-      price: q.price, prevClose: q.prevClose, chgPct: chg, quoteTime: q.rawTime };
-  }).filter(Boolean);
-  log('indices strip:', indicesOut.map(i => i.label + ' ' + (i.chgPct > 0 ? '+' : '') + i.chgPct + '%').join(' | '));
+  const indicesOut = await assembleIndices(rt);
+  log('indices strip:', indicesOut.map(i => i.label + '(' + i.code + (i.viaEtf ? '~' + i.etfName : '') + ') ' + (i.chgPct > 0 ? '+' : '') + i.chgPct + '%').join(' | '));
 
   log('fetching official NAV series (eastmoney)...');
   const offMaps = {};

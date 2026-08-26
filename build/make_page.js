@@ -79,6 +79,7 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-strip{display:flex;flex-wrap:wrap;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 16px;margin-top:20px}
 .idx-strip .ichip{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:6px 11px;font-size:13px;display:flex;align-items:center;gap:7px;color:#aab4c2;white-space:nowrap}
 .idx-strip .ichip em{font-style:normal;font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:13.5px}
+.idx-strip .ichip .tick{font-style:normal;font-size:10px;color:var(--muted);font-family:Consolas,"Courier New",monospace}
 .idx-strip .ichip.lof{border-color:#3b82f677;background:#16233b;color:var(--text)}
 .idx-strip .note{font-size:11px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
@@ -235,14 +236,14 @@ function renderAll() {
   // 指数条（7 市场基准 + 2 LOF 较前日涨幅）
   const strip = document.getElementById('idxStrip');
   strip.innerHTML = (D.indices || []).map(ix =>
-    '<span class="ichip"' + (ix.proxy ? ' title="以 ' + ix.proxy + ' 表征"' : '') + '>' + ix.label
+    '<span class="ichip">' + ix.label + '<i class="tick">' + ix.code + (ix.viaEtf ? '*' : '') + '</i>'
     + '<em id="idx_' + ix.key + '" class="' + cls(ix.chgPct ?? 0) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>'
   ).join('')
     + D.funds.map((f, i) =>
       '<span class="ichip lof">' + f.nameShort
       + '<em id="lofchg' + i + '" class="' + cls(f.live.fundDailyChgPct ?? 0) + '">' + sign(f.live.fundDailyChgPct ?? 0) + '%</em></span>'
     ).join('')
-    + '<span class="note">注：标普信息科技 / 纳指科技 / 标普生物 分别以 XLK / QTEC / XBI 行业ETF表征，其余为指数行情；LOF为估算净值较前一日</span>';
+    + '<span class="note">注：*号项（SP500-45、SPSIBI）暂无公开免费数据源，以跟踪同一指数的 XLK / XBI ETF 表征；NDXTMC 为 CNBC 收盘口径；其余为指数实时行情。LOF 为估算净值较前一日。</span>';
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');
@@ -272,9 +273,10 @@ function liveRefresh() {
   window.__qtCb = () => {
     try {
       let gotUs = false, gotCn = false, usTime = '', cnTime = '';
-      // 指数条：市场基准
+      // 指数条：市场基准（仅腾讯源可实时刷新：真实指数与 ETF 表征项）
       (D.indices || []).forEach(ix => {
-        const v = window['v_' + ix.code];
+        if (!ix.rtCode) return;
+        const v = window['v_' + ix.rtCode];
         if (typeof v !== 'string') return;
         const q = parseQt(v);
         if (!q || !(q.price > 0) || !(q.prevClose > 0)) return;
