@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-26 03:25:58 (北京时间, 构建时点)",
+ "generatedAt": "2026-08-26 03:46:06 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -610,7 +610,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -15.61,
      "valLast": 180906879.87184268,
-     "weightNowPct": 19.02
+     "weightNowPct": 19.03
     },
     {
      "name": "Invesco PHLX Semiconductor ETF",
@@ -632,7 +632,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -18.99,
      "valLast": 173034509.1192753,
-     "weightNowPct": 18.19
+     "weightNowPct": 18.2
     },
     {
      "name": "iShares Semiconductor ETF",
@@ -676,7 +676,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -27.91,
      "valLast": 159058821.31868878,
-     "weightNowPct": 16.72
+     "weightNowPct": 16.73
     },
     {
      "name": "国泰CES半导体芯片行业ETF",
@@ -692,13 +692,13 @@
      "qty": 58708000,
      "qtyDisp": "58,708,000",
      "prevClose": 1.066,
-     "dailyChgPct": 2.06,
-     "pLast": 1.088,
+     "dailyChgPct": 1.88,
+     "pLast": 1.086,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -31.36,
-     "valLast": 63874304.00000001,
-     "weightNowPct": 6.72
+     "chgPct": -31.48,
+     "valLast": 63756888.00000001,
+     "weightNowPct": 6.71
     },
     {
      "name": "华夏国证半导体芯片ETF",
@@ -714,13 +714,13 @@
      "qty": 55317000,
      "qtyDisp": "55,317,000",
      "prevClose": 1.118,
-     "dailyChgPct": 1.79,
-     "pLast": 1.138,
+     "dailyChgPct": 1.61,
+     "pLast": 1.136,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -32.86,
-     "valLast": 62950745.99999999,
-     "weightNowPct": 6.62
+     "chgPct": -32.98,
+     "valLast": 62840111.99999999,
+     "weightNowPct": 6.61
     },
     {
      "name": "景顺长城中证芯片产业ETF",
@@ -736,13 +736,13 @@
      "qty": 18267800,
      "qtyDisp": "18,267,800",
      "prevClose": 2.22,
-     "dailyChgPct": 1.8,
-     "pLast": 2.26,
+     "dailyChgPct": 1.94,
+     "pLast": 2.263,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -31.43,
-     "valLast": 41285227.99999999,
-     "weightNowPct": 4.34
+     "chgPct": -31.34,
+     "valLast": 41340031.4,
+     "weightNowPct": 4.35
     },
     {
      "name": "Global X Japan Semiconductor ETF",
@@ -1061,19 +1061,19 @@
     },
     {
      "date": "2026-08-26",
-     "estNavA": 2.9569,
-     "estNavC": 2.9171,
+     "estNavA": 2.957,
+     "estNavC": 2.9172,
      "officialA": null,
      "officialC": null
     }
    ],
    "live": {
-    "estNavA": 2.9635,
-    "estNavC": 2.9237,
-    "chgSinceReportA": -21.52,
-    "chgSinceReportC": -21.52,
-    "estTotalAssetsCny": 951026871.8161385,
-    "fundDailyChgPct": 1.32,
+    "estNavA": 2.963,
+    "estNavC": 2.9231,
+    "chgSinceReportA": -21.54,
+    "chgSinceReportC": -21.54,
+    "estTotalAssetsCny": 950853625.2161385,
+    "fundDailyChgPct": 1.3,
     "estNavAPrev": 2.925,
     "officialLatestA": {
      "date": "2026-08-24",
@@ -1084,7 +1084,7 @@
      "navC": 2.8703
     },
     "usQuoteTime": "2026-08-25 16:00:01",
-    "cnQuoteTime": "20260826112500"
+    "cnQuoteTime": "20260826114500"
    },
    "warnings": []
   }
