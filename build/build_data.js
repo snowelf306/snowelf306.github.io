@@ -190,14 +190,21 @@ function assembleIndices(rt) {
       if (q && isFinite(q.price) && isFinite(q.prevClose) && q.prevClose)
         out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.rtCode, source: 'tencent-index' };
     }
-    // 2) TradingView 真实指数（机房可达性好）
+    // 2) CNBC（真实指数，收盘口径；本地实测稳定）
+    if (!out && ix.cnbcSym) {
+      try {
+        const c = await fetchCnbcIndex(ix.cnbcSym);
+        out = { chgPct: c.chgPct, rtCode: null, source: 'cnbc-index' };
+      } catch (e) { log('WARN cnbc failed for', ix.label, e.message.slice(0, 60)); }
+    }
+    // 3) TradingView 真实指数（机房可达性好；SPSIBI 已验证）
     if (!out && ix.tvSym) {
       try {
         const t = await fetchTvIndex(ix.tvSym);
         out = { chgPct: t.chgPct, price: t.price, rtCode: null, source: 'tradingview-index' };
       } catch (e) { log('WARN tradingview failed for', ix.label, ix.tvSym, '-', String(e.message).slice(0, 50)); }
     }
-    // 3) Yahoo 真实指数（cookie+crumb → 直连 → 公共代理）
+    // 4) Yahoo 真实指数（cookie+crumb → 直连 → 公共代理）
     if (!out && ix.yahooSym) {
       try {
         const y = await fetchYahooIdxChg(ix.yahooSym);
@@ -211,7 +218,7 @@ function assembleIndices(rt) {
         out = { chgPct: c.chgPct, rtCode: null, source: 'cnbc-index' };
       } catch (e) { log('WARN cnbc failed for', ix.label, e.message.slice(0, 60)); }
     }
-    // 4) 行业ETF表征（跟踪同一指数）
+    // 5) 行业ETF表征（跟踪同一指数）
     if (!out && ix.etfCode) {
       const q = rt[ix.etfCode];
       if (q && isFinite(q.chgPct)) out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.etfCode, source: 'etf-proxy', viaEtf: true, etfName: ix.etfName };
