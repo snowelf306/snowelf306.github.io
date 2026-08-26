@@ -76,12 +76,16 @@ svg{width:100%;height:auto;display:block;background:var(--panel2);border:1px sol
 .notes li{margin-left:18px;margin-top:5px}
 footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .warn{color:var(--gold);font-size:12px;padding:0 20px 12px}
-.idx-strip{display:flex;flex-wrap:wrap;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 16px;margin-top:20px}
+.idx-strip{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-top:20px}
+.igroup{display:flex;flex-direction:column;gap:6px}
+.igroup+.igroup{border-left:1px solid var(--border);padding-left:14px}
+.gtitle{font-size:11px;color:var(--muted);letter-spacing:1px}
+.gchips{display:flex;flex-wrap:wrap;gap:8px}
 .idx-strip .ichip{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:6px 11px;font-size:13px;display:flex;align-items:center;gap:7px;color:#aab4c2;white-space:nowrap}
 .idx-strip .ichip em{font-style:normal;font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:13.5px}
 .idx-strip .ichip .tick{font-style:normal;font-size:10px;color:var(--muted);font-family:Consolas,"Courier New",monospace}
 .idx-strip .ichip.lof{border-color:#3b82f677;background:#16233b;color:var(--text)}
-.idx-strip .note{font-size:11px;color:var(--muted)}
+.idx-strip .note{flex-basis:100%;font-size:11px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -233,16 +237,26 @@ function renderAll() {
   document.getElementById('genAt').textContent = D.generatedAt;
   document.getElementById('fxLine').innerHTML = '汇率中间价：USD/CNY ' + D.fx.usdcny0 + ' → <b>' + D.fx.usdcnyLast + '</b>（' + D.fx.usdcnyLastDate + '）';
   document.getElementById('statusLine').textContent = '';
-  // 指数条（7 市场基准 + 2 LOF 较前日涨幅）
+  // 指数条：四组显示（科技 / LOF / 生物 / 大盘基准）
   const strip = document.getElementById('idxStrip');
-  strip.innerHTML = (D.indices || []).map(ix =>
+  const byKey = k => (D.indices || []).find(i => i.key === k);
+  const idxChip = ix => !ix ? '' :
     '<span class="ichip">' + ix.label + '<i class="tick">' + ix.code + (ix.viaEtf ? '*' : '') + '</i>'
-    + '<em id="idx_' + ix.key + '" class="' + cls(ix.chgPct ?? 0) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>'
-  ).join('')
-    + D.funds.map((f, i) =>
-      '<span class="ichip lof">' + f.nameShort
-      + '<em id="lofchg' + i + '" class="' + cls(f.live.fundDailyChgPct ?? 0) + '">' + sign(f.live.fundDailyChgPct ?? 0) + '%</em></span>'
-    ).join('')
+    + '<em id="idx_' + ix.key + '" class="' + cls(ix.chgPct ?? 0) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>';
+  const groups = [
+    { title: '科技指数', items: [byKey('sp_it'), byKey('ndx_tech')] },
+    { title: 'LOF估算', lof: true },
+    { title: '生物医药', items: [byKey('sp_bio'), byKey('nbi')] },
+    { title: '大盘基准', items: [byKey('spx'), byKey('ndx'), byKey('dji')] },
+  ];
+  strip.innerHTML = groups.map(g => {
+    const inner = g.lof
+      ? D.funds.map((f, i) =>
+          '<span class="ichip lof">' + f.nameShort
+          + '<em id="lofchg' + i + '" class="' + cls(f.live.fundDailyChgPct ?? 0) + '">' + sign(f.live.fundDailyChgPct ?? 0) + '%</em></span>').join('')
+      : g.items.map(idxChip).join('');
+    return '<div class="igroup"><span class="gtitle">' + g.title + '</span><div class="gchips">' + inner + '</div></div>';
+  }).join('')
     + '<span class="note">' +
       ((D.indices || []).some(ix => ix.viaEtf)
         ? '注：*号项当前为 ETF 表征值——构建环境无法直连 Yahoo（网络受限），GitHub Actions 构建时自动改用真实指数。'
