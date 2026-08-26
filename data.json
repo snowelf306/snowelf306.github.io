@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-26 01:56:07 (北京时间, 构建时点)",
+ "generatedAt": "2026-08-26 02:35:33 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -537,15 +537,15 @@
     },
     {
      "date": "2026-08-25",
-     "estNavA": 2.4165,
-     "estNavC": 2.396,
+     "estNavA": 2.4639,
+     "estNavC": 2.4431,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-08-26",
-     "estNavA": 2.4165,
-     "estNavC": 2.396,
+     "estNavA": 2.4639,
+     "estNavC": 2.4431,
      "officialA": null,
      "officialC": null
     }
@@ -610,7 +610,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -15.61,
      "valLast": 180906879.87184268,
-     "weightNowPct": 19.08
+     "weightNowPct": 19.06
     },
     {
      "name": "Invesco PHLX Semiconductor ETF",
@@ -632,7 +632,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -18.99,
      "valLast": 173034509.1192753,
-     "weightNowPct": 18.25
+     "weightNowPct": 18.23
     },
     {
      "name": "iShares Semiconductor ETF",
@@ -654,7 +654,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -20.1,
      "valLast": 171443333.29441124,
-     "weightNowPct": 18.09
+     "weightNowPct": 18.06
     },
     {
      "name": "Invesco Dynamic Semiconductors ETF",
@@ -676,7 +676,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -27.91,
      "valLast": 159058821.31868878,
-     "weightNowPct": 16.78
+     "weightNowPct": 16.76
     },
     {
      "name": "国泰CES半导体芯片行业ETF",
@@ -692,13 +692,13 @@
      "qty": 58708000,
      "qtyDisp": "58,708,000",
      "prevClose": 1.066,
-     "dailyChgPct": 0.19,
-     "pLast": 1.068,
+     "dailyChgPct": 0.84,
+     "pLast": 1.075,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -32.62,
-     "valLast": 62700144,
-     "weightNowPct": 6.61
+     "chgPct": -32.18,
+     "valLast": 63111100,
+     "weightNowPct": 6.65
     },
     {
      "name": "华夏国证半导体芯片ETF",
@@ -714,13 +714,13 @@
      "qty": 55317000,
      "qtyDisp": "55,317,000",
      "prevClose": 1.118,
-     "dailyChgPct": -0.18,
-     "pLast": 1.116,
+     "dailyChgPct": 0.54,
+     "pLast": 1.124,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -34.16,
-     "valLast": 61733772.00000001,
-     "weightNowPct": 6.51
+     "chgPct": -33.69,
+     "valLast": 62176308.00000001,
+     "weightNowPct": 6.55
     },
     {
      "name": "景顺长城中证芯片产业ETF",
@@ -736,13 +736,13 @@
      "qty": 18267800,
      "qtyDisp": "18,267,800",
      "prevClose": 2.22,
-     "dailyChgPct": 0,
-     "pLast": 2.22,
+     "dailyChgPct": 0.81,
+     "pLast": 2.238,
      "fxLast": 1,
      "pLastSrc": "qt-close",
-     "chgPct": -32.65,
-     "valLast": 40554516,
-     "weightNowPct": 4.28
+     "chgPct": -32.1,
+     "valLast": 40883336.4,
+     "weightNowPct": 4.31
     },
     {
      "name": "Global X Japan Semiconductor ETF",
@@ -1054,26 +1054,26 @@
     },
     {
      "date": "2026-08-25",
-     "estNavA": 2.9224,
-     "estNavC": 2.8831,
+     "estNavA": 2.9545,
+     "estNavC": 2.9148,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-08-26",
-     "estNavA": 2.9222,
-     "estNavC": 2.8829,
+     "estNavA": 2.955,
+     "estNavC": 2.9152,
      "officialA": null,
      "officialC": null
     }
    ],
    "live": {
-    "estNavA": 2.9538,
-    "estNavC": 2.9141,
-    "chgSinceReportA": -21.78,
-    "chgSinceReportC": -21.78,
-    "estTotalAssetsCny": 947905025.8161385,
-    "fundDailyChgPct": 0.98,
+    "estNavA": 2.9575,
+    "estNavC": 2.9177,
+    "chgSinceReportA": -21.68,
+    "chgSinceReportC": -21.68,
+    "estTotalAssetsCny": 949087338.2161385,
+    "fundDailyChgPct": 1.11,
     "estNavAPrev": 2.925,
     "officialLatestA": {
      "date": "2026-08-24",
@@ -1084,9 +1084,81 @@
      "navC": 2.8703
     },
     "usQuoteTime": "2026-08-25 16:00:01",
-    "cnQuoteTime": "20260826095603"
+    "cnQuoteTime": "20260826103530"
    },
    "warnings": []
+  }
+ ],
+ "indices": [
+  {
+   "key": "sp_it",
+   "label": "标普信息科技",
+   "code": "usXLK",
+   "proxy": "XLK ETF",
+   "price": 181.74,
+   "prevClose": 180.05,
+   "chgPct": 0.94,
+   "quoteTime": "2026-08-25 16:00:01"
+  },
+  {
+   "key": "ndx_tech",
+   "label": "纳指科技",
+   "code": "usQTEC",
+   "proxy": "QTEC ETF",
+   "price": 311.88,
+   "prevClose": 309.86,
+   "chgPct": 0.65,
+   "quoteTime": "2026-08-25 16:00:01"
+  },
+  {
+   "key": "sp_bio",
+   "label": "标普生物",
+   "code": "usXBI",
+   "proxy": "XBI ETF",
+   "price": 169.1,
+   "prevClose": 164.17,
+   "chgPct": 3,
+   "quoteTime": "2026-08-25 16:00:01"
+  },
+  {
+   "key": "nbi",
+   "label": "纳指生物",
+   "code": "usNBI",
+   "proxy": null,
+   "price": 7380.34,
+   "prevClose": 7248.1,
+   "chgPct": 1.82,
+   "quoteTime": "2026-08-25 17:15:59"
+  },
+  {
+   "key": "spx",
+   "label": "标普500",
+   "code": "usINX",
+   "proxy": null,
+   "price": 7677.28,
+   "prevClose": 7652.86,
+   "chgPct": 0.32,
+   "quoteTime": "2026-08-25 17:43:49"
+  },
+  {
+   "key": "ndx",
+   "label": "纳指100",
+   "code": "usNDX",
+   "proxy": null,
+   "price": 29209.23,
+   "prevClose": 29023.18,
+   "chgPct": 0.64,
+   "quoteTime": "2026-08-25 17:15:59"
+  },
+  {
+   "key": "dji",
+   "label": "道琼斯",
+   "code": "usDJI",
+   "proxy": null,
+   "price": 53577.4,
+   "prevClose": 53417.16,
+   "chgPct": 0.3,
+   "quoteTime": "2026-08-25 17:43:49"
   }
  ],
  "sources": {

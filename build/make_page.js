@@ -76,6 +76,11 @@ svg{width:100%;height:auto;display:block;background:var(--panel2);border:1px sol
 .notes li{margin-left:18px;margin-top:5px}
 footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .warn{color:var(--gold);font-size:12px;padding:0 20px 12px}
+.idx-strip{display:flex;flex-wrap:wrap;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 16px;margin-top:20px}
+.idx-strip .ichip{background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:6px 11px;font-size:13px;display:flex;align-items:center;gap:7px;color:#aab4c2;white-space:nowrap}
+.idx-strip .ichip em{font-style:normal;font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:13.5px}
+.idx-strip .ichip.lof{border-color:#3b82f677;background:#16233b;color:var(--text)}
+.idx-strip .note{font-size:11px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -90,6 +95,7 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
     <span id="statusLine"></span>
   </div>
 </header>
+<section id="idxStrip" class="idx-strip"></section>
 <div id="funds"></div>
 
 <div class="notes">
@@ -226,6 +232,17 @@ function renderAll() {
   document.getElementById('genAt').textContent = D.generatedAt;
   document.getElementById('fxLine').innerHTML = '汇率中间价：USD/CNY ' + D.fx.usdcny0 + ' → <b>' + D.fx.usdcnyLast + '</b>（' + D.fx.usdcnyLastDate + '）';
   document.getElementById('statusLine').textContent = '';
+  // 指数条（7 市场基准 + 2 LOF 较前日涨幅）
+  const strip = document.getElementById('idxStrip');
+  strip.innerHTML = (D.indices || []).map(ix =>
+    '<span class="ichip"' + (ix.proxy ? ' title="以 ' + ix.proxy + ' 表征"' : '') + '>' + ix.label
+    + '<em id="idx_' + ix.key + '" class="' + cls(ix.chgPct ?? 0) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>'
+  ).join('')
+    + D.funds.map((f, i) =>
+      '<span class="ichip lof">' + f.nameShort
+      + '<em id="lofchg' + i + '" class="' + cls(f.live.fundDailyChgPct ?? 0) + '">' + sign(f.live.fundDailyChgPct ?? 0) + '%</em></span>'
+    ).join('')
+    + '<span class="note">注：标普信息科技 / 纳指科技 / 标普生物 分别以 XLK / QTEC / XBI 行业ETF表征，其余为指数行情；LOF为估算净值较前一日</span>';
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');
@@ -249,12 +266,23 @@ function liveRefresh() {
     if (h.market === 'US') codes.push('us' + h.ticker);
     else if (h.market === 'CN') codes.push(h.symbol);
   }));
+  codes.push(...(D.indices || []).map(ix => ix.code));
   const s = document.createElement('script');
   const done = (ok, msg) => { btn.disabled = false; document.getElementById('statusLine').textContent = msg || ''; };
   window.__qtCb = () => {
     try {
       let gotUs = false, gotCn = false, usTime = '', cnTime = '';
-      D.funds.forEach(f => {
+      // 指数条：市场基准
+      (D.indices || []).forEach(ix => {
+        const v = window['v_' + ix.code];
+        if (typeof v !== 'string') return;
+        const q = parseQt(v);
+        if (!q || !(q.price > 0) || !(q.prevClose > 0)) return;
+        ix.chgPct = +((q.price / q.prevClose - 1) * 100).toFixed(2);
+        const el = document.getElementById('idx_' + ix.key);
+        if (el) { el.textContent = sign(ix.chgPct) + '%'; el.className = cls(ix.chgPct); }
+      });
+      D.funds.forEach((f, fi) => {
         let portVal = 0, discVal = 0, portValPrev = 0;
         f.holdings.forEach(h => {
           let price = h.pLast, prevClose = h.prevClose;
@@ -290,6 +318,12 @@ function liveRefresh() {
           estNavAPrev: +(f.navA0 * estTotPrev / f.netAssetsTotal).toFixed(4),
           estTot,
         };
+        const lofEl = document.getElementById('lofchg' + fi);
+        if (lofEl) {
+          const c = f.liveLive.fundDailyChgPct ?? 0;
+          lofEl.textContent = sign(c) + '%';
+          lofEl.className = cls(c);
+        }
       });
       applyLive(usTime, cnTime);
       done(true, (gotUs ? '美股盘中价已更新(' + usTime + ' 美东)' : '') + (gotCn ? ' · A股收盘价已确认' : '') + ' · 汇率/日经持仓保持快照值');

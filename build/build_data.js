@@ -91,6 +91,18 @@ const FUNDS = [
 const ALL_US = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market === 'US').map(h => h.ticker)))];
 const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market === 'CN').map(h => h.symbol)))];
 
+/* ---- 指数条：表格上方的市场基准（腾讯实时行情） ---- */
+// 标普信息科技/纳指科技/标普生物 无直接指数代码，分别以 XLK/QTEC/XBI 行业 ETF 表征
+const INDICES = [
+  { key: 'sp_it',    label: '标普信息科技', code: 'usXLK', proxy: 'XLK ETF' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'usQTEC', proxy: 'QTEC ETF' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'usXBI', proxy: 'XBI ETF' },
+  { key: 'nbi',      label: '纳指生物',     code: 'usNBI', index: true },
+  { key: 'spx',      label: '标普500',      code: 'usINX', index: true },
+  { key: 'ndx',      label: '纳指100',      code: 'usNDX', index: true },
+  { key: 'dji',      label: '道琼斯',       code: 'usDJI', index: true },
+];
+
 /* ---------------- fetchers ---------------- */
 
 async function fetchNasdaqHist(sym) {
@@ -260,10 +272,18 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
   log('fx usdcny 6/30=', usdcny0, 'latest(', latestFxDate, ')=', usdcnyLast, '| jpycny 6/30=', jp100_0 / 100, 'latest=', jp100Last / 100);
 
   log('fetching realtime quotes...');
-  const rtCodes = [...ALL_US.map(t => 'us' + t), ...ALL_CN];
+  const rtCodes = [...ALL_US.map(t => 'us' + t), ...ALL_CN, ...INDICES.map(i => i.code)];
   const rt = await fetchRealtimeQuotes(rtCodes);
   const rtSample = rt['usARKK'];
   log('rt sample usARKK:', JSON.stringify(rtSample));
+  const indicesOut = INDICES.map(ix => {
+    const q = rt[ix.code];
+    if (!q || !isFinite(q.price) || !isFinite(q.prevClose) || !q.prevClose) { log('WARN index missing:', ix.label, ix.code); return null; }
+    const chg = isFinite(q.chgPct) ? Math.round(q.chgPct * 100) / 100 : +((q.price / q.prevClose - 1) * 100).toFixed(2);
+    return { key: ix.key, label: ix.label, code: ix.code, proxy: ix.proxy || null,
+      price: q.price, prevClose: q.prevClose, chgPct: chg, quoteTime: q.rawTime };
+  }).filter(Boolean);
+  log('indices strip:', indicesOut.map(i => i.label + ' ' + (i.chgPct > 0 ? '+' : '') + i.chgPct + '%').join(' | '));
 
   log('fetching official NAV series (eastmoney)...');
   const offMaps = {};
@@ -463,6 +483,7 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
     disclaimer: '基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。',
     fx,
     funds: fundsOut,
+    indices: indicesOut,
     sources: {
       usHistory: 'api.nasdaq.com (日收盘价)',
       cnHistory: '腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)',
