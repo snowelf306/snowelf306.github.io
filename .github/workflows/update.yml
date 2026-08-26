@@ -35,6 +35,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: refresh fund NAV estimates ($(date -u +%F %H:%M UTC))"
+            git commit -m "chore: refresh fund NAV estimates ($(date -u '+%F %H:%M' UTC))"
             git push
           fi

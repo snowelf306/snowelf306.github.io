@@ -98,9 +98,9 @@ const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 // 数据源可用性(2026-08实测)：NBI/SPX/NDX/DJI=腾讯实时；NDXTMC=CNBC接口；
 // SP500-45与SPSIBI无公开免费源(Yahoo/TradingView/Stooq/CNBC均不可用)，以跟踪同一指数的 XLK / XBI 表征。
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
-  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',     etfCode: 'usQTEC', etfName: 'QTEC' },
-  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', tvSym: 'SP:SP500-45', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
   { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
   { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
   { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
@@ -118,27 +118,65 @@ async function fetchCnbcIndex(sym) {
   return { chgPct: Math.round(pct * 100) / 100 };
 }
 
-// 真实指数日涨幅：直连 Yahoo（GitHub Actions 美国机房可直连），失败则走公共代理，最后抛错由调用方回退
+// 真实指数日涨幅：TradingView 公开接口（机房可达性好）→ Yahoo 直连 → Yahoo 经公共代理
+async function fetchRaw(urlStr, headers = {}, timeout = 12000) {
+  return new Promise((resolve) => {
+    const req = https.get(urlStr, { headers }, res => {
+      let d = '';
+      res.on('data', c => d += c);
+      res.on('end', () => resolve({ status: res.statusCode, body: d, setCookie: res.headers['set-cookie'] || [] }));
+    });
+    req.on('error', e => resolve({ status: 0, body: 'ERR ' + e.message, setCookie: [] }));
+    req.setTimeout(timeout, () => { req.destroy(); resolve({ status: -1, body: 'TIMEOUT', setCookie: [] }); });
+  });
+}
+
+async function fetchTvIndex(tvSym) {
+  const url = 'https://scanner.tradingview.com/symbol?symbol=' + encodeURIComponent(tvSym)
+    + '&fields=close,change&no_404=true';
+  const r = await getRetry(url, { headers: { 'User-Agent': BROWSER_UA, Origin: 'https://www.tradingview.com', Referer: 'https://www.tradingview.com/' } }, 1);
+  const j = JSON.parse(r.body);
+  const pct = Number(j.change);
+  if (!isFinite(pct)) throw new Error('tv no change');
+  return { chgPct: Math.round(pct * 100) / 100, price: Number(j.close) || null };
+}
+
+// Yahoo 需要 cookie+crumb 才能从数据中心 IP 拿数据
 async function fetchYahooIdxChg(symbol) {
-  const path = '/v8/finance/chart/' + encodeURIComponent(symbol) + '?range=10d&interval=1d';
-  const direct = 'https://query1.finance.yahoo.com' + path;
+  const UA = { 'User-Agent': BROWSER_UA };
+  // 1) 取 cookie
+  await fetchRaw('https://fc.yahoo.com', UA, 8000).catch(() => null);
+  const r0 = await fetchRaw('https://finance.yahoo.com', UA, 8000);
+  const cookie = r0.setCookie.map(c => c.split(';')[0]).join('; ');
+  // 2) 取 crumb
+  let crumb = '';
+  if (cookie) {
+    const r1 = await fetchRaw('https://query2.finance.yahoo.com/v1/test/getcrumb', { ...UA, Cookie: cookie, Referer: 'https://finance.yahoo.com/' }, 8000);
+    if (r1.status === 200 && r1.body && r1.body.length < 24) crumb = r1.body.trim();
+  }
+  const suffix = crumb ? '&crumb=' + encodeURIComponent(crumb) : '';
+  const path = '/v8/finance/chart/' + encodeURIComponent(symbol) + '?range=10d&interval=1d' + suffix;
+  const hosts = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
   const proxies = [
     u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
     u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
     u => 'https://api.cors.lol/?url=' + encodeURIComponent(u),
   ];
   let lastErr;
-  for (let attempt = 0; attempt < 7; attempt++) {
+  const attempts = [
+    () => fetchRaw(hosts[0] + path, { ...UA, Cookie: cookie }),
+    () => fetchRaw(hosts[1] + path, { ...UA, Cookie: cookie }),
+    ...[0, 1, 2].map(i => () => fetchRaw(proxies[i](hosts[0] + path))),
+  ];
+  for (const attempt of attempts) {
     try {
-      const r = attempt === 0 ? await getRetry(direct, { headers: { 'User-Agent': BROWSER_UA } }, 1)
-        : await getRetry(proxies[(attempt - 1) % proxies.length]('https://query1.finance.yahoo.com' + path), {}, 1);
+      const r = await attempt();
+      if (r.status !== 200) throw new Error('HTTP ' + r.status);
       const res = JSON.parse(r.body).chart.result[0];
       const cl = (res.indicators.quote[0].close || []).filter(v => isFinite(v));
-      if (cl.length >= 2) {
-        return { chgPct: Math.round((cl[cl.length - 1] / cl[cl.length - 2] - 1) * 10000) / 100, price: cl[cl.length - 1] };
-      }
+      if (cl.length >= 2) return { chgPct: Math.round((cl[cl.length - 1] / cl[cl.length - 2] - 1) * 10000) / 100, price: cl[cl.length - 1] };
       lastErr = new Error('no closes');
-    } catch (e) { lastErr = e; }
+    } catch (e) { lastErr = e instanceof Error ? e : new Error(String(e)); }
     await sleep(300);
   }
   throw lastErr || new Error('yahoo unreachable');
@@ -153,7 +191,14 @@ function assembleIndices(rt) {
       if (q && isFinite(q.price) && isFinite(q.prevClose) && q.prevClose)
         out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.rtCode, source: 'tencent-index' };
     }
-    // 2) Yahoo 真实指数（直连优先=Actions 环境；本地网络不可达时走代理/回退）
+    // 2) TradingView 真实指数（机房可达性好）
+    if (!out && ix.tvSym) {
+      try {
+        const t = await fetchTvIndex(ix.tvSym);
+        out = { chgPct: t.chgPct, price: t.price, rtCode: null, source: 'tradingview-index' };
+      } catch (e) { log('WARN tradingview failed for', ix.label, ix.tvSym, '-', String(e.message).slice(0, 50)); }
+    }
+    // 3) Yahoo 真实指数（cookie+crumb → 直连 → 公共代理）
     if (!out && ix.yahooSym) {
       try {
         const y = await fetchYahooIdxChg(ix.yahooSym);
