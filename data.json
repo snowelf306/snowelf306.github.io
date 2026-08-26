@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-26 04:10:00 (北京时间, 构建时点)",
+ "generatedAt": "2026-08-26 04:22:03 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -1105,23 +1105,23 @@
    "key": "ndx_tech",
    "label": "纳指科技",
    "code": "NDXTMC",
-   "chgPct": 0.85,
-   "price": null,
-   "rtCode": null,
-   "viaEtf": false,
+   "chgPct": 0.65,
+   "price": 311.88,
+   "rtCode": "usQTEC",
+   "viaEtf": true,
    "etfName": "QTEC",
-   "source": "cnbc-index"
+   "source": "etf-proxy"
   },
   {
    "key": "sp_bio",
    "label": "标普生物",
    "code": "SPSIBI",
-   "chgPct": 3,
-   "price": 169.1,
-   "rtCode": "usXBI",
-   "viaEtf": true,
+   "chgPct": 3.07,
+   "price": 13237.64,
+   "rtCode": null,
+   "viaEtf": false,
    "etfName": "XBI",
-   "source": "etf-proxy"
+   "source": "tradingview-index"
   },
   {
    "key": "nbi",
