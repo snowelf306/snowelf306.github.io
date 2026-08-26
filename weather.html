@@ -41,7 +41,8 @@
   .day.gstart{box-shadow:inset 0 2.5px 0 #c6d3e2}
   .day.today{outline:2px solid #2563eb;background:#eff6ff !important}
   .d-date{width:32px;flex:none;font-size:12px;color:#475569;font-variant-numeric:tabular-nums}
-  .ic{width:20px;flex:none;font-size:16px;text-align:center;line-height:1}
+  .wtxt{width:30px;flex:none;font-size:11px;font-weight:700;text-align:center;color:#64748b;line-height:1.2}
+  .wtxt.wet{color:#dc2626}
   .bar{flex:1;height:4.5px;min-width:24px;background:#eaeef4;border-radius:3px;margin-right:2px;overflow:hidden;position:relative}
   .bar i{position:absolute;top:0;left:0;height:100%;border-radius:3px}
   .tcol{margin-left:auto;font-size:15.5px;font-weight:600;color:#1e2430;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.2px}
@@ -92,6 +93,7 @@
     <span class="demo">温度格式：<b>低温 / 高温</b>；<b class="red">红色</b> = 低于 0&nbsp;°C 或高于 30&nbsp;°C</span>
     <span class="demo">行末彩色短线 + 数字 = 当日最大紫外线指数（无数据则不显示）</span>
     <span class="demo">每 5 天一组：交替底色 + 分隔线，方便跨城市对齐同一天</span>
+    <span class="demo">天气为文字说明；<b class="red">红字</b> = 有雨、雪或雷暴</span>
     <span class="demo">悬停任意一行可查看天气详情</span>
   </div>
 </main>
@@ -113,6 +115,16 @@ const WMO = {
   95:["雷暴","⛈️"],96:["雷暴伴冰雹","⛈️"],99:["强雷暴冰雹","⛈️"]
 };
 const wmo = c => WMO[c] || ["未知","❓"];
+
+/* 天气仅分五类：晴 / 雾 / 雨 / 雪 / 雷暴 */
+function catWx(c){
+  if(c==null) return "—";
+  if(c>=95) return "雷暴";
+  if((c>=71&&c<=77)||c===85||c===86) return "雪";
+  if(c>=51) return "雨";
+  if(c>=45) return "雾";
+  return "晴";
+}
 
 function uvLevel(v){
   if(v==null||isNaN(v)) return null;
@@ -307,7 +319,8 @@ function uvChip(v){
 
 function dayRow(day,todayISO,scale){
   const d=new Date(day.date+"T00:00:00");
-  const [desc,icon]=wmo(day.code);
+  const [desc]=wmo(day.code);
+  const wet=(day.code!=null&&day.code>=51&&day.code<=99);   // 51 及以上均为雨/雪/雷系
   const dom=d.getDate();
   const band=(Math.floor((dom-1)/5)%2)?"band-b":"band-a";       // 每5天一组交替底色
   const gline=((dom-1)%5===0&&dom>1)?"gstart":"";               // 每组首行加分隔线
@@ -322,7 +335,7 @@ function dayRow(day,todayISO,scale){
   el.title=(d.getMonth()+1)+"月"+d.getDate()+"日 · "+desc;
   el.innerHTML=
     '<span class="d-date">'+d.getDate()+'日</span>'+
-    '<span class="ic">'+icon+'</span>'+
+    '<span class="wtxt'+(wet?' wet':'')+'" title="'+desc+'">'+catWx(day.code)+'</span>'+
     '<span class="bar">'+barInner+'</span>'+
     '<span class="tcol">'+tempHTML(day.min)+'<span class="sep">/</span>'+tempHTML(day.max)+'</span>'+
     uvChip(day.uv);
