@@ -243,7 +243,11 @@ function renderAll() {
       '<span class="ichip lof">' + f.nameShort
       + '<em id="lofchg' + i + '" class="' + cls(f.live.fundDailyChgPct ?? 0) + '">' + sign(f.live.fundDailyChgPct ?? 0) + '%</em></span>'
     ).join('')
-    + '<span class="note">注：*号项（SP500-45、SPSIBI）暂无公开免费数据源，以跟踪同一指数的 XLK / XBI ETF 表征；NDXTMC 为 CNBC 收盘口径；其余为指数实时行情。LOF 为估算净值较前一日。</span>';
+    + '<span class="note">' +
+      ((D.indices || []).some(ix => ix.viaEtf)
+        ? '注：*号项当前为 ETF 表征值——构建环境无法直连 Yahoo（网络受限），GitHub Actions 构建时自动改用真实指数。'
+        : '注：全部为真实指数数据（SP500-45 / SPSIBI 经 Yahoo，NDXTMC 经 CNBC 收盘口径，其余为腾讯实时）。')
+      + 'LOF 为估算净值较前一日。</span>';
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');

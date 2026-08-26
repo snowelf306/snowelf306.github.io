@@ -39,6 +39,7 @@ async function getRetry(url, opts = {}, tries = 3) {
   throw new Error(`GET failed (${last.status}): ${url.slice(0, 90)} :: ${String(last.body).slice(0, 80)}`);
 }
 const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+const log = (...a) => console.log('[build]', ...a); // 模块级日志（main 内的同名局部变量会遮蔽此定义）
 
 /* ---------------- fund definitions (from the two PDF quarterly reports) ---------------- */
 const FUNDS = [
@@ -97,9 +98,9 @@ const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 // 数据源可用性(2026-08实测)：NBI/SPX/NDX/DJI=腾讯实时；NDXTMC=CNBC接口；
 // SP500-45与SPSIBI无公开免费源(Yahoo/TradingView/Stooq/CNBC均不可用)，以跟踪同一指数的 XLK / XBI 表征。
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
-  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
-  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',     etfCode: 'usQTEC', etfName: 'QTEC' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
   { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
   { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
   { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
@@ -117,6 +118,32 @@ async function fetchCnbcIndex(sym) {
   return { chgPct: Math.round(pct * 100) / 100 };
 }
 
+// 真实指数日涨幅：直连 Yahoo（GitHub Actions 美国机房可直连），失败则走公共代理，最后抛错由调用方回退
+async function fetchYahooIdxChg(symbol) {
+  const path = '/v8/finance/chart/' + encodeURIComponent(symbol) + '?range=10d&interval=1d';
+  const direct = 'https://query1.finance.yahoo.com' + path;
+  const proxies = [
+    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+    u => 'https://api.cors.lol/?url=' + encodeURIComponent(u),
+  ];
+  let lastErr;
+  for (let attempt = 0; attempt < 7; attempt++) {
+    try {
+      const r = attempt === 0 ? await getRetry(direct, { headers: { 'User-Agent': BROWSER_UA } }, 1)
+        : await getRetry(proxies[(attempt - 1) % proxies.length]('https://query1.finance.yahoo.com' + path), {}, 1);
+      const res = JSON.parse(r.body).chart.result[0];
+      const cl = (res.indicators.quote[0].close || []).filter(v => isFinite(v));
+      if (cl.length >= 2) {
+        return { chgPct: Math.round((cl[cl.length - 1] / cl[cl.length - 2] - 1) * 10000) / 100, price: cl[cl.length - 1] };
+      }
+      lastErr = new Error('no closes');
+    } catch (e) { lastErr = e; }
+    await sleep(300);
+  }
+  throw lastErr || new Error('yahoo unreachable');
+}
+
 function assembleIndices(rt) {
   return Promise.all(INDICES.map(async ix => {
     // 1) 腾讯实时（真实指数）
@@ -126,14 +153,21 @@ function assembleIndices(rt) {
       if (q && isFinite(q.price) && isFinite(q.prevClose) && q.prevClose)
         out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.rtCode, source: 'tencent-index' };
     }
-    // 2) CNBC（真实指数，仅收盘口径）
+    // 2) Yahoo 真实指数（直连优先=Actions 环境；本地网络不可达时走代理/回退）
+    if (!out && ix.yahooSym) {
+      try {
+        const y = await fetchYahooIdxChg(ix.yahooSym);
+        out = { chgPct: y.chgPct, price: y.price, rtCode: null, source: 'yahoo-index' };
+      } catch (e) { log('WARN yahoo index failed for', ix.label, ix.yahooSym, '-', String(e.message).slice(0, 50)); }
+    }
+    // 3) CNBC（真实指数，仅收盘口径）
     if (!out && ix.cnbcSym) {
       try {
         const c = await fetchCnbcIndex(ix.cnbcSym);
         out = { chgPct: c.chgPct, rtCode: null, source: 'cnbc-index' };
       } catch (e) { log('WARN cnbc failed for', ix.label, e.message.slice(0, 60)); }
     }
-    // 3) 行业ETF表征（跟踪同一指数）
+    // 4) 行业ETF表征（跟踪同一指数）
     if (!out && ix.etfCode) {
       const q = rt[ix.etfCode];
       if (q && isFinite(q.chgPct)) out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.etfCode, source: 'etf-proxy', viaEtf: true, etfName: ix.etfName };
