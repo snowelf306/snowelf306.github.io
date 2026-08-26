@@ -1,0 +1,40 @@
+name: update-fund-nav
+
+# 每个交易日（美东收盘后）自动拉取最新行情，重建 QDII 基金净值估算页面并提交
+# UTC 21:45 = 北京时间 05:45（次日，夏令时）/ 05:45（冬令时），覆盖美股完整收盘数据
+on:
+  schedule:
+    - cron: '45 21 * * 1-5'
+  workflow_dispatch: {}   # 允许在 Actions 页面手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild fund NAV dashboard
+        working-directory: build
+        run: |
+          node build_data.js
+          node make_page.js
+
+      - name: Commit refreshed page
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add qdii-nav.html data.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: refresh fund NAV estimates ($(date -u +%F %H:%M UTC))"
+            git push
+          fi

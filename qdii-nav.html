@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QDII-LOF 持仓净值估算看板 · 海外科技 / 全球芯片</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#2a3140;
+  --text:#e6e8eb; --muted:#8b949e; --accent:#58a6ff; --up:#3fb950; --down:#f85149;
+  --gold:#d29922; --chip:#21262d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.55;padding-bottom:60px}
+.wrap{max-width:1560px;margin:0 auto;padding:0 18px}
+.funds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(680px,1fr));gap:16px;align-items:stretch;margin-top:26px}
+@media(max-width:1420px){.funds-grid{grid-template-columns:1fr}}
+.fund{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+header{padding:26px 0 14px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
+h1{font-size:21px;font-weight:700;letter-spacing:.5px}
+h1 .sub{color:var(--muted);font-weight:400;font-size:13px;margin-left:8px}
+.meta{color:var(--muted);font-size:12px;width:100%;display:flex;flex-wrap:wrap;gap:6px 18px}
+button.refresh{background:var(--chip);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:6px 16px;cursor:pointer;font-size:13px}
+button.refresh:hover{background:var(--panel2)}
+button.refresh[disabled]{opacity:.5;cursor:wait}
+.fund-head{padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:linear-gradient(180deg,#182130,#141a24);border-bottom:1px solid var(--border)}
+.fund-head h2{font-size:17px;font-weight:600}
+.tag{font-size:11px;color:var(--muted);background:var(--chip);border:1px solid var(--border);padding:2px 8px;border-radius:4px}
+.tag.code{color:var(--accent);font-family:Consolas,monospace}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 18px}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 12px}
+.kpi .label{font-size:12px;color:var(--muted);white-space:nowrap}
+.kpi .value{font-size:19px;font-weight:700;font-family:Consolas,"Courier New",monospace;margin-top:2px;white-space:nowrap}
+.kpi .note{font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--muted)}
+section.holdings{padding:6px 20px 18px}
+section.holdings h3{font-size:14px;color:var(--muted);font-weight:600;margin:12px 0 8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{color:var(--muted);font-weight:500;text-align:right;padding:7px 7px;border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:7px 7px;border-bottom:1px solid #20263433;text-align:right;font-family:Consolas,"Courier New",monospace;white-space:nowrap}
+td:first-child{text-align:left;font-family:inherit;white-space:normal}
+tr:hover td{background:#ffffff08}
+td .nm{font-weight:600} td .tk{color:var(--muted);font-size:11px;margin-left:6px}
+.mkt-US{color:#58a6ff}.mkt-CN{color:#d29922}.mkt-JP{color:#bc8cff}
+.srcdot{font-size:10px;color:var(--muted);display:block;line-height:1.2}
+.chartbox{padding:4px 20px 20px;margin-top:auto}
+.chartbox h3{font-size:14px;color:var(--muted);font-weight:600;margin:8px 0 10px}
+svg{width:100%;height:auto;display:block;background:var(--panel2);border:1px solid var(--border);border-radius:8px}
+.legend{display:flex;gap:20px;font-size:12px;color:var(--muted);margin-top:8px}
+.legend span b{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+#tooltip{position:fixed;pointer-events:none;background:#000c;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;display:none;z-index:9;font-family:Consolas,monospace}
+.notes{margin-top:30px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px 22px;color:var(--muted);font-size:12.5px}
+.notes h3{color:var(--text);font-size:14px;margin-bottom:10px}
+.notes li{margin-left:18px;margin-top:5px}
+footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
+.warn{color:var(--gold);font-size:12px;padding:0 20px 12px}
+@media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>QDII-LOF 基金持仓净值估算看板<span class="sub">海外科技LOF · 全球芯片LOF</span></h1>
+  <button class="refresh" id="btnRefresh" onclick="liveRefresh()">↻ 刷新实时行情</button>
+  <div class="meta">
+    <span>数据构建时间：<b id="genAt"></b></span>
+    <span id="fxLine"></span>
+    <span id="statusLine"></span>
+  </div>
+</header>
+<div id="funds"></div>
+
+<div class="notes">
+<h3>计算方法与说明</h3>
+<ul>
+  <li><b>持仓来源：</b>两份《2026年第2季度报告》PDF（报告期截止 2026-06-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
+  <li><b>持仓数量推算：</b>季报未直接披露持有份数，按 <code>数量 = 报告期公允价值 ÷（报告期末收盘价 × 报告期末汇率中间价）</code> 推算。美国 ETF 价格取自 Nasdaq 日线（USD），A 股 ETF 取腾讯行情前复权日线（CNY，自动消除 159995 于 2026-07-07 的 1:2 份额拆分跳变），日本 2644.T 取 Yahoo Finance 日线（JPY）。</li>
+  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-06-30 USD/CNY = 6.8109、100JPY/CNY = 4.2045；最新中间价（2026-08-26）USD/CNY = 6.7829、100JPY/CNY = 4.2450。</li>
+  <li><b>估算净值公式：</b><code>估算净值(t) = 报告期净值 × [净资产−基金投资 + Σ 数量ᵢ×价格ᵢ(t)×汇率ᵢ(t) + 未披露持仓×平均涨幅] ÷ 净资产</code>。其中"未披露持仓"= 季报基金投资合计 − 前十（八）大披露合计，按已披露持仓的平均涨幅估值。该公式在报告日恰好还原官方净值。</li>
+  <li><b>银行存款 / 其他资产的处理：</b>季报中"银行存款和结算备付金""其他资产"（主要为应收证券清算款、应收申购款）扣除负债后并入公式的静态项，按面值持有、不随股价波动——该项占净值比例：海外科技约 15.3%，全球芯片约 6.7%。此处理保证报告日还原精确。</li>
+  <li><b>申赎流量是最主要的误差来源：</b>海外科技LOF 持续开放申购，报告期份额大幅净增长（场内溢价吸引申购-卖出套利）。新申购款以现金形态停留数日（美元换汇+建仓时滞），摊薄了组合波动，而本估算按季报结构满仓计算，故官方净值常低于估算值；新资金随后的投向与建仓成本季报不再披露，构成无法从公开数据消除的偏差。全球芯片LOF 处于暂停申购状态、仅有小额持续赎回，赎回对每份净值中性，组合结构与季报基本一致，因此静态估算与官方净值高度贴合（残余偏差≈费用水平）。</li>
+  <li><b>最新价格时点：</b>美股为腾讯行情实时盘中价（美东时间），A 股 ETF 为最近收盘价，日本 ETF 为 minkabu.jp 收盘快照，美元/日元汇率用最近日中间价。点击右上角"刷新实时行情"可更新美股与 A 股价格并重算（汇率与日经持仓保持构建时点值）。</li>
+  <li><b>误差参考：</b>以同日官方净值对照：全球芯片偏差约 0.1%~0.5%（接近费用拖累水平），海外科技约 1%~2%（开放申购带来的现金摊薄与再建仓所致）。其余次要素级：基金调仓 &gt; 管理托管等费用（约 0.3%/两月，恒为正偏）&gt; 境内外估值时点差 &gt; 现金静态假设。估算结果不构成投资建议。</li>
+</ul>
+</div>
+<footer id="srcFooter"></footer>
+</div>
+<div id="tooltip"></div>
+
+<script id="embedded-data" type="application/json">{"generatedAt":"2026-08-26 01:56:07 (北京时间, 构建时点)","disclaimer":"基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。","fx":{"usdcny0":6.8109,"usdcnyLast":6.7829,"usdcnyLastDate":"2026-08-26","jpycny0":0.042045000000000006,"jpycnyLast":0.04245,"source":"中国外汇交易中心人民币汇率中间价 (chinamoney.com.cn)"},"funds":[{"key":"hb","nameFull":"华宝海外科技股票型证券投资基金（QDII-LOF）","nameShort":"海外科技LOF","codeA":"501312","codeC":"017204","reportDate":"2026-06-30","navA0":2.4362,"navC0":2.4156,"sharesA":764363856.79,"sharesC":231456739.57,"netAssetsTotal":2421279778.94,"totalAssets":2585548235.16,"fundInvestments":2051362956.72,"liabilities":164268456.2199998,"otherNetAssets":369916822.22,"disclosedSum":1879169368.59,"residualFV":172193588.1300001,"holdings":[{"name":"ARK Genomic Revolution ETF","ticker":"ARKG","symbol":null,"market":"US","currency":"USD","fv0":409830940.68,"weight0Pct":16.93,"p0":42.06,"fx0":6.8109,"p0Cny":286.466454,"qty":1430641.999987894,"qtyDisp":"1,430,642","prevClose":48.01,"dailyChgPct":4.27,"pLast":50.06,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":18.53,"valLast":485777315.18319744,"weightNowPct":19.84},{"name":"ARK Innovation ETF","ticker":"ARKK","symbol":null,"market":"US","currency":"USD","fv0":447521490.59,"weight0Pct":18.48,"p0":80.82,"fx0":6.8109,"p0Cny":550.4569379999999,"qty":812999.9999927334,"qtyDisp":"813000.00","prevClose":83.92,"dailyChgPct":2.92,"pLast":86.37,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":6.43,"valLast":476287166.3447429,"weightNowPct":19.46},{"name":"ARK Autonomous Technology & Robotics ETF","ticker":"ARKQ","symbol":null,"market":"US","currency":"USD","fv0":245725082.53,"weight0Pct":10.15,"p0":132.22,"fx0":6.8109,"p0Cny":900.537198,"qty":272864.99999747926,"qtyDisp":"272865.00","prevClose":121.83,"dailyChgPct":0.75,"pLast":122.74,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-7.55,"valLast":227169156.88119137,"weightNowPct":9.28},{"name":"Global X Artificial Intelligence & Technology ETF","ticker":"AIQ","symbol":null,"market":"US","currency":"USD","fv0":153129276.45,"weight0Pct":6.32,"p0":65.61,"fx0":6.8109,"p0Cny":446.863149,"qty":342676.0000073311,"qtyDisp":"342676.00","prevClose":62.3,"dailyChgPct":1.25,"pLast":63.08,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-4.25,"valLast":146619180.5115687,"weightNowPct":5.99},{"name":"Global X Robotics & Artificial Intelligence ETF","ticker":"BOTZ","symbol":null,"market":"US","currency":"USD","fv0":122360710.95,"weight0Pct":5.05,"p0":37.94,"fx0":6.8109,"p0Cny":258.405546,"qty":473521.9999883439,"qtyDisp":"473522.00","prevClose":35.25,"dailyChgPct":1.7,"pLast":35.85,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-5.9,"valLast":115144907.59789562,"weightNowPct":4.7},{"name":"ARK Space & Defense Innovation ETF","ticker":"ARKX","symbol":null,"market":"US","currency":"USD","fv0":121125457.8,"weight0Pct":5,"p0":34.12,"fx0":6.8109,"p0Cny":232.38790799999998,"qty":521221.0000186413,"qtyDisp":"521221.00","prevClose":32.45,"dailyChgPct":0.12,"pLast":32.49,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-5.17,"valLast":114864818.53414911,"weightNowPct":4.69},{"name":"Technology Select Sector SPDR Fund","ticker":"XLK","symbol":null,"market":"US","currency":"USD","fv0":113098622.53,"weight0Pct":4.67,"p0":190.52,"fx0":6.8109,"p0Cny":1297.6126680000002,"qty":87158.99999983661,"qtyDisp":"87159.00","prevClose":180.05,"dailyChgPct":0.94,"pLast":181.74,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-5,"valLast":107443012.55691259,"weightNowPct":4.39},{"name":"VanEck Semiconductor ETF","ticker":"SMH","symbol":null,"market":"US","currency":"USD","fv0":106395331,"weight0Pct":4.39,"p0":655.89,"fx0":6.8109,"p0Cny":4467.201201,"qty":23816.99999905601,"qtyDisp":"23817.00","prevClose":546.8,"dailyChgPct":1.65,"pLast":555.82,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-15.61,"valLast":89791792.3879671,"weightNowPct":3.67},{"name":"Invesco QQQ Trust Series 1","ticker":"QQQ","symbol":null,"market":"US","currency":"USD","fv0":79245638.81,"weight0Pct":3.27,"p0":736.4,"fx0":6.8109,"p0Cny":5015.54676,"qty":15800.00000039876,"qtyDisp":"15800.00","prevClose":706.32,"dailyChgPct":0.62,"pLast":710.72,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-3.88,"valLast":76167734.47232231,"weightNowPct":3.11},{"name":"iShares Semiconductor ETF","ticker":"SOXX","symbol":null,"market":"US","currency":"USD","fv0":80736817.25,"weight0Pct":3.33,"p0":640.76,"fx0":6.8109,"p0Cny":4364.152284,"qty":18499.999999083444,"qtyDisp":"18500.00","prevClose":506.18,"dailyChgPct":1.56,"pLast":514.06,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-20.1,"valLast":64506125.11580413,"weightNowPct":2.63}],"residual":{"fv0":172193588.1300001,"note":"报告未披露的其余基金持仓（按已披露持仓平均涨幅估算）"},"series":[{"date":"2026-06-30","estNavA":2.4362,"estNavC":2.4156,"officialA":2.4362,"officialC":2.4156},{"date":"2026-07-01","estNavA":2.4213,"estNavC":2.4008,"officialA":2.4085,"officialC":2.3881},{"date":"2026-07-02","estNavA":2.3951,"estNavC":2.3748,"officialA":2.3699,"officialC":2.3498},{"date":"2026-07-03","estNavA":2.3951,"estNavC":2.3748,"officialA":2.3694,"officialC":2.3493},{"date":"2026-07-06","estNavA":2.4366,"estNavC":2.416,"officialA":2.4159,"officialC":2.3954},{"date":"2026-07-07","estNavA":2.3707,"estNavC":2.3507,"officialA":2.3395,"officialC":2.3196},{"date":"2026-07-08","estNavA":2.3593,"estNavC":2.3393,"officialA":2.3315,"officialC":2.3116},{"date":"2026-07-09","estNavA":2.3951,"estNavC":2.3749,"officialA":2.3746,"officialC":2.3543},{"date":"2026-07-10","estNavA":2.3666,"estNavC":2.3466,"officialA":2.3475,"officialC":2.3275},{"date":"2026-07-13","estNavA":2.3144,"estNavC":2.2949,"officialA":2.2842,"officialC":2.2646},{"date":"2026-07-14","estNavA":2.3414,"estNavC":2.3216,"officialA":2.3152,"officialC":2.2954},{"date":"2026-07-15","estNavA":2.3325,"estNavC":2.3128,"officialA":2.304,"officialC":2.2842},{"date":"2026-07-16","estNavA":2.275,"estNavC":2.2557,"officialA":2.2382,"officialC":2.219},{"date":"2026-07-17","estNavA":2.247,"estNavC":2.228,"officialA":2.2038,"officialC":2.1848},{"date":"2026-07-20","estNavA":2.2321,"estNavC":2.2132,"officialA":2.1908,"officialC":2.1719},{"date":"2026-07-21","estNavA":2.2916,"estNavC":2.2722,"officialA":2.2594,"officialC":2.2399},{"date":"2026-07-22","estNavA":2.2695,"estNavC":2.2503,"officialA":2.2364,"officialC":2.2171},{"date":"2026-07-23","estNavA":2.2417,"estNavC":2.2227,"officialA":2.2072,"officialC":2.1882},{"date":"2026-07-24","estNavA":2.1976,"estNavC":2.179,"officialA":2.1592,"officialC":2.1405},{"date":"2026-07-27","estNavA":2.2012,"estNavC":2.1826,"officialA":2.1627,"officialC":2.1439},{"date":"2026-07-28","estNavA":2.1847,"estNavC":2.1662,"officialA":2.1421,"officialC":2.1235},{"date":"2026-07-29","estNavA":2.1399,"estNavC":2.1218,"officialA":2.0919,"officialC":2.0737},{"date":"2026-07-30","estNavA":2.2161,"estNavC":2.1974,"officialA":2.1749,"officialC":2.156},{"date":"2026-07-31","estNavA":2.2041,"estNavC":2.1855,"officialA":2.1654,"officialC":2.1465},{"date":"2026-08-03","estNavA":2.2518,"estNavC":2.2327,"officialA":2.2165,"officialC":2.1971},{"date":"2026-08-04","estNavA":2.3316,"estNavC":2.3119,"officialA":2.3055,"officialC":2.2854},{"date":"2026-08-05","estNavA":2.3204,"estNavC":2.3008,"officialA":2.2926,"officialC":2.2726},{"date":"2026-08-06","estNavA":2.3113,"estNavC":2.2918,"officialA":2.2819,"officialC":2.2619},{"date":"2026-08-07","estNavA":2.3871,"estNavC":2.3669,"officialA":2.3622,"officialC":2.3415},{"date":"2026-08-10","estNavA":2.4009,"estNavC":2.3806,"officialA":2.3749,"officialC":2.354},{"date":"2026-08-11","estNavA":2.406,"estNavC":2.3857,"officialA":2.3803,"officialC":2.3593},{"date":"2026-08-12","estNavA":2.4229,"estNavC":2.4024,"officialA":2.3992,"officialC":2.3781},{"date":"2026-08-13","estNavA":2.4353,"estNavC":2.4147,"officialA":2.4143,"officialC":2.3931},{"date":"2026-08-14","estNavA":2.4151,"estNavC":2.3946,"officialA":2.3931,"officialC":2.372},{"date":"2026-08-17","estNavA":2.4268,"estNavC":2.4063,"officialA":2.4049,"officialC":2.3837},{"date":"2026-08-18","estNavA":2.372,"estNavC":2.3519,"officialA":2.3436,"officialC":2.3229},{"date":"2026-08-19","estNavA":2.4369,"estNavC":2.4163,"officialA":2.4077,"officialC":2.3863},{"date":"2026-08-20","estNavA":2.4246,"estNavC":2.4041,"officialA":2.3934,"officialC":2.3722},{"date":"2026-08-21","estNavA":2.4686,"estNavC":2.4478,"officialA":2.4354,"officialC":2.4137},{"date":"2026-08-24","estNavA":2.4165,"estNavC":2.396,"officialA":2.3815,"officialC":2.3602},{"date":"2026-08-25","estNavA":2.4165,"estNavC":2.396,"officialA":null,"officialC":null},{"date":"2026-08-26","estNavA":2.4165,"estNavC":2.396,"officialA":null,"officialC":null}],"live":{"estNavA":2.4632,"estNavC":2.4424,"chgSinceReportA":1.11,"chgSinceReportC":1.11,"estTotalAssetsCny":2448135955.99852,"fundDailyChgPct":1.95,"estNavAPrev":2.4161,"officialLatestA":{"date":"2026-08-24","navA":2.3815},"officialLatestC":{"date":"2026-08-24","navC":2.3602},"usQuoteTime":"2026-08-25 16:00:01","cnQuoteTime":null},"warnings":[]},{"key":"jsq","nameFull":"景顺长城全球半导体芯片产业股票型证券投资基金（QDII-LOF）","nameShort":"全球芯片LOF","codeA":"501225","codeC":"016668","reportDate":"2026-06-30","navA0":3.7763,"navC0":3.7255,"sharesA":239211983.86,"sharesC":82806748.09,"netAssetsTotal":1211849622.58,"totalAssets":1223535652.64,"fundInvestments":1131215717.33,"liabilities":11686030.060000181,"otherNetAssets":80633905.25,"disclosedSum":1131215717.33,"residualFV":0,"holdings":[{"name":"VanEck Semiconductor ETF","ticker":"SMH","symbol":null,"market":"US","currency":"USD","fv0":214358649.63,"weight0Pct":17.69,"p0":655.89,"fx0":6.8109,"p0Cny":4467.201201,"qty":47985.00000000336,"qtyDisp":"47985.00","prevClose":546.8,"dailyChgPct":1.65,"pLast":555.82,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-15.61,"valLast":180906879.87184268,"weightNowPct":19.08},{"name":"Invesco PHLX Semiconductor ETF","ticker":"SOXQ","symbol":null,"market":"US","currency":"USD","fv0":213589653.73,"weight0Pct":17.63,"p0":112.1,"fx0":6.8109,"p0Cny":763.50189,"qty":279750.00000327436,"qtyDisp":"279750.00","prevClose":89.93,"dailyChgPct":1.4,"pLast":91.19,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-18.99,"valLast":173034509.1192753,"weightNowPct":18.25},{"name":"iShares Semiconductor ETF","ticker":"SOXX","symbol":null,"market":"US","currency":"USD","fv0":214581003.65,"weight0Pct":17.71,"p0":640.76,"fx0":6.8109,"p0Cny":4364.152284,"qty":49168.99999954264,"qtyDisp":"49169.00","prevClose":506.18,"dailyChgPct":1.56,"pLast":514.06,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-20.1,"valLast":171443333.29441124,"weightNowPct":18.09},{"name":"Invesco Dynamic Semiconductors ETF","ticker":"PSI","symbol":null,"market":"US","currency":"USD","fv0":220636586.42,"weight0Pct":18.21,"p0":187.82,"fx0":6.8109,"p0Cny":1279.223238,"qty":172476.9999995888,"qtyDisp":"172477.00","prevClose":134.06,"dailyChgPct":1.42,"pLast":135.96,"fxLast":6.7829,"pLastSrc":"qt-intraday","chgPct":-27.91,"valLast":159058821.31868878,"weightNowPct":16.78},{"name":"国泰CES半导体芯片行业ETF","ticker":"512760","symbol":"sh512760","market":"CN","currency":"CNY","fv0":93052180,"weight0Pct":7.68,"p0":1.585,"fx0":1,"p0Cny":1.585,"qty":58708000,"qtyDisp":"58,708,000","prevClose":1.066,"dailyChgPct":0.19,"pLast":1.068,"fxLast":1,"pLastSrc":"qt-close","chgPct":-32.62,"valLast":62700144,"weightNowPct":6.61},{"name":"华夏国证半导体芯片ETF","ticker":"159995","symbol":"sz159995","market":"CN","currency":"CNY","fv0":93762315,"weight0Pct":7.74,"p0":1.695,"fx0":1,"p0Cny":1.695,"qty":55317000,"qtyDisp":"55,317,000","prevClose":1.118,"dailyChgPct":-0.18,"pLast":1.116,"fxLast":1,"pLastSrc":"qt-close","chgPct":-34.16,"valLast":61733772.00000001,"weightNowPct":6.51},{"name":"景顺长城中证芯片产业ETF","ticker":"159560","symbol":"sz159560","market":"CN","currency":"CNY","fv0":60210668.8,"weight0Pct":4.97,"p0":3.296,"fx0":1,"p0Cny":3.296,"qty":18267800,"qtyDisp":"18,267,800","prevClose":2.22,"dailyChgPct":0,"pLast":2.22,"fxLast":1,"pLastSrc":"qt-close","chgPct":-32.65,"valLast":40554516,"weightNowPct":4.28},{"name":"Global X Japan Semiconductor ETF","ticker":"2644.T","symbol":null,"market":"JP","currency":"JPY","fv0":21024660.1,"weight0Pct":1.73,"p0":4940,"fx0":0.042045000000000006,"p0Cny":207.70230000000004,"qty":101224.97487991225,"qtyDisp":"101224.97","prevClose":4479,"dailyChgPct":-5.07,"pLast":4252,"fxLast":0.041447000000000005,"pLastSrc":"eod-carry","chgPct":-15.15,"valLast":17839144.96192052,"weightNowPct":1.88}],"residual":{"fv0":0,"note":"报告未披露的其余基金持仓（按已披露持仓平均涨幅估算）"},"series":[{"date":"2026-06-30","estNavA":3.7763,"estNavC":3.7255,"officialA":3.7763,"officialC":3.7255},{"date":"2026-07-01","estNavA":3.5907,"estNavC":3.5424,"officialA":3.5887,"officialC":3.5404},{"date":"2026-07-02","estNavA":3.3619,"estNavC":3.3167,"officialA":3.3602,"officialC":3.3149},{"date":"2026-07-03","estNavA":3.36,"estNavC":3.3148,"officialA":3.3537,"officialC":3.3085},{"date":"2026-07-06","estNavA":3.4085,"estNavC":3.3626,"officialA":3.4039,"officialC":3.3579},{"date":"2026-07-07","estNavA":3.279,"estNavC":3.2349,"officialA":3.2747,"officialC":3.2304},{"date":"2026-07-08","estNavA":3.3243,"estNavC":3.2796,"officialA":3.3207,"officialC":3.2757},{"date":"2026-07-09","estNavA":3.4764,"estNavC":3.4297,"officialA":3.4742,"officialC":3.4271},{"date":"2026-07-10","estNavA":3.4303,"estNavC":3.3842,"officialA":3.427,"officialC":3.3805},{"date":"2026-07-13","estNavA":3.2812,"estNavC":3.237,"officialA":3.2771,"officialC":3.2325},{"date":"2026-07-14","estNavA":3.3589,"estNavC":3.3137,"officialA":3.3554,"officialC":3.3097},{"date":"2026-07-15","estNavA":3.2707,"estNavC":3.2267,"officialA":3.2661,"officialC":3.2216},{"date":"2026-07-16","estNavA":3.1261,"estNavC":3.0841,"officialA":3.1203,"officialC":3.0777},{"date":"2026-07-17","estNavA":3.0394,"estNavC":2.9985,"officialA":3.0317,"officialC":2.9903},{"date":"2026-07-20","estNavA":3.0376,"estNavC":2.9968,"officialA":3.0283,"officialC":2.9869},{"date":"2026-07-21","estNavA":3.2167,"estNavC":3.1734,"officialA":3.2158,"officialC":3.1718},{"date":"2026-07-22","estNavA":3.2234,"estNavC":3.18,"officialA":3.2215,"officialC":3.1774},{"date":"2026-07-23","estNavA":3.1841,"estNavC":3.1413,"officialA":3.1803,"officialC":3.1367},{"date":"2026-07-24","estNavA":3.0872,"estNavC":3.0457,"officialA":3.0877,"officialC":3.0454},{"date":"2026-07-27","estNavA":3.0337,"estNavC":2.9929,"officialA":3.0334,"officialC":2.9917},{"date":"2026-07-28","estNavA":2.8854,"estNavC":2.8466,"officialA":2.8762,"officialC":2.8366},{"date":"2026-07-29","estNavA":2.7614,"estNavC":2.7243,"officialA":2.749,"officialC":2.7111},{"date":"2026-07-30","estNavA":2.8955,"estNavC":2.8565,"officialA":2.8789,"officialC":2.8392},{"date":"2026-07-31","estNavA":2.9216,"estNavC":2.8823,"officialA":2.9136,"officialC":2.8735},{"date":"2026-08-03","estNavA":2.9075,"estNavC":2.8684,"officialA":2.8915,"officialC":2.8515},{"date":"2026-08-04","estNavA":3.0632,"estNavC":3.022,"officialA":3.0485,"officialC":3.0063},{"date":"2026-08-05","estNavA":3.0528,"estNavC":3.0117,"officialA":3.0484,"officialC":3.0062},{"date":"2026-08-06","estNavA":3.0711,"estNavC":3.0298,"officialA":3.0665,"officialC":3.024},{"date":"2026-08-07","estNavA":3.1385,"estNavC":3.0963,"officialA":3.1363,"officialC":3.0928},{"date":"2026-08-10","estNavA":3.0695,"estNavC":3.0282,"officialA":3.0698,"officialC":3.0272},{"date":"2026-08-11","estNavA":3.0851,"estNavC":3.0436,"officialA":3.0832,"officialC":3.0403},{"date":"2026-08-12","estNavA":3.1542,"estNavC":3.1118,"officialA":3.152,"officialC":3.1081},{"date":"2026-08-13","estNavA":3.1599,"estNavC":3.1174,"officialA":3.156,"officialC":3.112},{"date":"2026-08-14","estNavA":3.1647,"estNavC":3.1221,"officialA":3.1611,"officialC":3.117},{"date":"2026-08-17","estNavA":3.2334,"estNavC":3.1899,"officialA":3.2346,"officialC":3.1894},{"date":"2026-08-18","estNavA":3.1105,"estNavC":3.0687,"officialA":3.1126,"officialC":3.0691},{"date":"2026-08-19","estNavA":3.0056,"estNavC":2.9652,"officialA":2.999,"officialC":2.957},{"date":"2026-08-20","estNavA":3.0052,"estNavC":2.9648,"officialA":2.9979,"officialC":2.9559},{"date":"2026-08-21","estNavA":3.0006,"estNavC":2.9602,"officialA":2.9937,"officialC":2.9517},{"date":"2026-08-24","estNavA":2.9222,"estNavC":2.8829,"officialA":2.9112,"officialC":2.8703},{"date":"2026-08-25","estNavA":2.9224,"estNavC":2.8831,"officialA":null,"officialC":null},{"date":"2026-08-26","estNavA":2.9222,"estNavC":2.8829,"officialA":null,"officialC":null}],"live":{"estNavA":2.9538,"estNavC":2.9141,"chgSinceReportA":-21.78,"chgSinceReportC":-21.78,"estTotalAssetsCny":947905025.8161385,"fundDailyChgPct":0.98,"estNavAPrev":2.925,"officialLatestA":{"date":"2026-08-24","navA":2.9112},"officialLatestC":{"date":"2026-08-24","navC":2.8703},"usQuoteTime":"2026-08-25 16:00:01","cnQuoteTime":"20260826095603"},"warnings":[]}],"sources":{"usHistory":"api.nasdaq.com (日收盘价)","cnHistory":"腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)","jpHistory":"unavailable","fx":"chinamoney.com.cn 人民币汇率中间价","realtime":"qt.gtimg.cn 腾讯实时行情","officialNav":"东方财富 fund.eastmoney.com 官方公布净值"}}</script>
+<script>
+'use strict';
+let D = JSON.parse(document.getElementById('embedded-data').textContent);
+const SHORT = {"159560":"景顺长城芯片ETF","159995":"华夏国证芯片ETF","512760":"国泰CES芯片ETF","ARKK":"ARK创新ETF","ARKG":"ARK基因革命ETF","ARKQ":"ARK自动驾驶与机器人ETF","AIQ":"Global X人工智能科技ETF","BOTZ":"Global X机器人AI ETF","ARKX":"ARK太空与国防ETF","XLK":"科技行业精选SPDR","SMH":"VanEck半导体ETF","SOXX":"iShares半导体ETF","QQQ":"纳指100 ETF","PSI":"Invesco动态半导体ETF","SOXQ":"Invesco费城半导体ETF","2644.T":"Global X日本半导体ETF"};
+const fmtWan = v => (v / 1e4).toLocaleString('zh-CN', { maximumFractionDigits: 0 });
+const fmtYi = v => (v / 1e8).toFixed(2);
+const cls = x => x > 0 ? 'up' : x < 0 ? 'down' : 'flat';
+const sign = x => (x > 0 ? '+' : '') + x.toFixed(2);
+
+/* ---------- render ---------- */
+function kpi(label, valueHtml, note) {
+  return '<div class="kpi"><div class="label">' + label + '</div><div class="value">' + valueHtml + '</div>' + (note ? '<div class="note">' + note + '</div>' : '') + '</div>';
+}
+
+function fundCard(f, fi) {
+  const L = f.live;
+  const offA = L.officialLatestA;
+  const offChgA = offA ? sign((offA.navA / f.navA0 - 1) * 100) + '% 较报告期' : '';
+  let hrows = '';
+  f.holdings.forEach((h, i) => {
+    const srcTxt = h.pLastSrc === 'qt-intraday' ? '盘中' : h.pLastSrc === 'qt-close' ? '收盘' : 'EOD';
+    hrows += '<tr>'
+      + '<td><span class="nm">' + (SHORT[h.ticker] || h.name) + '</span><span class="tk">' + h.ticker + '</span></td>'
+      + '<td>' + Math.round(h.qty).toLocaleString('zh-CN') + '</td>'
+      + '<td>' + h.pLast.toFixed(h.pLast > 100 ? 2 : 4) + '<span class="srcdot">' + srcTxt + '</span></td>'
+      + '<td class="' + cls(h.dailyChgPct ?? 0) + '">' + (h.dailyChgPct == null ? '-' : sign(h.dailyChgPct) + '%')
+      + '<span class="srcdot">较6/30累计 ' + sign(h.chgPct) + '%</span></td>'
+      + '<td>' + fmtWan(h.valLast) + '</td>'
+      + '<td>' + h.weightNowPct.toFixed(2) + '%</td>'
+      + '</tr>';
+  });
+  if (f.residual && f.residual.fv0 > 0.5) {
+    const residVal = L.estTotalAssetsCny - f.otherNetAssets - f.holdings.reduce((s, h) => s + h.valLast, 0);
+    hrows += '<tr style="color:var(--muted)">'
+      + '<td>其余未披露基金持仓<small>（按已披露平均涨幅估算）</small></td>'
+      + '<td>-</td><td>-</td>'
+      + '<td class="' + cls(L.chgSinceReportA) + '">≈' + sign(L.chgSinceReportA) + '%<span class="srcdot">随组合平均</span></td>'
+      + '<td>' + fmtWan(residVal) + '</td>'
+      + '<td>' + (residVal / L.estTotalAssetsCny * 100).toFixed(2) + '%</td></tr>';
+  }
+  const estVsOff = offA ? ((L.estNavA / offA.navA - 1) * 100) : null;
+
+  return '<div class="fund" id="fund' + fi + '">'
+    + '<div class="fund-head"><h2>' + f.nameShort + '</h2>'
+    + '<span class="tag code">' + f.codeA + '</span>'
+    + '<span class="tag">季报基准日 ' + f.reportDate + '</span>'
+    + '<span class="tag" style="margin-left:auto">' + f.nameFull.replace(/（QDII-LOF）/, '') + '（QDII-LOF）</span></div>'
+    + '<div class="kpis">'
+    + kpi('较前日收盘', '<span class="' + cls(L.fundDailyChgPct ?? 0) + '">' + sign(L.fundDailyChgPct ?? 0) + '%</span>', L.estNavAPrev != null ? '前日估算净值 ' + L.estNavAPrev.toFixed(4) : '')
+    + kpi('最新估算净值', L.estNavA.toFixed(4) + ' <span style="font-size:13px" class="' + cls(L.chgSinceReportA) + '">' + sign(L.chgSinceReportA) + '%</span>', 'A类 · 较季报净值 ' + f.navA0.toFixed(4))
+    + (offA ? kpi('官方公布净值（A类）', offA.navA.toFixed(4), offA.date + ' 公布 · ' + offChgA) : '')
+    + (estVsOff != null ? kpi('估算 vs 最新官方', '<span class="' + cls(estVsOff) + '">' + sign(estVsOff) + '%</span>', '估算领先于 T+2 发布的官方净值') : '')
+    + '</div>'
+    + (f.warnings && f.warnings.length ? '<div class="warn">⚠ 价格序列检测到异常跳动：' + f.warnings.join('；') + '</div>' : '')
+    + '<section class="holdings"><h3><span>持仓明细（数量由季报公允价值 ÷ 报告期末价格 × 汇率反推，按占估算总资产降序）</span><span>涨幅以前一交易日收盘为基准 · 单位：份 / 元人民币</span></h3>'
+    + '<table><thead><tr>'
+    + '<th style="width:32%">基金名称</th><th>持仓数量<br>(份)</th><th>最新价<br>(本币)</th><th>较前日<br>收盘涨幅</th><th>最新市值<br>(万元)</th><th>占估算<br>总资产</th>'
+    + '</tr></thead><tbody>' + hrows + '</tbody></table></section>'
+    + '<div class="chartbox"><h3>估算净值走势 vs 官方公布净值（A类）</h3><div id="chart' + fi + '"></div>'
+    + '<div class="legend"><span><b style="background:var(--accent)"></b>静态持仓估算净值</span><span><b style="background:#8b949e"></b>官方公布净值（T+2）</span><span><b style="background:var(--gold)"></b>季报净值基准</span></div></div>'
+    + '</div>';
+}
+
+/* ---------- chart (hand-rolled SVG) ---------- */
+function drawChart(container, series, nav0) {
+  const W = 1120, H = 300, padL = 56, padR = 16, padT = 18, padB = 34;
+  const pts = series.filter(p => p.estNavA != null);
+  if (!pts.length) return;
+  const xs = d => padL + (new Date(d) - new Date(pts[0].date)) / Math.max(1, new Date(pts[pts.length - 1].date) - new Date(pts[0].date)) * (W - padL - padR);
+  let lo = Infinity, hi = -Infinity;
+  pts.forEach(p => { lo = Math.min(lo, p.estNavA, p.officialA ?? p.estNavA); hi = Math.max(hi, p.estNavA, p.officialA ?? p.estNavA); });
+  const pad = (hi - lo) * 0.08 || 0.05; lo -= pad; hi += pad;
+  const ys = v => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
+  let g = '';
+  // gridlines + y ticks
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + (hi - lo) * i / 4, y = ys(v);
+    g += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#232b38"/>';
+    g += '<text x="' + (padL - 8) + '" y="' + (y + 4) + '" fill="#8b949e" font-size="11" text-anchor="end">' + v.toFixed(3) + '</text>';
+  }
+  // x ticks (~6)
+  const step = Math.max(1, Math.floor(pts.length / 6));
+  for (let i = 0; i < pts.length; i += step) {
+    const x = xs(pts[i].date);
+    g += '<line x1="' + x + '" y1="' + padT + '" x2="' + x + '" y2="' + (H - padB) + '" stroke="#1b2130"/>';
+    g += '<text x="' + x + '" y="' + (H - padB + 16) + '" fill="#8b949e" font-size="11" text-anchor="middle">' + pts[i].date.slice(5) + '</text>';
+  }
+  // base reference line at report NAV
+  if (nav0 > lo && nav0 < hi) {
+    g += '<line x1="' + padL + '" y1="' + ys(nav0) + '" x2="' + (W - padR) + '" y2="' + ys(nav0) + '" stroke="#d29922" stroke-dasharray="2 4" opacity=".7"/>';
+  }
+  // official line (gray dashed)
+  const offPts = pts.filter(p => p.officialA != null);
+  if (offPts.length > 1) g += '<polyline fill="none" stroke="#8b949e" stroke-width="1.6" stroke-dasharray="5 4" points="' + offPts.map(p => xs(p.date) + ',' + ys(p.officialA)).join(' ') + '"/>';
+  // est line
+  g += '<polyline fill="none" stroke="#58a6ff" stroke-width="2" points="' + pts.map(p => xs(p.date) + ',' + ys(p.estNavA)).join(' ') + '"/>';
+  // hover targets
+  pts.forEach((p, idx) => { g += '<circle cx="' + xs(p.date) + '" cy="' + ys(p.estNavA) + '" r="7" fill="transparent" class="hit" data-i="' + idx + '" style="cursor:crosshair"/>'; });
+  container.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' + g + '</svg>';
+
+  const tip = document.getElementById('tooltip');
+  container.querySelectorAll('.hit').forEach(c => {
+    c.addEventListener('mouseenter', ev => {
+      const p = pts[+c.dataset.i];
+      tip.innerHTML = '<b>' + p.date + '</b><br>估算净值: ' + (p.estNavA ?? '-') + (p.officialA != null ? '<br>官方净值: ' + p.officialA : '');
+      tip.style.display = 'block';
+    });
+    c.addEventListener('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY - 10) + 'px'; });
+    c.addEventListener('mouseleave', () => tip.style.display = 'none');
+  });
+}
+
+function renderAll() {
+  document.getElementById('genAt').textContent = D.generatedAt;
+  document.getElementById('fxLine').innerHTML = '汇率中间价：USD/CNY ' + D.fx.usdcny0 + ' → <b>' + D.fx.usdcnyLast + '</b>（' + D.fx.usdcnyLastDate + '）';
+  document.getElementById('statusLine').textContent = '';
+  const fd = document.getElementById('funds');
+  fd.classList.add('funds-grid');
+  fd.innerHTML = D.funds.map(fundCard).join('');
+  D.funds.forEach((f, i) => drawChart(document.getElementById('chart' + i), f.series, f.navA0));
+  document.getElementById('srcFooter').textContent = Object.values(D.sources).join(' | ');
+}
+renderAll();
+
+/* ---------- live refresh via qt.gtimg.cn (script-tag injection) ---------- */
+function parseQt(raw, isUS) {
+  const f = raw.split('~');
+  if (f.length < 32) return null;
+  const price = parseFloat(f[3]), prevClose = parseFloat(f[4]);
+  return { price, prevClose, time: f[30] };
+}
+function liveRefresh() {
+  const btn = document.getElementById('btnRefresh');
+  btn.disabled = true;
+  const codes = [];
+  D.funds.forEach(f => f.holdings.forEach(h => {
+    if (h.market === 'US') codes.push('us' + h.ticker);
+    else if (h.market === 'CN') codes.push(h.symbol);
+  }));
+  const s = document.createElement('script');
+  const done = (ok, msg) => { btn.disabled = false; document.getElementById('statusLine').textContent = msg || ''; };
+  window.__qtCb = () => {
+    try {
+      let gotUs = false, gotCn = false, usTime = '', cnTime = '';
+      D.funds.forEach(f => {
+        let portVal = 0, discVal = 0, portValPrev = 0;
+        f.holdings.forEach(h => {
+          let price = h.pLast, prevClose = h.prevClose;
+          if (h.market === 'US') {
+            const v = window['v_us' + h.ticker];
+            if (typeof v === 'string') { const q = parseQt(v, true); if (q && q.price > 0) { price = q.price; if (q.prevClose > 0) prevClose = q.prevClose; gotUs = true; usTime = q.time; } }
+            h.fxLastLive = D.fx.usdcnyLast;
+          } else if (h.market === 'CN') {
+            const v = window['v_' + h.symbol];
+            if (typeof v === 'string') { const q = parseQt(v, false); if (q && q.price > 0) { price = q.price; if (q.prevClose > 0) prevClose = q.prevClose; gotCn = true; cnTime = q.time; } }
+            h.fxLastLive = 1;
+          } else {
+            h.fxLastLive = h.fxLast; // JP keeps snapshot
+          }
+          h.pLastLive = price;
+          h.prevCloseLive = prevClose; // 前一交易日收盘（美股即上一美股交易日）
+          const fxBase = h.currency === 'USD' ? D.fx.usdcny0 : h.currency === 'JPY' ? D.fx.jpycny0 : 1;
+          h.chgPctLive = +((price * h.fxLastLive / (fxBase * h.p0) - 1) * 100).toFixed(2);
+          h.dailyChgLive = (prevClose > 0) ? +((price / prevClose - 1) * 100).toFixed(2) : null;
+          const val = h.qty * price * h.fxLastLive;
+          portVal += val; discVal += val;
+          const pc = (prevClose != null && prevClose > 0) ? prevClose : price;
+          portValPrev += h.qty * pc * h.fxLastLive;
+        });
+        const residVal = f.residualFV > 0 ? f.residualFV * (discVal / (f.disclosedSum || 1)) : 0;
+        const estTot = f.otherNetAssets + portVal + residVal;
+        const residPrev = f.residualFV > 0 ? f.residualFV * (portValPrev / (f.disclosedSum || 1)) : 0;
+        const estTotPrev = f.otherNetAssets + portValPrev + residPrev;
+        f.liveLive = {
+          estNavA: +(f.navA0 * estTot / f.netAssetsTotal).toFixed(4),
+          chgA: +((f.navA0 * estTot / f.netAssetsTotal / f.navA0 - 1) * 100).toFixed(2),
+          fundDailyChgPct: +((estTot / estTotPrev - 1) * 100).toFixed(2),
+          estNavAPrev: +(f.navA0 * estTotPrev / f.netAssetsTotal).toFixed(4),
+          estTot,
+        };
+      });
+      applyLive(usTime, cnTime);
+      done(true, (gotUs ? '美股盘中价已更新(' + usTime + ' 美东)' : '') + (gotCn ? ' · A股收盘价已确认' : '') + ' · 汇率/日经持仓保持快照值');
+    } catch (e) { done(false, '刷新失败：' + e.message); }
+  };
+  s.src = 'https://qt.gtimg.cn/q=' + codes.join(',') + '&r=' + Date.now();
+  s.onerror = () => { delete window.__qtCb; done(false, '实时行情拉取失败（网络受限），当前展示构建时点数据'); };
+  s.onload = () => { const cb = window.__qtCb; delete window.__qtCb; if (cb) cb(); };
+  document.head.appendChild(s);
+}
+function applyLive(usTime, cnTime) {
+  D.funds.forEach((f, fi) => {
+    const L = f.liveLive;
+    const card = document.getElementById('fund' + fi);
+    const kpis = card.querySelectorAll('.kpi');
+    kpis.forEach(k => {
+      const lbl = k.querySelector('.label');
+      if (!lbl) return;
+      const t = lbl.textContent;
+      if (t.includes('较前日收盘')) {
+        k.querySelector('.value').innerHTML = '<span class="' + cls(L.fundDailyChgPct ?? 0) + '">' + sign(L.fundDailyChgPct ?? 0) + '%</span>';
+        k.querySelector('.note').textContent = L.estNavAPrev != null ? '前日估算净值 ' + L.estNavAPrev.toFixed(4) : '';
+      } else if (t.includes('最新估算净值')) {
+        k.querySelector('.value').innerHTML = L.estNavA.toFixed(4) + ' <span style="font-size:13px" class="' + cls(L.chgA) + '">' + sign(L.chgA) + '%</span>';
+      } else if (t.includes('估算 vs') && f.live.officialLatestA) {
+        const d = (L.estNavA / f.live.officialLatestA.navA - 1) * 100;
+        k.querySelector('.value').innerHTML = '<span class="' + cls(d) + '">' + sign(d) + '%</span>';
+      }
+    });
+    // table rows (6 columns: name | qty | pLast | dailyChg | value | weight)
+    const rows = card.querySelectorAll('tbody tr');
+    f.holdings.forEach((h, ri) => {
+      const td = rows[ri] ? rows[ri].querySelectorAll('td') : null;
+      if (!td || td.length < 6) return;
+      td[2].innerHTML = h.pLastLive.toFixed(h.pLastLive > 100 ? 2 : 4) + '<span class="srcdot">' + (h.market === 'JP' ? 'EOD' : h.market === 'US' ? '盘中' : '收盘') + '</span>';
+      td[3].className = cls(h.dailyChgLive ?? 0);
+      td[3].innerHTML = (h.dailyChgLive == null ? '-' : sign(h.dailyChgLive) + '%')
+        + '<span class="srcdot">较6/30累计 ' + sign(h.chgPctLive) + '%</span>';
+      td[4].textContent = fmtWan(h.qty * h.pLastLive * h.fxLastLive);
+      td[5].textContent = (h.qty * h.pLastLive * h.fxLastLive / L.estTot * 100).toFixed(2) + '%';
+    });
+  });
+  document.getElementById('genAt').textContent = D.generatedAt + (window.__liveApplied ? '（行情已实时刷新）' : '（行情已于刚才刷新）');
+  window.__liveApplied = true;
+}
+</script>
+</body>
+</html>
