@@ -104,7 +104,6 @@ const INDICES = [
   { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
   { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
   { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
-  { key: 'dji',      label: '道琼斯',       code: 'DJI',      rtCode: 'usDJI' },
 ];
 
 async function fetchCnbcIndex(sym) {

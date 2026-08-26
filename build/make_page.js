@@ -247,7 +247,7 @@ function renderAll() {
     { title: '科技指数', items: [byKey('sp_it'), byKey('ndx_tech')] },
     { title: 'LOF估算', lof: true },
     { title: '生物医药', items: [byKey('sp_bio'), byKey('nbi')] },
-    { title: '大盘基准', items: [byKey('spx'), byKey('ndx'), byKey('dji')] },
+    { title: '大盘基准', items: [byKey('spx'), byKey('ndx')] },
   ];
   strip.innerHTML = groups.map(g => {
     const inner = g.lof

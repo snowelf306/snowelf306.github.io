@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-26 03:54:23 (北京时间, 构建时点)",
+ "generatedAt": "2026-08-26 04:10:00 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -1084,7 +1084,7 @@
      "navC": 2.8703
     },
     "usQuoteTime": "2026-08-25 16:00:01",
-    "cnQuoteTime": "20260826115300"
+    "cnQuoteTime": "20260826120500"
    },
    "warnings": []
   }
@@ -1152,17 +1152,6 @@
    "chgPct": 0.64,
    "price": 29209.23,
    "rtCode": "usNDX",
-   "viaEtf": false,
-   "etfName": null,
-   "source": "tencent-index"
-  },
-  {
-   "key": "dji",
-   "label": "道琼斯",
-   "code": "DJI",
-   "chgPct": 0.3,
-   "price": 53577.4,
-   "rtCode": "usDJI",
    "viaEtf": false,
    "etfName": null,
    "source": "tencent-index"
