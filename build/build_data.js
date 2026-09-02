@@ -98,7 +98,7 @@ const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 // 数据源可用性(2026-08实测)：NBI/SPX/NDX/DJI=腾讯实时；NDXTMC=CNBC接口；
 // SP500-45与SPSIBI无公开免费源(Yahoo/TradingView/Stooq/CNBC均不可用)，以跟踪同一指数的 XLK / XBI 表征。
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45', tvSym: 'S5INFT', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45',  cnbcSym: '.SPLRCT',    tvSym: 'S5INFT', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
   { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
   { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
   { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
