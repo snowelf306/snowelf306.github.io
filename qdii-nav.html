@@ -70,7 +70,6 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-strip .ichip.proxy .nm{color:#fbbf24}
 .idx-strip .ichip.proxy .tick{color:#f59e0baa}
 .idx-strip .ichip em.pv-warn{color:#fbbf24}
-.idx-strip .badge{font-size:10px;background:#f59e0b;color:#1a1206;padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.3px}
 .idx-strip .note{flex-basis:100%;font-size:11px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
@@ -231,7 +230,7 @@ function renderAll() {
     const proxy = ix.viaEtf || ix.source === 'etf-proxy';
     return '<span class="ichip' + (proxy ? ' proxy' : '') + '"'
       + (proxy ? ' title="真实指数数据获取失败，当前显示 ' + (ix.etfName || 'ETF') + ' 的涨幅作为替代"' : '') + '>'
-      + '<b class="nm">' + ix.label + '</b><i class="tick">' + ix.code + (proxy ? '</i><span class="badge">ETF替代</span>' : '</i>')
+      + '<b class="nm">' + ix.label + '</b><i class="tick">' + ix.code + '</i>'
       + '<em id="idx_' + ix.key + '" class="' + (proxy ? 'pv-warn' : cls(ix.chgPct ?? 0)) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>';
   };
   const groups = [
@@ -250,7 +249,7 @@ function renderAll() {
   }).join('')
     + '<span class="note">' +
       ((D.indices || []).some(ix => ix.viaEtf || ix.source === 'etf-proxy')
-        ? '注：标有 <span style="color:#fbbf24;font-weight:700">ETF替代</span> 的项——真实指数数据源当时不可达，显示为跟踪同一指数的 ETF（XLK/QTEC/XBI）涨幅。'
+        ? '注：<span style="color:#fbbf24;font-weight:700">琥珀色标注</span>的项——真实指数数据源当时不可达，显示为跟踪同一指数的 ETF（XLK/QTEC/XBI）涨幅。'
         : '注：全部为真实指数数据。')
       + '数据源自动降级顺序：CNBC → TradingView → Yahoo → ETF替代。LOF 为估算净值较前一日。</span>';
   const fd = document.getElementById('funds');
