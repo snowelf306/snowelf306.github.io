@@ -93,12 +93,12 @@ const ALL_US = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market === 'CN').map(h => h.symbol)))];
 
 /* ---- 指数条：表格上方的市场基准 ---- */
-// 用户指定代码：SP500-45(S&P500信息技术)、NDXTMC(纳指100科技市值加权)、
-// SPSIBI(S&P生物科技精选行业)、NBI(纳斯达克生物技术)、SPX、NDX、DJI。
-// 数据源可用性(2026-08实测)：NBI/SPX/NDX/DJI=腾讯实时；NDXTMC=CNBC接口；
-// SP500-45与SPSIBI无公开免费源(Yahoo/TradingView/Stooq/CNBC均不可用)，以跟踪同一指数的 XLK / XBI 表征。
+// 指数代码：S5INFT(S&P500信息技术板块, CNBC符号.SPLRCT)、NDXTMC(纳指100科技市值加权)、
+// SPSIBI(S&P生物科技精选行业)、NBI(纳斯达克生物技术)、SPX、NDX。
+// 数据源自动降级：腾讯实时(NBI/SPX/NDX) → CNBC(.SPLRCT/NDXTMC, 实测可取真实板块指数)
+// → TradingView(机房环境) → Yahoo cookie/crumb → 跟踪同指数ETF表征(XLK/QTEC/XBI, 前端标"ETF替代")
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'SP500-45',  cnbcSym: '.SPLRCT',    tvSym: 'S5INFT', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'S5INFT',  cnbcSym: '.SPLRCT',    tvSym: 'SP:S5INFT', yahooSym: '^S5INFT', etfCode: 'usXLK',  etfName: 'XLK' },
   { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
   { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
   { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },

@@ -85,6 +85,12 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-strip .ichip em{font-style:normal;font-family:Consolas,"Courier New",monospace;font-weight:700;font-size:13.5px}
 .idx-strip .ichip .tick{font-style:normal;font-size:10px;color:var(--muted);font-family:Consolas,"Courier New",monospace}
 .idx-strip .ichip.lof{border-color:#3b82f677;background:#16233b;color:var(--text)}
+.idx-strip .ichip .nm{font-weight:600}
+.idx-strip .ichip.proxy{border-color:#f59e0bb3;background:#2f2410;box-shadow:0 0 0 1px #f59e0b40}
+.idx-strip .ichip.proxy .nm{color:#fbbf24}
+.idx-strip .ichip.proxy .tick{color:#f59e0baa}
+.idx-strip .ichip em.pv-warn{color:#fbbf24}
+.idx-strip .badge{font-size:10px;background:#f59e0b;color:#1a1206;padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.3px}
 .idx-strip .note{flex-basis:100%;font-size:11px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
@@ -240,9 +246,14 @@ function renderAll() {
   // 指数条：四组显示（科技 / LOF / 生物 / 大盘基准）
   const strip = document.getElementById('idxStrip');
   const byKey = k => (D.indices || []).find(i => i.key === k);
-  const idxChip = ix => !ix ? '' :
-    '<span class="ichip">' + ix.label + '<i class="tick">' + ix.code + (ix.viaEtf ? '*' : '') + '</i>'
-    + '<em id="idx_' + ix.key + '" class="' + cls(ix.chgPct ?? 0) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>';
+  const idxChip = ix => {
+    if (!ix) return '';
+    const proxy = ix.viaEtf || ix.source === 'etf-proxy';
+    return '<span class="ichip' + (proxy ? ' proxy' : '') + '"'
+      + (proxy ? ' title="真实指数数据获取失败，当前显示 ' + (ix.etfName || 'ETF') + ' 的涨幅作为替代"' : '') + '>'
+      + '<b class="nm">' + ix.label + '</b><i class="tick">' + ix.code + (proxy ? '</i><span class="badge">ETF替代</span>' : '</i>')
+      + '<em id="idx_' + ix.key + '" class="' + (proxy ? 'pv-warn' : cls(ix.chgPct ?? 0)) + '">' + sign(ix.chgPct ?? 0) + '%</em></span>';
+  };
   const groups = [
     { title: '科技指数', items: [byKey('sp_it'), byKey('ndx_tech')] },
     { title: 'LOF估算', lof: true },
@@ -258,10 +269,10 @@ function renderAll() {
     return '<div class="igroup"><span class="gtitle">' + g.title + '</span><div class="gchips">' + inner + '</div></div>';
   }).join('')
     + '<span class="note">' +
-      ((D.indices || []).some(ix => ix.viaEtf)
-        ? '注：*号项当前为 ETF 表征值——构建环境无法直连 Yahoo（网络受限），GitHub Actions 构建时自动改用真实指数。'
-        : '注：全部为真实指数数据（SP500-45 / SPSIBI 经 Yahoo，NDXTMC 经 CNBC 收盘口径，其余为腾讯实时）。')
-      + 'LOF 为估算净值较前一日。</span>';
+      ((D.indices || []).some(ix => ix.viaEtf || ix.source === 'etf-proxy')
+        ? '注：标有 <span style="color:#fbbf24;font-weight:700">ETF替代</span> 的项——真实指数数据源当时不可达，显示为跟踪同一指数的 ETF（XLK/QTEC/XBI）涨幅。'
+        : '注：全部为真实指数数据。')
+      + '数据源自动降级顺序：CNBC → TradingView → Yahoo → ETF替代。LOF 为估算净值较前一日。</span>';
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');
@@ -300,7 +311,8 @@ function liveRefresh() {
         if (!q || !(q.price > 0) || !(q.prevClose > 0)) return;
         ix.chgPct = +((q.price / q.prevClose - 1) * 100).toFixed(2);
         const el = document.getElementById('idx_' + ix.key);
-        if (el) { el.textContent = sign(ix.chgPct) + '%'; el.className = cls(ix.chgPct); }
+        const isProxy = ix.viaEtf || ix.source === 'etf-proxy';
+        if (el) { el.textContent = sign(ix.chgPct) + '%'; el.className = isProxy ? 'pv-warn' : cls(ix.chgPct); }
       });
       D.funds.forEach((f, fi) => {
         let portVal = 0, discVal = 0, portValPrev = 0;
