@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 交互式教学 · 从三区模型到分支实战</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link rel="stylesheet" href="git-tutorial.css">
+</head>
+<body>
+
+<header class="hero">
+  <h1>🌱 Git 交互式教学</h1>
+  <p class="sub">三区模型 · 日常循环 · 分支实验室 · 远程协作 · GitHub Flow · 急救包 · 自测测验</p>
+  <nav class="toc" id="toc">
+    <a href="#concept">1 核心概念</a>
+    <a href="#zones">2 三区流转</a>
+    <a href="#daily">3 日常命令</a>
+    <a href="#lab">4 分支实验室</a>
+    <a href="#remote">5 远程协作</a>
+    <a href="#flow">6 协作工作流</a>
+    <a href="#rescue">7 急救包</a>
+    <a href="#quiz">8 自测</a>
+    <a href="#cheatsheet">9 速查表</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ 1 核心概念 ============ -->
+<section id="concept">
+  <h2>1. 核心概念：Git 到底在记什么</h2>
+  <div class="grid3">
+    <article class="card">
+      <h3>📸 快照，不是差异</h3>
+      <p>每次 <code>commit</code> 保存的是<b>整个项目的完整快照</b>；未变动的文件只存一个指针。
+      这让「回到任意历史时刻」几乎零成本。</p>
+    </article>
+    <article class="card">
+      <h3>🔑 哈希即身份</h3>
+      <p>每个提交有一个 40 位 SHA-1 指纹（终端里常显示前 7 位，如 <code>a1b2c3d</code>）。
+      内容变一个字节，指纹就完全不同 —— 因此历史无法被悄悄篡改。</p>
+    </article>
+    <article class="card">
+      <h3>🌐 分布式全量仓库</h3>
+      <p><code>clone</code> 下来的不是「一份副本」，而是<b>包含全部历史的完整仓库</b>。
+      断网也能提交、查日志、建分支；<code>push</code> 只是同步。</p>
+    </article>
+  </div>
+
+  <h3 class="h-sub">文件的三种状态</h3>
+  <div class="state-row">
+    <div class="state s-mod"><b>Modified 已修改</b><span>改了，但还没保存到仓库</span></div>
+    <div class="arrow">→</div>
+    <div class="state s-stage"><b>Staged 已暂存</b><span>标记了，下次提交会带上它</span></div>
+    <div class="arrow">→</div>
+    <div class="state s-comm"><b>Committed 已提交</b><span>已安全落盘到本地仓库</span></div>
+  </div>
+  <p class="note">💡 新手最大的困惑几乎都来自「暂存区」这个中间层。它存在的意义是：让你把一堆乱七八糟的改动，
+  <b>挑选出逻辑完整的一小块</b>再提交 —— 而不是「一次性全交」。记住：<code>add</code> 是拍照，<code>commit</code> 是冲印成册。</p>
+</section>
+
+<!-- ============ 2 三区流转 ============ -->
+<section id="zones">
+  <h2>2. 三区流转动画：亲手走一遍</h2>
+  <p class="lead">下面的按钮对应真实命令。点一点，看文件卡片在<b>工作区 → 暂存区 → 仓库</b>之间移动，右侧终端会同步打印命令与输出。</p>
+
+  <div class="lab-toolbar">
+    <button class="btn" data-zone="edit">✏️ 修改文件<br><small>vi app.js</small></button>
+    <button class="btn" data-zone="add">➕ 暂存<br><small>git add app.js</small></button>
+    <button class="btn" data-zone="unstage">↩️ 取消暂存<br><small>git restore --staged app.js</small></button>
+    <button class="btn primary" data-zone="commit">💾 提交<br><small>git commit -m "…"</small></button>
+    <button class="btn danger" data-zone="discard">🗑 丢弃修改<br><small>git restore app.js</small></button>
+    <button class="btn ghost" data-zone="reset">🔄 重置演示</button>
+  </div>
+
+  <div class="zones-wrap">
+    <div class="zone" id="z-work">
+      <div class="zone-head">① 工作区 <small>Working Directory</small></div>
+      <div class="zone-body" id="zone-work"><p class="zone-hint">你正在编辑的真实文件</p></div>
+    </div>
+    <div class="zone-arrow">⇄<br><small>git add</small></div>
+    <div class="zone" id="z-stage">
+      <div class="zone-head">② 暂存区 <small>Staging Area / Index</small></div>
+      <div class="zone-body" id="zone-stage"><p class="zone-hint">下次提交的「购物车」</p></div>
+    </div>
+    <div class="zone-arrow">→<br><small>git commit</small></div>
+    <div class="zone" id="z-repo">
+      <div class="zone-head">③ 本地仓库 <small>.git / HEAD</small></div>
+      <div class="zone-body" id="zone-repo"><p class="zone-hint">不可变的历史快照</p></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="term" id="zone-term" aria-live="polite"></div>
+    <div class="explain" id="zone-status"></div>
+  </div>
+</section>
+
+<!-- ============ 3 日常命令 ============ -->
+<section id="daily">
+  <h2>3. 日常命令：从安装到提交</h2>
+
+  <div class="step">
+    <div class="step-no">0</div>
+    <div class="step-body">
+      <h3>初次配置（每台机器一次）</h3>
+      <p>作者信息会被写进每个提交。<code>--global</code> 写入用户级配置，单个仓库可用 <code>--local</code> 覆盖。</p>
+      <pre data-code><code>git config --global user.name  "你的名字"
+git config --global user.email "you@example.com"
+git config --global init.defaultBranch main
+git config --global core.autocrlf input   <span class="hl-c"># Windows 建议 true，macOS/Linux 用 input</span>
+git config --list                          <span class="hl-c"># 查看当前生效配置</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <h3>创建仓库 / 获取仓库</h3>
+      <pre data-code><code>git init                 <span class="hl-c"># 把当前目录变成 Git 仓库（只是多出一个 .git 目录）</span>
+git clone &lt;url&gt;          <span class="hl-c"># 克隆远程仓库，含全部分支与历史</span>
+git clone -b dev --depth 1 &lt;url&gt;   <span class="hl-c"># 只要 dev 分支最近 1 次提交：CI 提速常用</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <h3>核心循环（每天都要用）</h3>
+      <pre data-code><code>git status               <span class="hl-c"># 万能第一步：现在到底什么状态</span>
+git add app.js           <span class="hl-c"># 暂存单个文件</span>
+git add -p               <span class="hl-c"># 逐块(hunk)挑选要暂存的改动，强烈推荐</span>
+git diff                 <span class="hl-c"># 工作区 vs 暂存区：还没 add 的改动</span>
+git diff --staged        <span class="hl-c"># 暂存区 vs 仓库：即将提交的内容</span>
+git commit -m "feat: 支持批量导入"
+git commit -am "fix: 修正空指针"   <span class="hl-c"># -a 自动暂存「已跟踪」文件的改动（不含新文件）</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <h3>查看历史</h3>
+      <pre data-code><code>git log --oneline --graph --decorate -20
+git log --author="张三" --since=2.week.ago -p
+git show HEAD            <span class="hl-c"># 某次提交的完整差异</span>
+git blame app.js         <span class="hl-c"># 每一行是谁、在哪次提交写的</span>
+git tag -a v1.0 -m "release"     <span class="hl-c"># 给提交打标签</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">4</div>
+    <div class="step-body">
+      <h3>.gitignore：别把垃圾提交进去</h3>
+      <pre data-code><code># 依赖与构建产物
+node_modules/
+dist/
+*.log
+# 本地配置与密钥（密钥绝不进仓库）
+.env
+.env.local
+# 系统 / 编辑器
+.DS_Store
+.idea/
+# 例外规则：感叹号放在后面覆盖前面的规则
+!dist/keep.txt</code></pre>
+      <p class="note">⚠️ <code>.gitignore</code> 只对<b>未被跟踪</b>的文件生效。已经提交过的文件要这样移除：
+      <code>git rm -r --cached node_modules</code>（保留本地文件，只停止跟踪），然后提交。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">5</div>
+    <div class="step-body">
+      <h3>写一条好的提交信息</h3>
+      <pre data-code><code>feat: 新增 CSV 批量导入
+fix: 修复分页越界导致的 500
+docs / style / refactor / perf / test / chore   <span class="hl-c"># 常用类型前缀</span></code></pre>
+      <div class="tipbox">
+        <b>格式约定</b>：<code>类型: 一句话说明「做了什么」</code>，空一行后写「为什么这么做」。
+        判断标准很简单 —— 半年后你 <code>git log</code> 时，只看这一行能不能想起当时为什么改。
+        不要用「update」「修改bug」这类信息，它们等于没写。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 分支实验室 ============ -->
+<section id="lab">
+  <h2>4. 分支实验室：边玩边懂 HEAD</h2>
+  <p class="lead">分支不是「复制一份代码」，它只是<b>一个指向某次提交的可移动指针</b>；<code>HEAD</code> 则告诉你「我现在在哪个分支上」。
+  所以下面创建分支是瞬间完成的，无论仓库有多大。</p>
+
+  <div class="lab-toolbar">
+    <button class="btn" id="lb-commit">💾 在当前分支提交</button>
+    <button class="btn" id="lb-new">🌿 新建并切换分支</button>
+    <button class="btn" id="lb-switch">🔀 切换分支</button>
+    <button class="btn primary" id="lb-merge">🔗 把某分支并入当前</button>
+    <button class="btn" id="lb-rebase">⚡ rebase 当前分支到 main</button>
+    <button class="btn danger" id="lb-reset">🔄 清空重来</button>
+  </div>
+
+  <div class="lab-stage">
+    <svg id="graph" viewBox="0 0 760 260" role="img" aria-label="提交历史图"></svg>
+    <div class="lab-side">
+      <div class="kv">当前分支：<b id="cur-branch">main</b></div>
+      <div class="kv">已有分支：<span id="branch-list" class="pills"></span></div>
+      <div class="kv">HEAD 指向：<code id="head-info">refs/heads/main</code></div>
+    </div>
+  </div>
+
+  <div class="term" id="lab-term"></div>
+
+  <div class="tipbox">
+    试试这个练习：<b>在 main 上提交 1 次 → 新建 <code>feat</code> 分支 → 提交 2 次 → 切回 main → 提交 1 次 → 合并 feat</b>。
+    因为 main 前进了，这次合并无法快进（fast-forward），Git 会自动生成一个有两个父提交的 merge commit。
+  </div>
+
+  <h3 class="h-sub">merge 还是 rebase？</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>git merge feat</th><th>git rebase main（在 feat 上执行）</th></tr></thead>
+      <tbody>
+        <tr><td>做了什么</td><td>新建合并提交，把两条线接到一起，历史原样保留</td><td>把 feat 的提交逐个「重放」到 main 之后，历史变成一条直线</td></tr>
+        <tr><td>历史长相</td><td>真实、有交叉，能看出功能边界</td><td>干净、线性，review 时更易读</td></tr>
+        <tr><td>提交哈希</td><td>不变</td><td><b>全部改变</b>（等同重写历史）</td></tr>
+        <tr><td>冲突处理</td><td>集中一次</td><td>可能在每个重放提交上反复出现</td></tr>
+        <tr><td>黄金法则</td><td>并入主干时用它更安全</td><td><b>只对自己尚未推送（或只有自己在用）的分支使用</b>；对已共享的分支 rebase = 给同事制造灾难</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">团队里常见的折中：功能分支内用 <code>rebase</code> 保持整洁，合入主干时用 <code>merge --no-ff</code> 保留功能边界。</p>
+</section>
+
+<!-- ============ 5 远程协作 ============ -->
+<section id="remote">
+  <h2>5. 远程协作：push 之前先看清楚</h2>
+
+  <div class="grid3">
+    <article class="card">
+      <h3>git fetch</h3>
+      <p>把远程的最新提交下载到本地的 <code>origin/main</code>，<b>不改动你的工作区和当前分支</b>。安全，随时可用。</p>
+    </article>
+    <article class="card">
+      <h3>git pull</h3>
+      <p>= <code>fetch</code> + <code>merge</code>（加 <code>--rebase</code> 则是 fetch + rebase）。方便但会「自动改你的历史」，不熟时建议先 fetch 再自己决定。</p>
+    </article>
+    <article class="card">
+      <h3>git push</h3>
+      <p>把本地提交上传。首次用 <code>git push -u origin feat</code> 建立跟踪关系，之后只需 <code>git push</code>。</p>
+    </article>
+  </div>
+
+  <pre data-code><code>git remote -v                          <span class="hl-c"># 看远程别名与地址</span>
+git remote add upstream &lt;url&gt;          <span class="hl-c"># fork 工作流：加原仓库</span>
+git fetch --all --prune                <span class="hl-c"># 同步所有远程并清理已删除的远程分支</span>
+git branch -a                          <span class="hl-c"># -a 含远程分支；本地 main 与 origin/main 是两回事</span>
+git checkout -b dev origin/dev         <span class="hl-c"># 基于远程分支建本地分支（新 Git 可直接 git switch dev）</span>
+
+<span class="hl-c"># 推荐的安全同步节奏</span>
+git fetch origin
+git log --oneline HEAD..origin/main    <span class="hl-c"># 别人有、我还没有的提交</span>
+git log --oneline origin/main..HEAD    <span class="hl-c"># 我有、别人还没有的提交</span>
+git rebase origin/main                 <span class="hl-c"># 或 merge，把上游改动接进来</span>
+git push                               <span class="hl-c"># rebase 之后推送需 git push --force-with-lease</span></code></pre>
+
+  <h3 class="h-sub">解决冲突的完整流程</h3>
+  <p>冲突不是错误，而是 Git 说「这两处改动我无法自动判断，请你决定」。解决它永远是同四步：</p>
+  <ol class="steps-list">
+    <li><b>定位</b>：<code>git status</code> 会列出 <span class="bad">both modified</span> 的文件。</li>
+    <li><b>编辑</b>：打开文件，处理冲突标记 —— 留下正确内容，<b>把标记行整行删掉</b>。</li>
+    <li><b>标记已解决</b>：<code>git add &lt;file&gt;</code>（这一步就是告诉 Git「我处理好了」）。</li>
+    <li><b>收尾</b>：<code>git commit</code>（merge）或 <code>git rebase --continue</code>（rebase）。中途想放弃：<code>git merge --abort</code> / <code>git rebase --abort</code>。</li>
+  </ol>
+  <pre data-code><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+const timeout = 3000;        <span class="hl-c">// 你当前分支的版本</span>
+=======
+const timeout = 5000;        <span class="hl-c">// 对方分支的版本</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feat/timeout-config</code></pre>
+  <div class="tipbox">
+    冲突时的帮手：<code>git mergetool</code>、VS Code 内置的「采用当前/采用传入/保留双方」按钮、
+    <code>git config --global merge.conflictStyle zdiff3</code>（会额外显示共同祖先，判断意图极有用）。
+    另外 <code>git checkout --ours / --theirs &lt;file&gt;</code> 可整文件选边站。
+  </div>
+</section>
+
+<!-- ============ 6 协作工作流 ============ -->
+<section id="flow">
+  <h2>6. 协作工作流：GitHub Flow 与一次提交的生命周期</h2>
+  <p class="lead">前面讲的是「一个人的 Git」。真正到了团队里，规则其实只有两条：<b>① 主干（main）任何时刻都是可发布的；② 所有改动都通过分支 + Pull Request 汇入主干</b>。
+  这套极简规则就是 GitHub Flow —— 它不是新命令，而是把第 4、5 节学过的分支与远程，套进一个可协作的节奏里。</p>
+
+  <h3 class="h-sub">① GitHub Flow 六步循环（点「下一步」走一遍）</h3>
+  <div class="flow-lab">
+    <div class="flow-stage">
+      <svg id="flow-svg" viewBox="0 0 780 320" role="img" aria-label="GitHub Flow 循环图"></svg>
+      <div class="flow-nav">
+        <button class="btn" id="flow-prev">← 上一步</button>
+        <button class="btn primary" id="flow-next">下一步 →</button>
+        <button class="btn ghost" id="flow-auto">▶ 自动播放</button>
+        <span class="flow-step" id="flow-step">1 / 6</span>
+      </div>
+    </div>
+    <div class="explain flow-explain" id="flow-explain"></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>GitHub Flow</th><th>做什么</th><th>常用命令 / 操作</th></tr></thead>
+      <tbody>
+        <tr><td>1 开分支</td><td>从 main 切出一个<b>短命</b>功能分支，分支名说清意图</td><td><code>git switch -c feat/csv-import</code></td></tr>
+        <tr><td>2 提交</td><td>本地小步提交，信息按规范写（见 ③）</td><td><code>git add -p</code> · <code>git commit -m "feat: …"</code></td></tr>
+        <tr><td>3 保持同步</td><td>main 前进了就把改动接进来，别攒到最后统一解决冲突</td><td><code>git fetch</code> · <code>git rebase origin/main</code></td></tr>
+        <tr><td>4 推送分支</td><td>把分支推到远端，成为可评审的公开备份</td><td><code>git push -u origin feat/csv-import</code></td></tr>
+        <tr><td>5 开 PR + 评审</td><td>请求合并；CI 跑测试，同事在 diff 上评论，你继续 push 同一分支即可自动更新 PR</td><td>GitHub 界面 + 追加 <code>git push</code></td></tr>
+        <tr><td>6 合并并删除分支</td><td>通过后合入 main，<b>立刻部署</b>；功能分支使命结束</td><td>Squash / Merge commit + 删分支</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">循环而不是瀑布：PR 合并后马上开始下一个功能分支，main 一直在前进、一直在可发布状态。这就是「持续交付」在 Git 层面的形态。</p>
+
+  <h3 class="h-sub">② 合并方式怎么选：Squash / Merge commit / Rebase merge</h3>
+  <div class="grid3">
+    <article class="card">
+      <h3>① Squash and merge</h3>
+      <p>把 PR 里的 <code>fix typo</code>、<code>wip</code> 等 N 个提交<b>压成 1 个</b>进 main。主干历史 = 功能列表，最干净。</p>
+      <p class="pick">👉 大多数开源项目 / 小粒度 PR 的默认选择</p>
+    </article>
+    <article class="card">
+      <h3>② Create a merge commit</h3>
+      <p>保留分支上每个提交 + 一个 merge commit，功能边界和过程都留下。</p>
+      <p class="pick">👉 一个 PR 本身就是一个完整里程碑、提交历史值得保留时</p>
+    </article>
+    <article class="card">
+      <h3>③ Rebase and merge</h3>
+      <p>把 PR 的提交逐个搬到 main 之后，线性历史但保留细节；代价是哈希全变。</p>
+      <p class="pick">👉 团队要求「历史必须线性」；禁止在 main 上用</p>
+    </article>
+  </div>
+  <div class="tipbox">
+    仓库管理员应在 Settings 里<b>只勾选团队约定的一种</b>，否则三年后 main 的历史会是三种风格搅在一起。
+    个人建议：<b>Squash 为默认</b>，同时把「一个 PR 只做一件事」作为团队纪律 —— PR 越小，squash 出来的提交就越是天然的功能单位。
+  </div>
+
+  <h3 class="h-sub">③ 提交信息生成器（Conventional Commits 解剖）</h3>
+  <p>规范只有一行格式：<code>类型(范围): 一句话说清做了什么</code>。点下面的按钮，边生成边看每个字段的作用 —— 生成结果可直接复制到真实项目。</p>
+  <div class="builder">
+    <div class="b-row"><span class="b-key">类型</span>
+      <div class="pills" id="b-type"></div>
+    </div>
+    <div class="b-row"><span class="b-key">范围</span>
+      <input id="b-scope" type="text" placeholder="可选，影响模块：api / ui / db …" maxlength="18">
+      <label class="b-brk"><input type="checkbox" id="b-break"> 破坏性变更 <code>!</code></label>
+    </div>
+    <div class="b-row"><span class="b-key">主题</span>
+      <input id="b-subj" type="text" placeholder="必填，动词开头、≤50 字、结尾不加句号：支持 CSV 批量导入" maxlength="60">
+    </div>
+    <div class="b-row"><span class="b-key">正文</span>
+      <textarea id="b-body" rows="2" placeholder="可选，空一行后写「为什么」：旧接口 5 千行要 40s，改为流式解析"></textarea>
+    </div>
+    <pre id="b-out" class="b-out"></pre>
+    <div class="b-tips" id="b-tips"></div>
+  </div>
+
+  <h3 class="h-sub">④ 一次 PR 的完整生命周期</h3>
+  <div class="pipe">
+    <div class="pnode"><b>push 分支</b><span>改动进入公开视野</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Open PR</b><span>填动机/截图/测试说明，标 reviewers</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>CI 检查</b><span>lint + test + build，红了不让合</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Review</b><span>评论 → 本地修改 → 再次 push，PR 自动更新</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Approve</b><span>2人规则？CODEOWNERS？按团队约定</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode good"><b>Merge + 部署</b><span>main 前进，触发发布，删分支</span></div>
+  </div>
+  <div class="tipbox">
+    <b>提 PR 的人视角</b>：小步快跑（&gt;400 行的 PR 评审质量断崖式下跌）、先 self-review、把「为什么」写进描述而不只是「改了什么」。
+    <b>评审者视角</b>：先问意图再看风格；区分 <span class="dim">blocking</span>（错误/风险）与 <span class="dim">nit</span>（口味），别让 nit 阻塞合并。
+  </div>
+
+  <h3 class="h-sub">⑤ 三种主流工作流对比：该用哪个？</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>GitHub Flow</th><th>Git Flow</th><th>主干开发 Trunk-based</th></tr></thead>
+      <tbody>
+        <tr><td><b>常驻分支</b></td><td>只有 main</td><td>main + develop（+ release/hotfix）</td><td>只有 main（trunk）</td></tr>
+        <tr><td><b>发布方式</b></td><td>合并即可发布，持续部署</td><td>攒到 release 分支统一发</td><td>随时可发，靠 feature flag 隔离未完成功能</td></tr>
+        <tr><td><b>版本节奏</b></td><td>持续（每周/每天）</td><td>固定版本号、周期性</td><td>持续，甚至每天多次</td></tr>
+        <tr><td><b>适合的团队</b></td><td>Web/SaaS、中小型团队、开源项目</td><td>需要同时维护多个老版本的客户端/软件产品</td><td>工程成熟度高、CI/CD 与测试极强的团队</td></tr>
+        <tr><td><b>复杂度</b></td><td>⭐ 低</td><td>⭐⭐⭐ 高（分支多、合并频繁）</td><td>⭐⭐ 对流程要求高</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">选择建议：拿不准就用 <b>GitHub Flow + Squash + Conventional Commits</b> —— 它覆盖了绝大多数团队的真实需求；Git Flow 是 2010 年代的产物，只有「必须长期并行维护多个发布线」时才值得它的复杂度。</p>
+</section>
+
+<!-- ============ 7 急救包 ============ -->
+<section id="rescue">
+  <h2>7. 急救包：出事时先看这里</h2>
+  <p class="lead">先记住一句保命话：<b>只要东西被 <code>commit</code> 过（甚至只是 <code>add</code> 过），Git 几乎都能找回来</b>；
+  真正危险的是 <code>reset --hard</code>、<code>clean -fd</code> 和强制推送。慌了就先 <code>git stash</code> + <code>git status</code>。</p>
+
+  <div class="acc">
+    <details>
+      <summary>提交信息写错了 / 忘了加文件（仅限还没 push）</summary>
+      <div class="acc-body">
+        <pre data-code><code>git add 漏掉的文件
+git commit --amend -m "feat: 正确的描述"</code></pre>
+        <p><code>--amend</code> 会<b>替换</b>最后一次提交（生成新哈希）。已经推送给别人用过的提交不要 amend，改用 <code>revert</code>。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>工作区改乱了，想丢掉本次修改</summary>
+      <div class="acc-body">
+        <pre data-code><code>git restore app.js              <span class="hl-c"># 丢弃单个文件的未暂存修改</span>
+git restore .                   <span class="hl-c"># 丢弃全部未暂存修改（危险）</span>
+git clean -nd                   <span class="hl-c"># 先看会删掉哪些「未跟踪」文件（dry-run，务必先跑）</span>
+git clean -fd                   <span class="hl-c"># 再真删；-x 连 .gitignore 忽略的也删</span></code></pre>
+        <p class="warn">未跟踪的新文件不在任何提交里，<code>clean</code> 之后无法找回。拿不准就先 <code>git stash -u</code>。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>add 多了，想从暂存区拿回来</summary>
+      <div class="acc-body">
+        <pre data-code><code>git restore --staged app.js     <span class="hl-c"># 取消暂存，工作区改动完整保留</span>
+git reset                       <span class="hl-c"># 取消全部暂存（旧写法，同样安全）</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>想回退到之前的某次提交（三种 reset 的区别）</summary>
+      <div class="acc-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>命令</th><th>仓库 HEAD</th><th>暂存区</th><th>工作区文件</th><th>典型用途</th></tr></thead>
+            <tbody>
+              <tr><td><code>reset --soft HEAD~1</code></td><td>回退</td><td>保留</td><td>保留</td><td>把几次提交合成一次再写信息</td></tr>
+              <tr><td><code>reset --mixed HEAD~1</code>（默认）</td><td>回退</td><td>清空</td><td>保留</td><td>重新挑选要提交的文件</td></tr>
+              <tr><td><code>reset --hard HEAD~1</code></td><td>回退</td><td>清空</td><td><span class="bad">丢弃</span></td><td>彻底不要了（可用 reflog 救）</td></tr>
+              <tr><td><code>revert &lt;sha&gt;</code></td><td>前进</td><td>—</td><td>反向改动</td><td><b>已推送的提交</b>：用一个新提交抵消它</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>handy：切分支时改动放不下（stash）</summary>
+      <div class="acc-body">
+        <pre data-code><code>git stash push -u -m "半成品：导入功能"   <span class="hl-c"># -u 连未跟踪文件一起收走</span>
+git switch main
+git stash list
+git stash pop                     <span class="hl-c"># 恢复并删除该条</span>
+git stash apply stash@{1}         <span class="hl-c"># 恢复但保留</span>
+git stash drop stash@{0}</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>提交到了错误的分支</summary>
+      <div class="acc-body">
+        <pre data-code><code>git log --oneline -3              <span class="hl-c"># 记下错误的提交哈希 abc1234</span>
+git switch correct-branch
+git cherry-pick abc1234           <span class="hl-c"># 把它摘过来</span>
+git switch wrong-branch
+git reset --hard HEAD~1           <span class="hl-c"># 确认无误后再清掉原处的误提交</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>已经把东西删没了 —— 用 reflog 找回</summary>
+      <div class="acc-body">
+        <pre data-code><code>git reflog                        <span class="hl-c"># HEAD 的所有移动记录，包括被 reset 掉的提交</span>
+<span class="hl-c"># 输出如：HEAD@{2}: commit: 那个被我删掉的功能</span>
+git diff HEAD@{2}                 <span class="hl-c"># 先看看那次提交是什么</span>
+git reset --hard HEAD@{2}         <span class="hl-c"># 或 git cherry-pick HEAD@{2} 只取那一次</span></code></pre>
+        <p class="note">只要还没被 <code>gc</code> 回收（默认至少保留 30 天），本地历史基本都在。<b>先 <code>git branch backup</code> 做个保险再折腾</b>是好习惯。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>进入 (HEAD detached) 分离头指针状态</summary>
+      <div class="acc-body">
+        <p>常见于 <code>checkout</code> 到某个标签或哈希。此时提交不属于任何分支，切走就「看不见」了。</p>
+        <pre data-code><code>git switch -c fix-from-tag        <span class="hl-c"># 立刻把当前提交挂到新分支上（最常用）</span>
+git switch main                   <span class="hl-c"># 不需要这些提交就切回去</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>大文件 / 密钥不小心提交了</summary>
+      <div class="acc-body">
+        <pre data-code><code>git rm --cached secrets.env       <span class="hl-c"># 停止跟踪，本地文件保留</span>
+echo "secrets.env" &gt;&gt; .gitignore
+git commit -m "chore: 移除不应入库的文件"</code></pre>
+        <p class="warn">注意：文件仍留在历史里。真正的清理要 <code>git filter-repo</code>（或 BFG）重写历史 + 强制推送，
+        且<b>密钥必须立刻作废重发</b> —— 只要推送过，就应视为已泄露。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 8 测验 ============ -->
+<section id="quiz">
+  <h2>8. 自测：10 道常见坑</h2>
+  <form id="quiz-form"><div id="quiz-box"></div>
+    <div class="quiz-foot">
+      <button class="btn primary" type="submit">提交答卷</button>
+      <button class="btn ghost" type="button" id="quiz-reset">重做</button>
+      <span id="quiz-score" class="score"></span>
+    </div>
+  </form>
+</section>
+
+<!-- ============ 9 速查表 ============ -->
+<section id="cheatsheet">
+  <h2>9. 命令速查表</h2>
+  <div class="search-row">
+    <input id="cmd-search" type="search" placeholder="🔍 搜索命令或说明，例如 stash、撤销、推送…" autocomplete="off">
+    <div class="tabs" id="cmd-tabs"></div>
+  </div>
+  <div class="table-wrap">
+    <table id="cmd-table">
+      <thead><tr><th>命令</th><th>作用</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="empty" id="cmd-empty" hidden>没有匹配的命令，换个关键词试试。</p>
+  <div class="tipbox">
+    <b>卡住时的三件套</b>：<code>git status</code>（我在哪、什么状态）→ <code>git log --oneline -10</code>（发生过什么）→
+    <code>git reflog</code>（我是怎么走到这的）。绝大多数「Git 坏了」都能靠这三条定位。
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p>📚 建议学习路径：先把第 2 节的三区流转点到熟练 → 用第 3 节循环做一件真实小事 → 在第 4 节实验室玩懂分支 → 再碰 rebase 和远程 → 最后按第 6 节的 GitHub Flow 循环参与真实协作。</p>
+  <p class="dim">所有命令均为 Git 2.23+ 的现代写法（<code>switch</code>/<code>restore</code> 取代 <code>checkout</code> 的两个职责）。用 <code>git &lt;cmd&gt; -h</code> 或 <a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Pro Git 中文版</a> 查阅细节。</p>
+</footer>
+
+<script src="git-tutorial.js"></script>
+</body>
+</html>

@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git 交互式教学 · 从三区模型到分支实战</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2349553897911628" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<style>
+/* ============ Git 交互式教学 ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117; --bg2:#161a24; --panel:#1b2130; --panel2:#222a3c;
+  --line:#2b3548; --fg:#e7ecf5; --dim:#93a0b8;
+  --acc:#4f8cff; --warn:#f0b429; --good:#3ecf8e; --bad:#ff6b6b; --purple:#a78bfa;
+  --mono:ui-monospace,"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.75}
+code{font-family:var(--mono);font-size:.92em;background:rgba(79,140,255,.14);color:#9dc0ff;padding:.1em .38em;border-radius:5px;white-space:nowrap}
+a{color:#79f2c0;text-decoration:none;border-bottom:1px dotted rgba(121,242,192,.5)}
+a:hover{border-bottom-style:solid}
+.bad{color:var(--bad);font-weight:600}
+.warn{color:var(--warn)}
+.dim{color:var(--dim)}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(135deg,#15294d,#0f1117 62%);border-bottom:1px solid var(--line);padding:26px clamp(14px,3.4vw,44px) 18px}
+.hero h1{font-size:clamp(21px,3.1vw,33px);letter-spacing:.3px}
+.hero .sub{color:var(--dim);margin-top:6px;font-size:clamp(12px,1.35vw,14.5px)}
+.toc{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+.toc a{font-size:12.5px;padding:6px 13px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--fg);border-bottom:1px solid var(--line)}
+.toc a:hover{background:var(--acc);border-color:var(--acc);color:#fff}
+
+/* ---------- layout ---------- */
+main{max-width:1160px;margin:0 auto;padding:10px clamp(12px,2.6vw,30px) 60px}
+section{margin:38px 0;padding-top:4px}
+h2{font-size:clamp(18px,2.3vw,24px);margin-bottom:14px;padding-left:12px;border-left:4px solid var(--acc)}
+.h-sub{font-size:16px;margin:22px 0 10px;color:#c9d6ee}
+.lead{color:#c3cee2;margin-bottom:14px}
+.note{background:rgba(79,140,255,.09);border-left:3px solid var(--acc);padding:11px 14px;border-radius:0 9px 9px 0;margin:12px 0;font-size:14px;color:#cad6ea}
+.tipbox{background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.28);border-radius:10px;padding:12px 15px;margin:14px 0;font-size:14px;color:#d5f3e6}
+.tipbox b{color:#8ff0c4}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+.card h3{font-size:15.5px;margin-bottom:7px;color:#fff}
+.card p{font-size:13.6px;color:#b8c5da}
+.two-col{display:grid;grid-template-columns:1.25fr .85fr;gap:14px;margin-top:14px}
+@media(max-width:880px){.two-col{grid-template-columns:1fr}}
+
+/* ---------- 状态卡片 ---------- */
+.state-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.state{flex:1 1 190px;border-radius:11px;padding:11px 14px;border:1px solid var(--line);background:var(--panel)}
+.state b{display:block;font-size:14px;margin-bottom:2px}
+.state span{font-size:12.3px;color:var(--dim)}
+.state.s-mod{border-color:#5b4a1f;background:rgba(240,180,41,.1)}.s-mod b{color:var(--warn)}
+.state.s-stage{border-color:#28406e;background:rgba(79,140,255,.12)}.s-stage b{color:#8ab4ff}
+.state.s-comm{border-color:#1d5742;background:rgba(62,207,142,.12)}.s-comm b{color:var(--good)}
+.arrow{color:var(--dim);font-size:19px}
+
+/* ---------- 终端 ---------- */
+.term{background:#0b0e14;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-family:var(--mono);font-size:12.6px;line-height:1.62;min-height:132px;max-height:290px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.term .cmd{color:#fff;display:block;margin-top:9px}
+.term .cmd:first-child{margin-top:0}
+.term .cmd b{color:#7fd1ff;font-weight:600}
+.term .ok{color:#8ee6b6;display:block}
+.term .out{color:#a9b6cc;display:block}
+.term .bad{color:#ff8f8f;display:block}
+.term .cursor{display:inline-block;width:7px;height:14px;background:var(--acc);vertical-align:-2px;animation:blink 1.05s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- 代码块 ---------- */
+pre[data-code]{position:relative;margin:10px 0}
+pre[data-code] code{display:block;white-space:pre-wrap;word-break:break-word;background:#0b0e14;border:1px solid var(--line);border-radius:10px;padding:13px 48px 13px 14px;font-size:12.9px;line-height:1.72;color:#dfe7f4}
+.hl-c{color:#6b7a94;font-style:italic}
+.hl-a{color:#7dd3fc}
+.copy{position:absolute;top:7px;right:7px;font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:#1a2030;color:#9fb0c9;cursor:pointer;opacity:.72}
+.copy:hover{opacity:1;border-color:var(--acc);color:#cfe0ff}
+.copy.done{color:#8ee6b6;border-color:#2c6b52}
+
+/* ---------- 步骤 ---------- */
+.step{display:grid;grid-template-columns:50px 1fr;gap:14px;padding:13px 0;border-bottom:1px dashed #232c3d}
+.step:last-of-type{border-bottom:0}
+.step-no{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1c2740;border:1px solid #2f4370;color:#8ab4ff;font-weight:700;font-size:14px}
+.step h3{font-size:16px;margin:3px 0 6px}
+.step p{font-size:13.8px;color:#b6c3d8;margin-bottom:4px}
+.steps-list{margin:8px 0 8px 22px;font-size:14px;color:#c1cde1}
+.steps-list li{margin:5px 0}
+
+/* ---------- 通用按钮 ---------- */
+.lab-toolbar{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0 14px}
+.btn{border:1px solid var(--line);background:var(--panel);color:#d7e2f2;border-radius:9px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;line-height:1.35;text-align:left;transition:.16s}
+.btn small{display:block;font-family:var(--mono);font-size:10.6px;color:var(--dim);margin-top:2px}
+.btn:hover{border-color:var(--acc);background:#1e2740;transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn.primary{background:linear-gradient(135deg,#2f6fe0,#2a53b8);border-color:#3f7ce8;color:#fff}
+.btn.primary small{color:#d5e5ff}
+.btn.danger:hover{border-color:var(--bad);background:#2a1b21}
+.btn.ghost{background:transparent}
+
+/* ---------- 三区动画 ---------- */
+.zones-wrap{display:grid;grid-template-columns:1fr 66px 1fr 66px 1fr;align-items:stretch;gap:6px}
+@media(max-width:820px){.zones-wrap{grid-template-columns:1fr}.zone-arrow{justify-self:center;transform:rotate(90deg);padding:2px 0}}
+.zone{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;transition:.2s}
+.zone.flash{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.16)}
+.zone.flash-good{border-color:var(--good);box-shadow:0 0 0 3px rgba(62,207,142,.16)}
+.zone-head{font-size:14px;font-weight:600;margin-bottom:9px}
+.zone-head small{display:block;font-weight:400;font-size:10.6px;color:var(--dim);letter-spacing:.3px}
+.zone-body{min-height:104px}
+.zone-hint{color:#5c6a83;font-size:11.6px;font-style:italic;padding-top:28px;text-align:center}
+.zone-arrow{text-align:center;color:var(--dim);font-size:19px;align-self:center}
+.zone-arrow small{font-family:var(--mono);font-size:10px;display:block}
+.file-card{display:flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid #33405a;border-left:4px solid var(--warn);border-radius:8px;padding:7px 9px;font-family:var(--mono);font-size:12.3px;margin-bottom:7px;animation:pop .26s ease}
+.file-card.staged{border-left-color:var(--acc)}
+.file-card.comm{border-left-color:var(--good)}
+@keyframes pop{from{transform:translateY(-9px) scale(.96);opacity:0}}
+.explain{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:13px;color:#c6d2e6}
+.explain h4{font-size:14px;color:#fff;margin-bottom:6px}
+.explain .st{font-family:var(--mono);font-size:12px;white-space:pre-wrap;display:block;margin:8px 0;color:#e6edf8}
+
+/* ---------- 分支实验室 ---------- */
+.lab-stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+#graph{width:100%;height:auto;display:block}
+#graph .lane{stroke-width:2.5;opacity:.55}
+#graph .edge{stroke-width:2.5;fill:none}
+#graph .node{stroke-width:2.4;fill:#111725;cursor:default}
+#graph .ntext{font-family:var(--mono);font-size:9px;fill:#9fb0c9}
+#graph .lbl{font-family:var(--mono);font-size:11px;font-weight:700}
+#graph .headlbl{font-family:var(--mono);font-size:11px;fill:#fff;font-weight:700}
+.lab-side{display:flex;flex-wrap:wrap;gap:10px 20px;padding:8px 6px 6px;border-top:1px dashed #29334a;font-size:12.6px;color:var(--dim);margin-top:4px}
+.lab-side .kv b{color:#cfe0ff}
+.pills{display:inline-flex;gap:6px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:999px;border:1px solid #33405a;background:#1c2740;color:#cfe0ff}
+.pill.cur{border-color:var(--good);background:rgba(62,207,142,.14);color:#9ff0c8}
+
+/* ---------- 表格 ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:13.2px;min-width:540px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #232c3d;vertical-align:top}
+th{background:#1a2131;color:#dbe5f5;font-size:12.6px;white-space:nowrap}
+tbody tr:hover{background:#181f2d}
+tbody tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+#cmd-table td:first-child{width:min(340px,42%)}
+#cmd-table tr.hide{display:none}
+#cmd-table td:first-child code{background:transparent;border:0;padding:0;color:#a8d8ff}
+
+/* ---------- 速查表搜索 ---------- */
+.search-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+#cmd-search{flex:1 1 260px;padding:9px 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:inherit;font-size:13.5px;outline:none}
+#cmd-search:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.16)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--dim);font-size:12.3px;cursor:pointer}
+.tab.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.empty{color:#66748d;font-size:13px;padding:16px 2px}
+
+/* ---------- 折叠面板 ---------- */
+.acc details{background:var(--panel);border:1px solid var(--line);border-radius:11px;margin-bottom:9px;overflow:hidden}
+.acc summary{cursor:pointer;padding:12px 15px;font-weight:600;font-size:14.2px;list-style:none;display:flex;gap:9px;align-items:center}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::before{content:"▸";color:var(--acc);transition:transform .18s;font-size:12px}
+.acc details[open] summary::before{transform:rotate(90deg)}
+.acc summary:hover{background:#1e2534}
+.acc-body{padding:2px 15px 14px;font-size:13.6px;color:#bdc9dd;border-top:1px solid #232c3d}
+.acc-body p{margin-top:8px}
+
+/* ---------- 测验 ---------- */
+.q{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:11px}
+.q p.qt{font-weight:600;font-size:14.4px;margin-bottom:9px}
+.q label{display:block;padding:7px 11px;border:1px solid #2a3348;border-radius:8px;margin-bottom:6px;font-size:13.4px;cursor:pointer;transition:.15s;color:#cbd7e8}
+.q label:hover{border-color:var(--acc);background:#1c2434}
+.q label input{margin-right:9px;accent-color:var(--acc)}
+.q.right{border-color:#2c6b52;background:rgba(62,207,142,.07)}
+.q.wrong{border-color:#6b2c2c;background:rgba(255,107,107,.07)}
+.q .why{display:none;margin-top:9px;font-size:12.8px;color:#b8c6dc;border-left:3px solid var(--warn);padding-left:11px;line-height:1.68}
+.q.done .why{display:block}
+.q .tag{display:inline-block;margin-left:8px;font-size:11.5px;padding:1px 8px;border-radius:999px;font-weight:700}
+.q .tag.ok{background:rgba(62,207,142,.2);color:#8ff0c4}
+.q .tag.no{background:rgba(255,107,107,.2);color:#ffa8a8}
+.quiz-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.score{font-size:14px;font-weight:600}
+
+/* ---------- 协作工作流 ---------- */
+.flow-lab{display:grid;grid-template-columns:1.3fr .9fr;gap:14px;margin:12px 0}
+@media(max-width:880px){.flow-lab{grid-template-columns:1fr}}
+.flow-stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 8px 9px}
+#flow-svg{width:100%;height:auto;display:block}
+#flow-svg .arc{fill:none;stroke:#2b3548;stroke-width:2.5;stroke-dasharray:6 7}
+#flow-svg .arc-live{fill:none;stroke-width:3.2;stroke-linecap:round}
+#flow-svg .nbox{fill:#151b28;stroke:#33405a;stroke-width:1.6;transition:.28s}
+#flow-svg .nbox.on{fill:#1d2a46;stroke:var(--acc);stroke-width:2.4;filter:drop-shadow(0 0 7px rgba(79,140,255,.5))}
+#flow-svg .nbox.done{stroke:#2c6b52;fill:#14231e}
+#flow-svg .nt{font-size:13px;font-weight:700;fill:#9fb0c9;transition:.28s}
+#flow-svg .nt.on{fill:#fff}
+#flow-svg .nt.done{fill:#8ff0c4}
+#flow-svg .ns{font-size:10.4px;fill:#66748d}
+#flow-svg .dot{transition:.35s}
+#flow-svg .dot.glow{filter:drop-shadow(0 0 6px currentColor)}
+.flow-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 4px 2px}
+.flow-step{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto;padding-right:6px}
+.flow-explain{align-self:start}
+.flow-explain h4{font-size:14.5px;color:#fff;margin-bottom:7px}
+.flow-explain .cmdline{display:block;font-family:var(--mono);font-size:12.1px;background:#0b0e14;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;white-space:pre-wrap;word-break:break-word;color:#a8d8ff}
+.flow-explain ul{margin:6px 0 0 18px;font-size:13px;color:#c3cfe3}
+.flow-explain li{margin:4px 0}
+.pick{margin-top:8px!important;font-size:12.4px!important;color:#8ff0c4!important}
+
+/* 提交信息生成器 */
+.builder{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:10px 0}
+.b-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.b-key{flex:0 0 44px;font-size:12px;color:var(--dim);padding-top:7px}
+.b-row input[type=text],.builder textarea{flex:1 1 260px;padding:8px 11px;border-radius:8px;border:1px solid var(--line);background:#101724;color:var(--fg);font:inherit;font-size:13.2px;outline:none;resize:vertical}
+.b-row input:focus,.builder textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.15)}
+.b-row .pill{cursor:pointer;user-select:none}
+.b-row .pill.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.b-brk{font-size:12.5px;color:#ffc9a8;display:flex;align-items:center;gap:6px;padding-top:7px}
+.b-brk input{accent-color:var(--warn)}
+.b-out{background:#0b0e14;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.8px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:#dfe7f4;margin:2px 0 8px;min-height:56px}
+.b-out .t-scope{color:#7dd3fc}.b-out .t-brk{color:#ffb26b;font-weight:700}
+.b-out .t-warn{color:#ff8f8f}
+.b-tips{font-size:12.4px;color:#b6c3d8;line-height:1.7}
+.b-tips b{color:#8ff0c4}
+.b-tips .no{color:#ff9d9d}
+
+/* PR 流水线 */
+.pipe{display:flex;align-items:stretch;gap:6px;overflow-x:auto;padding:6px 2px 10px;margin:8px 0}
+.pnode{flex:1 1 0;min-width:132px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12.4px}
+.pnode b{display:block;font-size:13.4px;color:#fff;margin-bottom:4px}
+.pnode span{color:var(--dim);font-size:11.6px;line-height:1.55;display:block}
+.pnode.good{border-color:#2c6b52;background:rgba(62,207,142,.09)}
+.parrow{align-self:center;color:#4c5a76;font-size:16px;flex:0 0 auto}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--line);padding:22px clamp(14px,3vw,40px) 40px;max-width:1160px;margin:0 auto;font-size:13.3px;color:#a9b6cc}
+.foot p{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>🌱 Git 交互式教学</h1>
+  <p class="sub">三区模型 · 日常循环 · 分支实验室 · 远程协作 · GitHub Flow · 急救包 · 自测测验</p>
+  <nav class="toc" id="toc">
+    <a href="#concept">1 核心概念</a>
+    <a href="#zones">2 三区流转</a>
+    <a href="#daily">3 日常命令</a>
+    <a href="#lab">4 分支实验室</a>
+    <a href="#remote">5 远程协作</a>
+    <a href="#flow">6 协作工作流</a>
+    <a href="#rescue">7 急救包</a>
+    <a href="#quiz">8 自测</a>
+    <a href="#cheatsheet">9 速查表</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ 1 核心概念 ============ -->
+<section id="concept">
+  <h2>1. 核心概念：Git 到底在记什么</h2>
+  <div class="grid3">
+    <article class="card">
+      <h3>📸 快照，不是差异</h3>
+      <p>每次 <code>commit</code> 保存的是<b>整个项目的完整快照</b>；未变动的文件只存一个指针。
+      这让「回到任意历史时刻」几乎零成本。</p>
+    </article>
+    <article class="card">
+      <h3>🔑 哈希即身份</h3>
+      <p>每个提交有一个 40 位 SHA-1 指纹（终端里常显示前 7 位，如 <code>a1b2c3d</code>）。
+      内容变一个字节，指纹就完全不同 —— 因此历史无法被悄悄篡改。</p>
+    </article>
+    <article class="card">
+      <h3>🌐 分布式全量仓库</h3>
+      <p><code>clone</code> 下来的不是「一份副本」，而是<b>包含全部历史的完整仓库</b>。
+      断网也能提交、查日志、建分支；<code>push</code> 只是同步。</p>
+    </article>
+  </div>
+
+  <h3 class="h-sub">文件的三种状态</h3>
+  <div class="state-row">
+    <div class="state s-mod"><b>Modified 已修改</b><span>改了，但还没保存到仓库</span></div>
+    <div class="arrow">→</div>
+    <div class="state s-stage"><b>Staged 已暂存</b><span>标记了，下次提交会带上它</span></div>
+    <div class="arrow">→</div>
+    <div class="state s-comm"><b>Committed 已提交</b><span>已安全落盘到本地仓库</span></div>
+  </div>
+  <p class="note">💡 新手最大的困惑几乎都来自「暂存区」这个中间层。它存在的意义是：让你把一堆乱七八糟的改动，
+  <b>挑选出逻辑完整的一小块</b>再提交 —— 而不是「一次性全交」。记住：<code>add</code> 是拍照，<code>commit</code> 是冲印成册。</p>
+</section>
+
+<!-- ============ 2 三区流转 ============ -->
+<section id="zones">
+  <h2>2. 三区流转动画：亲手走一遍</h2>
+  <p class="lead">下面的按钮对应真实命令。点一点，看文件卡片在<b>工作区 → 暂存区 → 仓库</b>之间移动，右侧终端会同步打印命令与输出。</p>
+
+  <div class="lab-toolbar">
+    <button class="btn" data-zone="edit">✏️ 修改文件<br><small>vi app.js</small></button>
+    <button class="btn" data-zone="add">➕ 暂存<br><small>git add app.js</small></button>
+    <button class="btn" data-zone="unstage">↩️ 取消暂存<br><small>git restore --staged app.js</small></button>
+    <button class="btn primary" data-zone="commit">💾 提交<br><small>git commit -m "…"</small></button>
+    <button class="btn danger" data-zone="discard">🗑 丢弃修改<br><small>git restore app.js</small></button>
+    <button class="btn ghost" data-zone="reset">🔄 重置演示</button>
+  </div>
+
+  <div class="zones-wrap">
+    <div class="zone" id="z-work">
+      <div class="zone-head">① 工作区 <small>Working Directory</small></div>
+      <div class="zone-body" id="zone-work"><p class="zone-hint">你正在编辑的真实文件</p></div>
+    </div>
+    <div class="zone-arrow">⇄<br><small>git add</small></div>
+    <div class="zone" id="z-stage">
+      <div class="zone-head">② 暂存区 <small>Staging Area / Index</small></div>
+      <div class="zone-body" id="zone-stage"><p class="zone-hint">下次提交的「购物车」</p></div>
+    </div>
+    <div class="zone-arrow">→<br><small>git commit</small></div>
+    <div class="zone" id="z-repo">
+      <div class="zone-head">③ 本地仓库 <small>.git / HEAD</small></div>
+      <div class="zone-body" id="zone-repo"><p class="zone-hint">不可变的历史快照</p></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="term" id="zone-term" aria-live="polite"></div>
+    <div class="explain" id="zone-status"></div>
+  </div>
+</section>
+
+<!-- ============ 3 日常命令 ============ -->
+<section id="daily">
+  <h2>3. 日常命令：从安装到提交</h2>
+
+  <div class="step">
+    <div class="step-no">0</div>
+    <div class="step-body">
+      <h3>初次配置（每台机器一次）</h3>
+      <p>作者信息会被写进每个提交。<code>--global</code> 写入用户级配置，单个仓库可用 <code>--local</code> 覆盖。</p>
+      <pre data-code><code>git config --global user.name  "你的名字"
+git config --global user.email "you@example.com"
+git config --global init.defaultBranch main
+git config --global core.autocrlf input   <span class="hl-c"># Windows 建议 true，macOS/Linux 用 input</span>
+git config --list                          <span class="hl-c"># 查看当前生效配置</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">1</div>
+    <div class="step-body">
+      <h3>创建仓库 / 获取仓库</h3>
+      <pre data-code><code>git init                 <span class="hl-c"># 把当前目录变成 Git 仓库（只是多出一个 .git 目录）</span>
+git clone &lt;url&gt;          <span class="hl-c"># 克隆远程仓库，含全部分支与历史</span>
+git clone -b dev --depth 1 &lt;url&gt;   <span class="hl-c"># 只要 dev 分支最近 1 次提交：CI 提速常用</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">2</div>
+    <div class="step-body">
+      <h3>核心循环（每天都要用）</h3>
+      <pre data-code><code>git status               <span class="hl-c"># 万能第一步：现在到底什么状态</span>
+git add app.js           <span class="hl-c"># 暂存单个文件</span>
+git add -p               <span class="hl-c"># 逐块(hunk)挑选要暂存的改动，强烈推荐</span>
+git diff                 <span class="hl-c"># 工作区 vs 暂存区：还没 add 的改动</span>
+git diff --staged        <span class="hl-c"># 暂存区 vs 仓库：即将提交的内容</span>
+git commit -m "feat: 支持批量导入"
+git commit -am "fix: 修正空指针"   <span class="hl-c"># -a 自动暂存「已跟踪」文件的改动（不含新文件）</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">3</div>
+    <div class="step-body">
+      <h3>查看历史</h3>
+      <pre data-code><code>git log --oneline --graph --decorate -20
+git log --author="张三" --since=2.week.ago -p
+git show HEAD            <span class="hl-c"># 某次提交的完整差异</span>
+git blame app.js         <span class="hl-c"># 每一行是谁、在哪次提交写的</span>
+git tag -a v1.0 -m "release"     <span class="hl-c"># 给提交打标签</span></code></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">4</div>
+    <div class="step-body">
+      <h3>.gitignore：别把垃圾提交进去</h3>
+      <pre data-code><code># 依赖与构建产物
+node_modules/
+dist/
+*.log
+# 本地配置与密钥（密钥绝不进仓库）
+.env
+.env.local
+# 系统 / 编辑器
+.DS_Store
+.idea/
+# 例外规则：感叹号放在后面覆盖前面的规则
+!dist/keep.txt</code></pre>
+      <p class="note">⚠️ <code>.gitignore</code> 只对<b>未被跟踪</b>的文件生效。已经提交过的文件要这样移除：
+      <code>git rm -r --cached node_modules</code>（保留本地文件，只停止跟踪），然后提交。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-no">5</div>
+    <div class="step-body">
+      <h3>写一条好的提交信息</h3>
+      <pre data-code><code>feat: 新增 CSV 批量导入
+fix: 修复分页越界导致的 500
+docs / style / refactor / perf / test / chore   <span class="hl-c"># 常用类型前缀</span></code></pre>
+      <div class="tipbox">
+        <b>格式约定</b>：<code>类型: 一句话说明「做了什么」</code>，空一行后写「为什么这么做」。
+        判断标准很简单 —— 半年后你 <code>git log</code> 时，只看这一行能不能想起当时为什么改。
+        不要用「update」「修改bug」这类信息，它们等于没写。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 分支实验室 ============ -->
+<section id="lab">
+  <h2>4. 分支实验室：边玩边懂 HEAD</h2>
+  <p class="lead">分支不是「复制一份代码」，它只是<b>一个指向某次提交的可移动指针</b>；<code>HEAD</code> 则告诉你「我现在在哪个分支上」。
+  所以下面创建分支是瞬间完成的，无论仓库有多大。</p>
+
+  <div class="lab-toolbar">
+    <button class="btn" id="lb-commit">💾 在当前分支提交</button>
+    <button class="btn" id="lb-new">🌿 新建并切换分支</button>
+    <button class="btn" id="lb-switch">🔀 切换分支</button>
+    <button class="btn primary" id="lb-merge">🔗 把某分支并入当前</button>
+    <button class="btn" id="lb-rebase">⚡ rebase 当前分支到 main</button>
+    <button class="btn danger" id="lb-reset">🔄 清空重来</button>
+  </div>
+
+  <div class="lab-stage">
+    <svg id="graph" viewBox="0 0 760 260" role="img" aria-label="提交历史图"></svg>
+    <div class="lab-side">
+      <div class="kv">当前分支：<b id="cur-branch">main</b></div>
+      <div class="kv">已有分支：<span id="branch-list" class="pills"></span></div>
+      <div class="kv">HEAD 指向：<code id="head-info">refs/heads/main</code></div>
+    </div>
+  </div>
+
+  <div class="term" id="lab-term"></div>
+
+  <div class="tipbox">
+    试试这个练习：<b>在 main 上提交 1 次 → 新建 <code>feat</code> 分支 → 提交 2 次 → 切回 main → 提交 1 次 → 合并 feat</b>。
+    因为 main 前进了，这次合并无法快进（fast-forward），Git 会自动生成一个有两个父提交的 merge commit。
+  </div>
+
+  <h3 class="h-sub">merge 还是 rebase？</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>git merge feat</th><th>git rebase main（在 feat 上执行）</th></tr></thead>
+      <tbody>
+        <tr><td>做了什么</td><td>新建合并提交，把两条线接到一起，历史原样保留</td><td>把 feat 的提交逐个「重放」到 main 之后，历史变成一条直线</td></tr>
+        <tr><td>历史长相</td><td>真实、有交叉，能看出功能边界</td><td>干净、线性，review 时更易读</td></tr>
+        <tr><td>提交哈希</td><td>不变</td><td><b>全部改变</b>（等同重写历史）</td></tr>
+        <tr><td>冲突处理</td><td>集中一次</td><td>可能在每个重放提交上反复出现</td></tr>
+        <tr><td>黄金法则</td><td>并入主干时用它更安全</td><td><b>只对自己尚未推送（或只有自己在用）的分支使用</b>；对已共享的分支 rebase = 给同事制造灾难</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">团队里常见的折中：功能分支内用 <code>rebase</code> 保持整洁，合入主干时用 <code>merge --no-ff</code> 保留功能边界。</p>
+</section>
+
+<!-- ============ 5 远程协作 ============ -->
+<section id="remote">
+  <h2>5. 远程协作：push 之前先看清楚</h2>
+
+  <div class="grid3">
+    <article class="card">
+      <h3>git fetch</h3>
+      <p>把远程的最新提交下载到本地的 <code>origin/main</code>，<b>不改动你的工作区和当前分支</b>。安全，随时可用。</p>
+    </article>
+    <article class="card">
+      <h3>git pull</h3>
+      <p>= <code>fetch</code> + <code>merge</code>（加 <code>--rebase</code> 则是 fetch + rebase）。方便但会「自动改你的历史」，不熟时建议先 fetch 再自己决定。</p>
+    </article>
+    <article class="card">
+      <h3>git push</h3>
+      <p>把本地提交上传。首次用 <code>git push -u origin feat</code> 建立跟踪关系，之后只需 <code>git push</code>。</p>
+    </article>
+  </div>
+
+  <pre data-code><code>git remote -v                          <span class="hl-c"># 看远程别名与地址</span>
+git remote add upstream &lt;url&gt;          <span class="hl-c"># fork 工作流：加原仓库</span>
+git fetch --all --prune                <span class="hl-c"># 同步所有远程并清理已删除的远程分支</span>
+git branch -a                          <span class="hl-c"># -a 含远程分支；本地 main 与 origin/main 是两回事</span>
+git checkout -b dev origin/dev         <span class="hl-c"># 基于远程分支建本地分支（新 Git 可直接 git switch dev）</span>
+
+<span class="hl-c"># 推荐的安全同步节奏</span>
+git fetch origin
+git log --oneline HEAD..origin/main    <span class="hl-c"># 别人有、我还没有的提交</span>
+git log --oneline origin/main..HEAD    <span class="hl-c"># 我有、别人还没有的提交</span>
+git rebase origin/main                 <span class="hl-c"># 或 merge，把上游改动接进来</span>
+git push                               <span class="hl-c"># rebase 之后推送需 git push --force-with-lease</span></code></pre>
+
+  <h3 class="h-sub">解决冲突的完整流程</h3>
+  <p>冲突不是错误，而是 Git 说「这两处改动我无法自动判断，请你决定」。解决它永远是同四步：</p>
+  <ol class="steps-list">
+    <li><b>定位</b>：<code>git status</code> 会列出 <span class="bad">both modified</span> 的文件。</li>
+    <li><b>编辑</b>：打开文件，处理冲突标记 —— 留下正确内容，<b>把标记行整行删掉</b>。</li>
+    <li><b>标记已解决</b>：<code>git add &lt;file&gt;</code>（这一步就是告诉 Git「我处理好了」）。</li>
+    <li><b>收尾</b>：<code>git commit</code>（merge）或 <code>git rebase --continue</code>（rebase）。中途想放弃：<code>git merge --abort</code> / <code>git rebase --abort</code>。</li>
+  </ol>
+  <pre data-code><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+const timeout = 3000;        <span class="hl-c">// 你当前分支的版本</span>
+=======
+const timeout = 5000;        <span class="hl-c">// 对方分支的版本</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feat/timeout-config</code></pre>
+  <div class="tipbox">
+    冲突时的帮手：<code>git mergetool</code>、VS Code 内置的「采用当前/采用传入/保留双方」按钮、
+    <code>git config --global merge.conflictStyle zdiff3</code>（会额外显示共同祖先，判断意图极有用）。
+    另外 <code>git checkout --ours / --theirs &lt;file&gt;</code> 可整文件选边站。
+  </div>
+</section>
+
+<!-- ============ 6 协作工作流 ============ -->
+<section id="flow">
+  <h2>6. 协作工作流：GitHub Flow 与一次提交的生命周期</h2>
+  <p class="lead">前面讲的是「一个人的 Git」。真正到了团队里，规则其实只有两条：<b>① 主干（main）任何时刻都是可发布的；② 所有改动都通过分支 + Pull Request 汇入主干</b>。
+  这套极简规则就是 GitHub Flow —— 它不是新命令，而是把第 4、5 节学过的分支与远程，套进一个可协作的节奏里。</p>
+
+  <h3 class="h-sub">① GitHub Flow 六步循环（点「下一步」走一遍）</h3>
+  <div class="flow-lab">
+    <div class="flow-stage">
+      <svg id="flow-svg" viewBox="0 0 780 320" role="img" aria-label="GitHub Flow 循环图"></svg>
+      <div class="flow-nav">
+        <button class="btn" id="flow-prev">← 上一步</button>
+        <button class="btn primary" id="flow-next">下一步 →</button>
+        <button class="btn ghost" id="flow-auto">▶ 自动播放</button>
+        <span class="flow-step" id="flow-step">1 / 6</span>
+      </div>
+    </div>
+    <div class="explain flow-explain" id="flow-explain"></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>GitHub Flow</th><th>做什么</th><th>常用命令 / 操作</th></tr></thead>
+      <tbody>
+        <tr><td>1 开分支</td><td>从 main 切出一个<b>短命</b>功能分支，分支名说清意图</td><td><code>git switch -c feat/csv-import</code></td></tr>
+        <tr><td>2 提交</td><td>本地小步提交，信息按规范写（见 ③）</td><td><code>git add -p</code> · <code>git commit -m "feat: …"</code></td></tr>
+        <tr><td>3 保持同步</td><td>main 前进了就把改动接进来，别攒到最后统一解决冲突</td><td><code>git fetch</code> · <code>git rebase origin/main</code></td></tr>
+        <tr><td>4 推送分支</td><td>把分支推到远端，成为可评审的公开备份</td><td><code>git push -u origin feat/csv-import</code></td></tr>
+        <tr><td>5 开 PR + 评审</td><td>请求合并；CI 跑测试，同事在 diff 上评论，你继续 push 同一分支即可自动更新 PR</td><td>GitHub 界面 + 追加 <code>git push</code></td></tr>
+        <tr><td>6 合并并删除分支</td><td>通过后合入 main，<b>立刻部署</b>；功能分支使命结束</td><td>Squash / Merge commit + 删分支</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">循环而不是瀑布：PR 合并后马上开始下一个功能分支，main 一直在前进、一直在可发布状态。这就是「持续交付」在 Git 层面的形态。</p>
+
+  <h3 class="h-sub">② 合并方式怎么选：Squash / Merge commit / Rebase merge</h3>
+  <div class="grid3">
+    <article class="card">
+      <h3>① Squash and merge</h3>
+      <p>把 PR 里的 <code>fix typo</code>、<code>wip</code> 等 N 个提交<b>压成 1 个</b>进 main。主干历史 = 功能列表，最干净。</p>
+      <p class="pick">👉 大多数开源项目 / 小粒度 PR 的默认选择</p>
+    </article>
+    <article class="card">
+      <h3>② Create a merge commit</h3>
+      <p>保留分支上每个提交 + 一个 merge commit，功能边界和过程都留下。</p>
+      <p class="pick">👉 一个 PR 本身就是一个完整里程碑、提交历史值得保留时</p>
+    </article>
+    <article class="card">
+      <h3>③ Rebase and merge</h3>
+      <p>把 PR 的提交逐个搬到 main 之后，线性历史但保留细节；代价是哈希全变。</p>
+      <p class="pick">👉 团队要求「历史必须线性」；禁止在 main 上用</p>
+    </article>
+  </div>
+  <div class="tipbox">
+    仓库管理员应在 Settings 里<b>只勾选团队约定的一种</b>，否则三年后 main 的历史会是三种风格搅在一起。
+    个人建议：<b>Squash 为默认</b>，同时把「一个 PR 只做一件事」作为团队纪律 —— PR 越小，squash 出来的提交就越是天然的功能单位。
+  </div>
+
+  <h3 class="h-sub">③ 提交信息生成器（Conventional Commits 解剖）</h3>
+  <p>规范只有一行格式：<code>类型(范围): 一句话说清做了什么</code>。点下面的按钮，边生成边看每个字段的作用 —— 生成结果可直接复制到真实项目。</p>
+  <div class="builder">
+    <div class="b-row"><span class="b-key">类型</span>
+      <div class="pills" id="b-type"></div>
+    </div>
+    <div class="b-row"><span class="b-key">范围</span>
+      <input id="b-scope" type="text" placeholder="可选，影响模块：api / ui / db …" maxlength="18">
+      <label class="b-brk"><input type="checkbox" id="b-break"> 破坏性变更 <code>!</code></label>
+    </div>
+    <div class="b-row"><span class="b-key">主题</span>
+      <input id="b-subj" type="text" placeholder="必填，动词开头、≤50 字、结尾不加句号：支持 CSV 批量导入" maxlength="60">
+    </div>
+    <div class="b-row"><span class="b-key">正文</span>
+      <textarea id="b-body" rows="2" placeholder="可选，空一行后写「为什么」：旧接口 5 千行要 40s，改为流式解析"></textarea>
+    </div>
+    <pre id="b-out" class="b-out"></pre>
+    <div class="b-tips" id="b-tips"></div>
+  </div>
+
+  <h3 class="h-sub">④ 一次 PR 的完整生命周期</h3>
+  <div class="pipe">
+    <div class="pnode"><b>push 分支</b><span>改动进入公开视野</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Open PR</b><span>填动机/截图/测试说明，标 reviewers</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>CI 检查</b><span>lint + test + build，红了不让合</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Review</b><span>评论 → 本地修改 → 再次 push，PR 自动更新</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode"><b>Approve</b><span>2人规则？CODEOWNERS？按团队约定</span></div>
+    <div class="parrow">→</div>
+    <div class="pnode good"><b>Merge + 部署</b><span>main 前进，触发发布，删分支</span></div>
+  </div>
+  <div class="tipbox">
+    <b>提 PR 的人视角</b>：小步快跑（&gt;400 行的 PR 评审质量断崖式下跌）、先 self-review、把「为什么」写进描述而不只是「改了什么」。
+    <b>评审者视角</b>：先问意图再看风格；区分 <span class="dim">blocking</span>（错误/风险）与 <span class="dim">nit</span>（口味），别让 nit 阻塞合并。
+  </div>
+
+  <h3 class="h-sub">⑤ 三种主流工作流对比：该用哪个？</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>GitHub Flow</th><th>Git Flow</th><th>主干开发 Trunk-based</th></tr></thead>
+      <tbody>
+        <tr><td><b>常驻分支</b></td><td>只有 main</td><td>main + develop（+ release/hotfix）</td><td>只有 main（trunk）</td></tr>
+        <tr><td><b>发布方式</b></td><td>合并即可发布，持续部署</td><td>攒到 release 分支统一发</td><td>随时可发，靠 feature flag 隔离未完成功能</td></tr>
+        <tr><td><b>版本节奏</b></td><td>持续（每周/每天）</td><td>固定版本号、周期性</td><td>持续，甚至每天多次</td></tr>
+        <tr><td><b>适合的团队</b></td><td>Web/SaaS、中小型团队、开源项目</td><td>需要同时维护多个老版本的客户端/软件产品</td><td>工程成熟度高、CI/CD 与测试极强的团队</td></tr>
+        <tr><td><b>复杂度</b></td><td>⭐ 低</td><td>⭐⭐⭐ 高（分支多、合并频繁）</td><td>⭐⭐ 对流程要求高</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">选择建议：拿不准就用 <b>GitHub Flow + Squash + Conventional Commits</b> —— 它覆盖了绝大多数团队的真实需求；Git Flow 是 2010 年代的产物，只有「必须长期并行维护多个发布线」时才值得它的复杂度。</p>
+</section>
+
+<!-- ============ 7 急救包 ============ -->
+<section id="rescue">
+  <h2>7. 急救包：出事时先看这里</h2>
+  <p class="lead">先记住一句保命话：<b>只要东西被 <code>commit</code> 过（甚至只是 <code>add</code> 过），Git 几乎都能找回来</b>；
+  真正危险的是 <code>reset --hard</code>、<code>clean -fd</code> 和强制推送。慌了就先 <code>git stash</code> + <code>git status</code>。</p>
+
+  <div class="acc">
+    <details>
+      <summary>提交信息写错了 / 忘了加文件（仅限还没 push）</summary>
+      <div class="acc-body">
+        <pre data-code><code>git add 漏掉的文件
+git commit --amend -m "feat: 正确的描述"</code></pre>
+        <p><code>--amend</code> 会<b>替换</b>最后一次提交（生成新哈希）。已经推送给别人用过的提交不要 amend，改用 <code>revert</code>。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>工作区改乱了，想丢掉本次修改</summary>
+      <div class="acc-body">
+        <pre data-code><code>git restore app.js              <span class="hl-c"># 丢弃单个文件的未暂存修改</span>
+git restore .                   <span class="hl-c"># 丢弃全部未暂存修改（危险）</span>
+git clean -nd                   <span class="hl-c"># 先看会删掉哪些「未跟踪」文件（dry-run，务必先跑）</span>
+git clean -fd                   <span class="hl-c"># 再真删；-x 连 .gitignore 忽略的也删</span></code></pre>
+        <p class="warn">未跟踪的新文件不在任何提交里，<code>clean</code> 之后无法找回。拿不准就先 <code>git stash -u</code>。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>add 多了，想从暂存区拿回来</summary>
+      <div class="acc-body">
+        <pre data-code><code>git restore --staged app.js     <span class="hl-c"># 取消暂存，工作区改动完整保留</span>
+git reset                       <span class="hl-c"># 取消全部暂存（旧写法，同样安全）</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>想回退到之前的某次提交（三种 reset 的区别）</summary>
+      <div class="acc-body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>命令</th><th>仓库 HEAD</th><th>暂存区</th><th>工作区文件</th><th>典型用途</th></tr></thead>
+            <tbody>
+              <tr><td><code>reset --soft HEAD~1</code></td><td>回退</td><td>保留</td><td>保留</td><td>把几次提交合成一次再写信息</td></tr>
+              <tr><td><code>reset --mixed HEAD~1</code>（默认）</td><td>回退</td><td>清空</td><td>保留</td><td>重新挑选要提交的文件</td></tr>
+              <tr><td><code>reset --hard HEAD~1</code></td><td>回退</td><td>清空</td><td><span class="bad">丢弃</span></td><td>彻底不要了（可用 reflog 救）</td></tr>
+              <tr><td><code>revert &lt;sha&gt;</code></td><td>前进</td><td>—</td><td>反向改动</td><td><b>已推送的提交</b>：用一个新提交抵消它</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>handy：切分支时改动放不下（stash）</summary>
+      <div class="acc-body">
+        <pre data-code><code>git stash push -u -m "半成品：导入功能"   <span class="hl-c"># -u 连未跟踪文件一起收走</span>
+git switch main
+git stash list
+git stash pop                     <span class="hl-c"># 恢复并删除该条</span>
+git stash apply stash@{1}         <span class="hl-c"># 恢复但保留</span>
+git stash drop stash@{0}</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>提交到了错误的分支</summary>
+      <div class="acc-body">
+        <pre data-code><code>git log --oneline -3              <span class="hl-c"># 记下错误的提交哈希 abc1234</span>
+git switch correct-branch
+git cherry-pick abc1234           <span class="hl-c"># 把它摘过来</span>
+git switch wrong-branch
+git reset --hard HEAD~1           <span class="hl-c"># 确认无误后再清掉原处的误提交</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>已经把东西删没了 —— 用 reflog 找回</summary>
+      <div class="acc-body">
+        <pre data-code><code>git reflog                        <span class="hl-c"># HEAD 的所有移动记录，包括被 reset 掉的提交</span>
+<span class="hl-c"># 输出如：HEAD@{2}: commit: 那个被我删掉的功能</span>
+git diff HEAD@{2}                 <span class="hl-c"># 先看看那次提交是什么</span>
+git reset --hard HEAD@{2}         <span class="hl-c"># 或 git cherry-pick HEAD@{2} 只取那一次</span></code></pre>
+        <p class="note">只要还没被 <code>gc</code> 回收（默认至少保留 30 天），本地历史基本都在。<b>先 <code>git branch backup</code> 做个保险再折腾</b>是好习惯。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>进入 (HEAD detached) 分离头指针状态</summary>
+      <div class="acc-body">
+        <p>常见于 <code>checkout</code> 到某个标签或哈希。此时提交不属于任何分支，切走就「看不见」了。</p>
+        <pre data-code><code>git switch -c fix-from-tag        <span class="hl-c"># 立刻把当前提交挂到新分支上（最常用）</span>
+git switch main                   <span class="hl-c"># 不需要这些提交就切回去</span></code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>大文件 / 密钥不小心提交了</summary>
+      <div class="acc-body">
+        <pre data-code><code>git rm --cached secrets.env       <span class="hl-c"># 停止跟踪，本地文件保留</span>
+echo "secrets.env" &gt;&gt; .gitignore
+git commit -m "chore: 移除不应入库的文件"</code></pre>
+        <p class="warn">注意：文件仍留在历史里。真正的清理要 <code>git filter-repo</code>（或 BFG）重写历史 + 强制推送，
+        且<b>密钥必须立刻作废重发</b> —— 只要推送过，就应视为已泄露。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 8 测验 ============ -->
+<section id="quiz">
+  <h2>8. 自测：10 道常见坑</h2>
+  <form id="quiz-form"><div id="quiz-box"></div>
+    <div class="quiz-foot">
+      <button class="btn primary" type="submit">提交答卷</button>
+      <button class="btn ghost" type="button" id="quiz-reset">重做</button>
+      <span id="quiz-score" class="score"></span>
+    </div>
+  </form>
+</section>
+
+<!-- ============ 9 速查表 ============ -->
+<section id="cheatsheet">
+  <h2>9. 命令速查表</h2>
+  <div class="search-row">
+    <input id="cmd-search" type="search" placeholder="🔍 搜索命令或说明，例如 stash、撤销、推送…" autocomplete="off">
+    <div class="tabs" id="cmd-tabs"></div>
+  </div>
+  <div class="table-wrap">
+    <table id="cmd-table">
+      <thead><tr><th>命令</th><th>作用</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="empty" id="cmd-empty" hidden>没有匹配的命令，换个关键词试试。</p>
+  <div class="tipbox">
+    <b>卡住时的三件套</b>：<code>git status</code>（我在哪、什么状态）→ <code>git log --oneline -10</code>（发生过什么）→
+    <code>git reflog</code>（我是怎么走到这的）。绝大多数「Git 坏了」都能靠这三条定位。
+  </div>
+</section>
+
+</main>
+
+<div class="adslot" style="min-height:70px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #2b3548;border-radius:12px;background:#161a24;color:#66748d;font-size:11px;letter-spacing:.5px;max-width:1160px;margin:0 auto 26px;padding:0 clamp(12px,2.6vw,30px)">AD · 广告位招租 · 此处展示 Google AdSense 广告</div>
+<footer class="foot">
+  <p>📚 建议学习路径：先把第 2 节的三区流转点到熟练 → 用第 3 节循环做一件真实小事 → 在第 4 节实验室玩懂分支 → 再碰 rebase 和远程 → 最后按第 6 节的 GitHub Flow 循环参与真实协作。</p>
+  <p class="dim">所有命令均为 Git 2.23+ 的现代写法（<code>switch</code>/<code>restore</code> 取代 <code>checkout</code> 的两个职责）。用 <code>git &lt;cmd&gt; -h</code> 或 <a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Pro Git 中文版</a> 查阅细节。</p>
+</footer>
+
+<script>
+/* ============ Git 交互式教学 · 交互脚本 ============ */
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------- 1) 代码块复制按钮 ---------- */
+  $$('pre[data-code]').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy';
+    btn.textContent = '复制';
+    btn.addEventListener('click', function () {
+      var text = pre.querySelector('code').innerText.replace(/\s*\n\s{0,}$/g, '\n');
+      var done = function () {
+        btn.textContent = '已复制 ✓';
+        btn.classList.add('done');
+        setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('done'); }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = '复制失败'; }
+        document.body.removeChild(ta);
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  /* ---------- 2) 三区流转演示 ---------- */
+  (function zoneLab() {
+    var term = $('#zone-term'), explain = $('#zone-status');
+    var boxWork = $('#zone-work'), boxStage = $('#zone-stage'), boxRepo = $('#zone-repo');
+    if (!term) return;
+
+    var lines = [];
+    var commits = []; // {sha, msg}
+    var stage = false;      // app.js 是否在暂存区
+    var modified = false;   // 工作区是否有未暂存改动
+    var EDIT_COUNT = 0;
+
+    function rhex(n) {
+      var h = '0123456789abcdef', s = '';
+      for (var i = 0; i < n; i++) s += h[Math.floor(Math.random() * 16)];
+      return s;
+    }
+    function card(cls, label, extra) {
+      return '<div class="file-card ' + cls + '">📄 app.js<span class="dim" style="margin-left:auto;font-size:10.5px">' +
+        label + '</span>' + (extra || '') + '</div>';
+    }
+    function render() {
+      boxWork.innerHTML = modified
+        ? card('mod', 'modified')
+        : '<p class="zone-hint">你正在编辑的真实文件<br><span class="dim">工作区干净</span></p>';
+      boxStage.innerHTML = stage
+        ? card('staged', 'staged')
+        : '<p class="zone-hint">下次提交的「购物车」<br><span class="dim">（空）</span></p>';
+      boxRepo.innerHTML = commits.length
+        ? commits.map(function (c) {
+            return '<div class="file-card comm">✅ <b style="color:#8ee6b6">' + c.sha.slice(0, 7) + '</b>&nbsp;<span class="dim">' + c.msg + '</span></div>';
+          }).join('')
+        : '<p class="zone-hint">还没有任何提交<br><span class="dim">initial commit 待创建</span></p>';
+      term.innerHTML = lines.map(function (l) { return '<span class="' + l.k + '">' + l.t + '</span>'; }).join('') + '<span class="cursor"></span>';
+      term.scrollTop = term.scrollHeight;
+      status();
+    }
+    function out(k, t) { lines.push({ k: k, t: t }); if (lines.length > 60) lines.shift(); }
+    function run(cmd, outs) {
+      out('cmd', '<b>$</b> ' + cmd);
+      (outs || []).forEach(function (o) { out(o.k || 'out', o.t !== undefined ? o.t : o); });
+    }
+    function flash(el, good) {
+      if (!el) return;
+      el.classList.remove('flash', 'flash-good');
+      void el.offsetWidth;
+      el.classList.add(good ? 'flash-good' : 'flash');
+      setTimeout(function () { el.classList.remove('flash', 'flash-good'); }, 900);
+    }
+    function status() {
+      var n = commits.length;
+      var branch = n ? 'main (root-commit → ' + commits[n - 1].sha.slice(0, 7) + ')' : 'main (无提交)';
+      var st = 'On branch ' + branch + '\n\nChanges to be committed:\n  (use "git restore --staged <file>…" to unstage)\n' +
+        (stage ? '\tnew file:   app.js\n' : '\t(none)\n') +
+        '\nChanges not staged for commit:\n' +
+        (modified ? '\tmodified:   app.js\n' : '\t(none)\n');
+      var tips = {
+        clean: '工作区与暂存区都干净，且无提交。先点 <b>✏️ 修改文件</b> 造一点改动。',
+        mod: 'Git 现在<b>知道</b> app.js 变了，但它不会自动跟踪内容。要提交得先 <code>add</code>；不想要就 <code>restore</code> 丢弃。',
+        both: '注意：暂存的是你 <code>add</code> <b>那一刻</b>的内容快照。之后又改了工作区，就必须再 <code>add</code> 一次，否则提交里没有新改动 —— 这是新手最常见的坑。',
+        staged: '暂存 ≠ 提交。此刻仓库里什么也没变，关掉终端也不会留下历史。<code>add</code> 只是把「要提交什么」这件事说清楚。',
+        committed: '提交成功了：历史里多了一个不可变快照。<b>回退这一步</b>用 <code>git reset --soft HEAD~1</code>（回到暂存状态）或 <code>git reset --hard HEAD~1</code>（连改动一起丢）。'
+      };
+      var key = n && !stage && !modified ? 'committed' : (stage && modified ? 'both' : stage ? 'staged' : modified ? 'mod' : (commits.length ? 'clean' : 'clean'));
+      if (!n && !stage && !modified) key = 'clean';
+      explain.innerHTML = '<h4>此刻 <code>git status</code> 会告诉你：</h4><span class="st">' + st + '</span>' +
+        '<div>' + tips[key] + '</div>';
+    }
+
+  var acts = {
+      edit: function () {
+        EDIT_COUNT++; modified = true;
+        run('echo "// 第 ' + EDIT_COUNT + ' 次改动" >> app.js',
+          stage ? [{ k: 'bad', t: '提示：app.js 已在暂存区，新改动「尚未暂存」。稍后需再次 git add。' }] : []);
+      },
+      add: function () {
+        if (!modified && stage) { run('git add app.js', [{ k: 'out', t: '（无新改动可暂存，暂存区已是最新）' }]); return; }
+        if (!modified && !stage) { run('git add app.js', [{ k: 'bad', t: 'warning: 工作区没有任何改动可暂存。先点「✏️ 修改文件」。' }]); return; }
+        stage = true; modified = false; flash(boxStage);
+        run('git add app.js', [{ k: 'ok', t: '✔ 已写入暂存区。现在 "Changes to be committed" 里有它了。' }]);
+      },
+      unstage: function () {
+        if (!stage) { run('git restore --staged app.js', [{ k: 'bad', t: 'error: 路径 "app.js" 与暂存区不匹配（它没被 add 过）' }]); return; }
+        stage = false; modified = true; flash(boxWork);
+        run('git restore --staged app.js', [{ k: 'ok', t: '✔ 已从暂存区撤出，文件内容一字未改（安全操作）。' }]);
+      },
+      commit: function () {
+        if (!stage) {
+          run('git commit -m "…"', [
+            { k: 'bad', t: 'On branch main\nInitial commit\nUntracked files:\n\tapp.js\n\nnothing added to commit but untracked files present' },
+            { k: 'ok', t: '→ 先 git add app.js，把「要提交什么」告诉 Git。' }
+          ]);
+          return;
+        }
+        if (modified) {
+          run('git commit -m "…"', [{ k: 'bad', t: '⚠ 提交只包含暂存的内容：工作区里更晚的改动不会进入本次提交。' }]);
+        }
+        var n = commits.length + 1;
+        var sha = rhex(40);
+        commits.push({ sha: sha, msg: '第 ' + n + ' 次提交（快照 #' + n + '）' });
+        stage = false; modified = false; flash(boxRepo, true);
+        run('git commit -m "update app.js (#' + n + ')"', [
+          { k: 'ok', t: '[main ' + sha.slice(0, 7) + '] update app.js (#' + n + ')\n 1 file changed, 1 insertion(+)' },
+          { k: 'out', t: '→ 提交 = 给当前暂存内容拍一张只读快照，并把 main 指针前移一格。' }
+        ]);
+      },
+      discard: function () {
+        if (!modified) { run('git restore app.js', [{ k: 'bad', t: 'error: 工作区没有未暂存的改动可丢弃。' }]); return; }
+        modified = false; flash(boxWork);
+        run('git restore app.js', [{ k: 'ok', t: '✔ 工作区文件已还原为暂存区/HEAD 的版本 —— 你的改动没了。' }]);
+        out('bad', '这不会写进任何日志。改前不放心就 git stash -u 或先复制一份。');
+      },
+      reset: function () {
+        lines = []; commits = []; stage = false; modified = false; EDIT_COUNT = 0;
+        run('rm -rf .git && git init', [{ k: 'ok', t: 'Initialized empty Git repository in /demo/.git/' }]);
+      }
+    };
+
+    $$('.lab-toolbar .btn[data-zone]').forEach(function (b) {
+      b.addEventListener('click', function () { var a = acts[b.dataset.zone]; if (a) { a(); render(); } });
+    });
+    acts.reset(); render();
+  })();
+
+  /* ---------- 3) 分支实验室 ---------- */
+  (function branchLab() {
+    var svg = $('#graph');
+    if (!svg) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var COLS = 7, COLW = 96, LANEH = 54, X0 = 54, Y0 = 46, R = 15;
+    var colors = ['#4f8cff', '#3ecf8e', '#f0b429', '#a78bfa', '#ff8fa3', '#5eead4', '#fb923c'];
+    var commits, branches, head, timer, seq;
+
+    function hex(n) {
+      var h = '0123456789abcdef', s = '';
+      for (var i = 0; i < n; i++) s += h[Math.floor(Math.random() * 16)];
+      return s;
+    }
+    function el(name, attrs, text) {
+      var e = document.createElementNS(NS, name);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function xy(c) { return [X0 + c.col * COLW, Y0 + c.lane * LANEH]; }
+    function find(id) { for (var i = 0; i < commits.length; i++) if (commits[i].id === id) return commits[i]; return null; }
+    function short(id) { var c = find(id); return c ? c.sha.slice(0, 7) : '(无)'; }
+
+    function log(t) {
+      var box = $('#lab-term');
+      var span = document.createElement('span');
+      span.className = t.k;
+      span.textContent = t.t;
+      box.appendChild(span);
+      box.scrollTop = box.scrollHeight;
+      while (box.childNodes.length > 70) box.removeChild(box.firstChild);
+    }
+    function run(cmd, outs) {
+      clearTimeout(timer);
+      var all = [{ k: 'cmd', t: '$ ' + cmd }].concat((outs || []).map(function (o) {
+        return typeof o === 'string' ? { k: 'out', t: o } : o;
+      }));
+      var i = 0;
+      (function step() {
+        if (i >= all.length) return;
+        log(all[i++]);
+        timer = setTimeout(step, 190);
+      })();
+    }
+    function sync() {
+      $('#cur-branch').textContent = head;
+      $('#head-info').textContent = 'refs/heads/' + head + ' → ' + short(branches[head].sha);
+      $('#branch-list').innerHTML = Object.keys(branches).map(function (b) {
+        return '<span class="pill' + (b === head ? ' cur' : '') + '">' + b + '</span>';
+      }).join('');
+    }
+
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var rows = Object.keys(branches).length;
+      var maxCol = 0;
+      commits.forEach(function (c) { maxCol = Math.max(maxCol, c.col); });
+      var W = Math.max(760, X0 + maxCol * COLW + 250);
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (Y0 + (rows - 1) * LANEH + 66));
+
+      // 每条分支的泳道基线
+      Object.keys(branches).forEach(function (b, i) {
+        svg.appendChild(el('line', { x1: 22, y1: Y0 + i * LANEH, x2: W - 22, y2: Y0 + i * LANEH, stroke: branches[b].color, 'class': 'lane' }));
+      });
+      // 边（父子连线）
+      commits.forEach(function (c) {
+        if (!c.parents.length) return;
+        var p0 = xy(c);
+        c.parents.forEach(function (pid) {
+          var pa = find(pid);
+          if (!pa) return;
+          var q = xy(pa);
+          var mx = (p0[0] + q[0]) / 2;
+          var d = (Math.abs(p0[1] - q[1]) < 1)
+            ? 'M' + p0[0] + ',' + p0[1] + ' L' + q[0] + ',' + q[1]
+            : 'M' + q[0] + ',' + q[1] + ' C' + mx + ',' + q[1] + ' ' + mx + ',' + p0[1] + ' ' + p0[0] + ',' + p0[1];
+          svg.appendChild(el('path', { d: d, stroke: branches[c.branch].color, 'class': 'edge' }));
+        });
+      });
+      // 节点
+      commits.forEach(function (c) {
+        var p = xy(c), col = branches[c.branch] ? branches[c.branch].color : '#7dd3fc';
+        svg.appendChild(el('circle', { cx: p[0], cy: p[1], r: R, stroke: col, 'class': 'node' }));
+        svg.appendChild(el('text', { x: p[0], y: p[1] + 3.2, 'text-anchor': 'middle', 'class': 'ntext' }, c.sha.slice(0, 3)));
+      });
+      // 分支标签 + HEAD
+      Object.keys(branches).forEach(function (b, i) {
+        var c = find(branches[b].sha);
+        if (!c) return;
+        var p = xy(c);
+        var g = el('g', {});
+        var txt = b;
+        var w = 14 + txt.length * 6.6;
+        g.appendChild(el('rect', { x: p[0] + R + 4, y: p[1] - 23, width: w, height: 17, rx: 5, fill: branches[b].color, opacity: '.9' }));
+        g.appendChild(el('text', { x: p[0] + R + 10, y: p[1] - 10.5, 'class': 'lbl', fill: '#0d1220' }, txt));
+        if (b === head) {
+          var t2 = 'HEAD → ' + b, w2 = 14 + t2.length * 6.2;
+          g.appendChild(el('rect', { x: p[0] + R + 4, y: p[1] + 6, width: w2, height: 17, rx: 5, fill: 'none', stroke: '#fff', 'stroke-dasharray': '3 2' }));
+          g.appendChild(el('text', { x: p[0] + R + 10, y: p[1] + 18.5, 'class': 'headlbl' }, t2));
+        }
+        svg.appendChild(g);
+      });
+      // 提交信息
+      commits.forEach(function (c) {
+        var p = xy(c);
+        svg.appendChild(el('text', { x: p[0] + R + 6, y: p[1] + 34, 'font-size': '9.5', fill: '#7f8ea8' }, c.msg));
+      });
+      sync();
+    }
+
+    function mkCol(lane) {
+      var max = -1;
+      commits.forEach(function (c) { if (c.lane === lane && c.col > max) max = c.col; });
+      return max + 1;
+    }
+    function commit(msg) {
+      var b = branches[head];
+      var c = {
+        id: 'c' + (++seq), sha: hex(40), msg: msg, branch: head,
+        lane: b.lane, col: mkCol(b.lane), parents: b.sha ? [b.sha] : []
+      };
+      commits.push(c);
+      b.sha = c.id;
+      return c;
+    }
+
+    function nameAsk(what) {
+      var v = window.prompt(what, what.indexOf('新分支') >= 0 ? 'feat' : (what.indexOf('合并') >= 0 ? 'feat' : 'main'));
+      return v ? v.trim().replace(/\s+/g, '-') : null;
+    }
+
+    var actions = {
+      commit: function () {
+        var n = commits.filter(function (c) { return c.branch === head; }).length + 1;
+        var parent = branches[head].sha;
+        var c = commit(head + ' 改动 #' + n);
+        draw();
+        run('git commit -m "' + c.msg + '"', [
+          { k: 'ok', t: '[' + head + ' ' + c.sha.slice(0, 7) + '] ' + c.msg },
+          { k: 'out', t: '分支指针 ' + head + ' 从 ' + short(parent) + ' 前移到 ' + c.sha.slice(0, 7) + '。所谓「提交」，就是存一个不可变快照 + 把这个指针挪一格。' }
+        ]);
+      },
+      newBranch: function () {
+        var name = nameAsk('新分支名（在当前提交上创建并切换）');
+        if (!name) return;
+        if (branches[name]) { run('git switch -c ' + name, [{ k: 'bad', t: "fatal: a branch named '" + name + "' already exists" }]); return; }
+        var lane = Object.keys(branches).length, from = head;
+        branches[name] = { sha: branches[head].sha, color: colors[lane % colors.length], lane: lane };
+        head = name;
+        draw();
+        run('git switch -c ' + name, [
+          { k: 'ok', t: "Switched to a new branch '" + name + "'" },
+          { k: 'out', t: '注意：' + name + ' 现在和 ' + from + ' 指向同一个提交（' + short(branches[name].sha) + '）—— 建分支只是贴了张新便利贴，没有复制任何文件，所以再大的仓库也是瞬间完成。' }
+        ]);
+      },
+      switchB: function () {
+        var others = Object.keys(branches).filter(function (b) { return b !== head; });
+        if (!others.length) { run('git switch <branch>', [{ k: 'bad', t: '当前只有一个分支，先「新建并切换分支」。' }]); return; }
+        var t = window.prompt('切换到哪个分支？\n可选：' + others.join(' / '), others[0]);
+        if (!t) return;
+        if (!branches[t]) { run('git switch ' + t, [{ k: 'bad', t: "fatal: invalid reference: " + t }]); return; }
+        var from = head; head = t; draw();
+        run('git switch ' + t, [
+          { k: 'ok', t: "Switched to branch '" + t + "'" },
+          { k: 'out', t: '从 ' + from + '（' + short(branches[from].sha) + '）到 ' + t + '（' + short(branches[t].sha) + '）：Git 把工作区从 ' + from + ' 的快照原地换成 ' + t + ' 的快照，磁盘上只改写有差异的文件。' }
+        ]);
+      },
+      merge: function () {
+        var others = Object.keys(branches).filter(function (b) { return b !== head; });
+        if (!others.length) { run('git merge <branch>', [{ k: 'bad', t: '只有一个分支，无法合并。先「新建分支」并在那上面提交一次。' }]); return; }
+        var t = window.prompt('把哪个分支并入当前分支 ' + head + '？\n可选：' + others.join(' / '), others[0]);
+        if (!t) return;
+        if (!branches[t]) { run('git merge ' + t, [{ k: 'bad', t: "fatal: Not a valid object name " + t }]); return; }
+        var src = branches[t], dst = branches[head], cur = branches[head].sha;
+
+        if (!cur) { // 目标分支还没有提交
+          dst.sha = src.sha; draw();
+          run('git merge ' + t, [{ k: 'ok', t: 'Fast-forward\n（目标分支还没有提交，指针直接搬过去）' }]); return;
+        }
+        if (cur === src.sha) {
+          run('git merge ' + t, [{ k: 'ok', t: 'Already up to date.' }, '两者指向同一个提交，无事发生。']); return;
+        }
+        if (!src.sha) { run('git merge ' + t, [{ k: 'ok', t: 'Already up to date.' }, t + ' 上还没有任何提交。']); return; }
+        // src 已包含 dst（可快进）
+        if (hasAncestor(src.sha, cur)) {
+          dst.sha = src.sha; draw();
+          run('git merge ' + t, [
+            { k: 'ok', t: 'Updating ' + short(cur) + '..' + short(src.sha) + '\nFast-forward' },
+            { k: 'out', t: '快进合并（fast-forward）：' + head + ' 是 ' + t + ' 的祖先，只需把指针前移，不产生新提交。想在历史里留下合并痕迹用 git merge --no-ff。' }
+          ]);
+          return;
+        }
+        // 真正的三方合并 → merge commit
+        var both = [];
+        collect(src.sha, both);
+        var keep = {};
+        (function walk(id) {
+          var c = find(id);
+          if (!c) return;
+          c.parents.forEach(function (p) { if (!keep[p]) { keep[p] = 1; walk(p); } });
+        })(cur);
+        var extra = both.filter(function (id) { return !keep[id]; });
+        var merged = {
+          id: 'c' + (++seq), sha: hex(40), msg: "Merge branch '" + t + "' into " + head,
+          branch: head, lane: dst.lane, col: mkCol(dst.lane) + (extra.length ? extra.length : 1),
+          parents: [cur, src.sha]
+        };
+        commits.push(merged);
+        dst.sha = merged.id;
+        draw();
+        run('git merge ' + t, [
+          { k: 'ok', t: 'Merge made by the "ort" strategy.\n ' + extra.length + ' files changed' },
+          { k: 'out', t: '两条线各自都有独立提交，Git 找到共同祖先做三方合并，生成一个有两个父提交的 merge commit（' + merged.sha.slice(0, 7) + '，带进 ' + extra.length + ' 处改动）。若同一行被双方改过 → 报 CONFLICT，需手工解决后 git add + git commit。' }
+        ]);
+      },
+      rebase: function () {
+        if (head === 'main') { run('git rebase main', [{ k: 'bad', t: '你正在 main 上，rebase 到自己没有意义。先切到功能分支（如 feat）再试。' }]); return; }
+        if (!branches.main) { run('git rebase main', [{ k: 'bad', t: "fatal: invalid reference: main —— 先「清空重来」恢复 main。" }]); return; }
+        var base = branches.main.sha, cur = branches[head].sha;
+        if (!cur) { run('git rebase main', [{ k: 'bad', t: '当前分支没有提交，无需 rebase。' }]); return; }
+        if (base === cur) { run('git rebase main', [{ k: 'ok', t: 'Current branch ' + head + ' is up to date.' }]); return; }
+        if (hasAncestor(cur, base)) { run('git rebase main', [{ k: 'ok', t: 'Current branch ' + head + ' is up to date.' }, 'main 已经在你这条线上了。']); return; }
+        var tail = [];
+        (function walk(id) {
+          if (!id || id === base) return;
+          var c = find(id);
+          if (!c || c.branch !== head) return;
+          tail.unshift(c);
+          walk(c.parents[0]);
+        })(cur);
+        if (!tail.length) { run('git rebase main', [{ k: 'ok', t: 'Current branch ' + head + ' is up to date.' }]); return; }
+        var from = find(base);
+        var firstCol = (from ? from.col : 0) + 1;
+        commits = commits.filter(function (c) { return tail.indexOf(c) < 0; });
+        tail.forEach(function (c, i) {
+          // 重放：同 id、新哈希、新位置；父提交指向 base 或上一个重放出的提交
+          commits.push({
+            id: c.id, sha: hex(40), msg: c.msg, branch: head,
+            lane: branches[head].lane, col: firstCol + i,
+            parents: [i ? tail[i - 1].id : base]
+          });
+        });
+        branches[head].sha = tail[tail.length - 1].id;
+        draw();
+        run('git rebase main', [
+          { k: 'ok', t: 'Successfully rebased and updated refs/heads/' + head + '.' },
+          { k: 'out', t: '把 ' + head + ' 上的 ' + tail.length + ' 个提交「摘下来 → 重放」到 main 最新提交（' + short(base) + '）之后，历史变成一条直线。代价：这些提交的哈希全部变了（等于重写历史），所以已推送给别人的分支不要这样干；真要推就得 git push --force-with-lease。' }
+        ]);
+      },
+      resetAll: function () { init(); }
+    };
+
+    function collect(id, acc) {
+      var c = find(id);
+      if (!c) return;
+      acc.push(id);
+      c.parents.forEach(function (p) {
+        if (acc.indexOf(p) < 0) collect(p, acc);
+      });
+    }
+    function hasAncestor(from, target) {
+      var seen = [], ok = false;
+      (function walk(id) {
+        if (!id || ok) return;
+        if (id === target) { ok = true; return; }
+        if (seen.indexOf(id) >= 0) return;
+        seen.push(id);
+        var c = find(id);
+        if (c) c.parents.forEach(walk);
+      })(from);
+      return ok;
+    }
+
+    function init() {
+      commits = []; branches = {}; head = 'main'; seq = 0;
+      branches.main = { sha: null, color: colors[0], lane: 0 };
+      $('#lab-term').innerHTML = '';
+      draw();
+      run('git init', [
+        { k: 'ok', t: 'Initialized empty Git repository in /demo/.git/' },
+        'main 上还没有任何提交。建议顺序：①「💾 在当前分支提交」两次 → ②「🌿 新建分支 feat」→ ③ 在 feat 上提交两次 → ④「🔀 切换」回 main 并提交一次 → ⑤「🔗 合并 feat」。'
+      ]);
+    }
+
+    [['lb-commit', 'commit'], ['lb-new', 'newBranch'], ['lb-switch', 'switchB'],
+     ['lb-merge', 'merge'], ['lb-rebase', 'rebase'], ['lb-reset', 'resetAll']].forEach(function (p) {
+      var b = document.getElementById(p[0]);
+      if (b) b.addEventListener('click', actions[p[1]]);
+    });
+    init();
+  })();
+
+  /* ---------- 4) 协作工作流：GitHub Flow 循环图 ---------- */
+  (function flowLab() {
+    var svg = $('#flow-svg');
+    if (!svg) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var W = 180, H = 84;
+    var NODES = [
+      { t: '① 开分支', s: '从 main 切出短命分支', x: 30, y: 34 },
+      { t: '② 本地提交', s: '小步 commit，信息写清楚', x: 300, y: 34 },
+      { t: '③ 保持同步', s: 'rebase 最新 origin/main', x: 570, y: 34 },
+      { t: '④ 推送分支', s: 'push -u origin feat', x: 570, y: 196 },
+      { t: '⑤ PR + 评审', s: 'CI 跑测试，同事评论', x: 300, y: 196 },
+      { t: '⑥ 合并并部署', s: 'main 前进 → 发布', x: 30, y: 196 }
+    ];
+    var INFO = [
+      {
+        h: '① 开分支：一切从 main 开始',
+        c: 'git switch main && git pull\ngit switch -c feat/csv-import',
+        li: [
+          '分支名用前缀表达意图：<code>feat/</code> <code>fix/</code> <code>docs/</code> <code>chore/</code>，别人扫一眼侧栏就懂。',
+          '一个分支只做一件事。想顺手改点别的？<b>另开一个分支</b>，别塞进同一个 PR。',
+          '分支越短命越好（1~3 天）。长期分支 = 未来的冲突地狱。'
+        ]
+      },
+      {
+        h: '② 本地提交：给自己留台阶',
+        c: 'git add -p\ngit commit -m "feat: 支持 CSV 批量导入"',
+        li: [
+          '提交是「本地草稿」，不必完美，但每个提交最好都能独立编译通过。',
+          '主题行说「做了什么」，正文说「为什么」。见本页下面的 ③ 提交信息生成器。',
+          '脏提交（wip / typo）没关系，合并时用 Squash 收干净。'
+        ]
+      },
+      {
+        h: '③ 保持同步：别攒冲突',
+        c: 'git fetch origin\ngit rebase origin/main     <span class="hl-c"># 本地未推送，rebase 安全</span>',
+        li: [
+          'main 每前进一次就早一点接进来 —— 冲突要趁记忆还热的时候解决。',
+          '只在<b>自己尚未推送</b>（或明确只有自己在用）的分支上 rebase。',
+          '已经推过的分支要重写：用 <code>git push --force-with-lease</code>，绝不用裸 <code>-f</code>。'
+        ]
+      },
+      {
+        h: '④ 推送分支：让改动可见',
+        c: 'git push -u origin feat/csv-import',
+        li: [
+          '<code>-u</code> 建立跟踪关系，之后一条 <code>git push</code> 即可。',
+          '只推自己的分支，永远不直接推 main —— 打开保护分支，让机器替你守住规矩。',
+          '推完就是备份：换电脑、硬盘挂了，工作都在。'
+        ]
+      },
+      {
+        h: '⑤ 开 PR + 评审：改的是同一分支',
+        c: 'git commit -m "fix: 处理空行报错"\ngit push               <span class="hl-c"># PR 自动更新</span>',
+        li: [
+          '评审中被要求修改时，<b>在同一个分支继续提交并 push</b>，PR 会自动刷新 —— 不要新开 PR。',
+          'CI 红了先修 CI。跳过检查合并一次，就会有第二次。',
+          '描述里写「为什么 + 怎么测的 + 影响面」，比贴一大段 diff 有价值得多。'
+        ]
+      },
+      {
+        h: '⑥ 合并 → 部署 → 删分支',
+        c: 'Squash and merge      <span class="hl-c"># 或团队约定的方式</span>\ngit push origin --delete feat/csv-import\ngit switch main && git pull',
+        li: [
+          '合并方式怎么挑见下面 ②；合并后<b>立刻部署</b>，这才是 GitHub Flow 的意义。',
+          '删掉功能分支：使命已结束，留着只会让人误以为还有未完成的工作。',
+          '回到 main 拉最新，下一个循环从 ① 重新开始。'
+        ]
+      }
+    ];
+
+    function el(n, a, t) {
+      var e = document.createElementNS(NS, n);
+      for (var k in a) e.setAttribute(k, a[k]);
+      if (t !== undefined) e.textContent = t;
+      return e;
+    }
+    // 每条边连接节点 i 与 i+1（最后一条回到节点 0）
+    function edgeList() {
+      var P = NODES.map(function (n) { return { cx: n.x + W / 2, cy: n.y + H / 2, l: n.x, r: n.x + W, t: n.y, b: n.y + H }; });
+      return [
+        [P[0].r, P[0].cy, P[1].l, P[1].cy],
+        [P[1].r, P[1].cy, P[2].l, P[2].cy],
+        [P[2].cx, P[2].b, P[3].cx, P[3].t],
+        [P[3].l, P[3].cy, P[4].r, P[4].cy],
+        [P[4].l, P[4].cy, P[5].r, P[5].cy],
+        [P[5].cx, P[5].t, P[0].cx, P[0].b]
+      ];
+    }
+
+    var defs = el('defs', {});
+    var mk = el('marker', { id: 'fah', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6.5', markerHeight: '6.5', orient: 'auto-start-reverse' });
+    mk.appendChild(el('path', { d: 'M0,0 L10,5 L0,10 z', fill: '#7f8ea8' }));
+    defs.appendChild(mk);
+    svg.appendChild(defs);
+
+    var E = edgeList();
+    E.forEach(function (e) {
+      svg.appendChild(el('line', { x1: e[0], y1: e[1], x2: e[2], y2: e[3], stroke: '#3a4560', 'class': 'arc', 'marker-end': 'url(#fah)' }));
+    });
+    var live = E.map(function (e) {
+      var l = el('line', { x1: e[0], y1: e[1], x2: e[2], y2: e[3], stroke: '#3ecf8e', 'class': 'arc-live', opacity: '0' });
+      svg.appendChild(l); return l;
+    });
+    var boxes = [], titles = [];
+    NODES.forEach(function (n) {
+      var g = el('g', {});
+      var r = el('rect', { x: n.x, y: n.y, width: W, height: H, rx: 11, 'class': 'nbox' });
+      g.appendChild(r); boxes.push(r);
+      var t = el('text', { x: n.x + 15, y: n.y + 34, 'class': 'nt' }, n.t);
+      g.appendChild(t); titles.push(t);
+      g.appendChild(el('text', { x: n.x + 15, y: n.y + 58, 'class': 'ns' }, n.s));
+      svg.appendChild(g);
+    });
+    var dot = el('circle', { r: 7, cx: NODES[0].x + 12, cy: NODES[0].y - 9, fill: '#4f8cff', 'class': 'dot glow' });
+    svg.appendChild(dot);
+
+    var cur = 0, anim = 0, timer = null;
+    function paint() {
+      boxes.forEach(function (b, i) { b.setAttribute('class', 'nbox' + (i === cur ? ' on' : (i < cur ? ' done' : ''))); });
+      titles.forEach(function (t, i) { t.setAttribute('class', 'nt' + (i === cur ? ' on' : (i < cur ? ' done' : ''))); });
+      live.forEach(function (l, i) { l.setAttribute('opacity', i <= cur - 1 ? '1' : '0'); });
+      $('#flow-step').textContent = (cur + 1) + ' / ' + NODES.length + (cur === NODES.length - 1 ? ' · 下一步回到 ①' : '');
+      var info = INFO[cur];
+      $('#flow-explain').innerHTML = '<h4>' + info.h + '</h4>' +
+        '<span class="cmdline">' + info.c + '</span><ul>' + info.li.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>';
+    }
+    function travel(edgeIdx, fill, done) {
+      var e = E[edgeIdx];
+      if (e === undefined) { if (done) done(); return; }
+      var token = ++anim, t0 = null, dur = 520;
+      dot.setAttribute('fill', fill);
+      (function step(ts) {
+        if (token !== anim) return;
+        if (t0 === null) t0 = ts;
+        var k = Math.min(1, (ts - t0) / dur);
+        var ease = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        dot.setAttribute('cx', e[0] + (e[2] - e[0]) * ease);
+        dot.setAttribute('cy', e[1] + (e[3] - e[1]) * ease);
+        if (k < 1) requestAnimationFrame(step); else if (done) done();
+      })(performance.now());
+    }
+    function placeDot() {
+      dot.setAttribute('cx', NODES[cur].x + 12);
+      dot.setAttribute('cy', NODES[cur].y - 9);
+    }
+    function go(next) {
+      next = (next + NODES.length) % NODES.length;
+      if (next === cur + 1) {
+        // 前进一步：沿边动画
+        travel(cur, cur === NODES.length - 2 ? '#3ecf8e' : '#4f8cff', function () {
+          cur = next; paint();
+        });
+      } else {
+        // 后退 / 环形跳转（⑥→①、①→⑥）：直接落位，不做五边巡游
+        anim++; cur = next; paint(); placeDot();
+      }
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; $('#flow-auto').textContent = '▶ 自动播放'; }
+    }
+    $('#flow-next').addEventListener('click', function () { stop(); go(cur + 1); });
+    $('#flow-prev').addEventListener('click', function () { stop(); go(cur - 1); });
+    $('#flow-auto').addEventListener('click', function () {
+      if (timer) { stop(); return; }
+      this.textContent = '⏸ 暂停';
+      timer = setInterval(function () { go(cur + 1); }, 2800);
+    });
+    paint();
+  })();
+
+  /* ---------- 5) 提交信息生成器 ---------- */
+  (function commitBuilder() {
+    var out = $('#b-out');
+    if (!out) return;
+    var TYPES = [
+      ['feat', '新功能 → semver minor'],
+      ['fix', '修 bug → semver patch'],
+      ['docs', '只改文档'],
+      ['style', '格式（不改逻辑：空格、格式化）'],
+      ['refactor', '重构：既不加功能也不修 bug'],
+      ['perf', '性能优化'],
+      ['test', '增删测试'],
+      ['build', '构建系统 / 依赖（npm、docker…）'],
+      ['ci', 'CI 配置与脚本'],
+      ['chore', '杂务：不属于以上任何一类'],
+      ['revert', '回滚某次提交']
+    ];
+    var state = { type: 'feat', scope: '', brk: false, subj: '', body: '' };
+
+    $('#b-type').innerHTML = TYPES.map(function (t, i) {
+      return '<span class="pill' + (i === 0 ? ' on' : '') + '" data-t="' + t[0] + '" title="' + t[1] + '">' + t[0] + '</span>';
+    }).join('');
+
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function render() {
+      var tips = [];
+      var td = TYPES.filter(function (t) { return t[0] === state.type; })[0][1];
+      out.innerHTML = '<span class="t-scope">' + esc(state.type + (state.scope ? '(' + state.scope + ')' : '')) + '</span>' +
+        (state.brk ? '<span class="t-brk">!</span>' : '') + ': ' +
+        '<span style="color:#fff">' + esc(state.subj || '‹描述›') + '</span>' +
+        (state.body ? '\n\n' + esc(state.body) : '') +
+        (state.brk ? '\n\n<span class="t-brk">BREAKING CHANGE: </span>' + esc(state.body || '说明破坏了什么、如何迁移') : '');
+
+      tips.push('<b>' + state.type + '</b>：' + td + '。');
+      if (!state.subj) {
+        tips.push('<span class="no">主题必填</span> —— 动词开头、第一人称现在时（「新增」而不是「新增了」）。');
+      } else {
+        if (state.subj.length > 50) tips.push('<span class="no">主题 ' + state.subj.length + ' 字偏长</span>：git log --oneline 和 GitHub 标题都会被截断，建议 ≤50。');
+        if (/[。.，,；;]$/.test(state.subj)) tips.push('<span class="no">去掉结尾标点</span> —— 它是标题，不是句子。');
+        if (state.type === 'feat' && /^(fix|修复|修改)/.test(state.subj)) tips.push('类型与内容似乎不符：写的是修复，类型却是 feat。');
+        if (state.subj.length <= 50 && !/[。.，,；;]$/.test(state.subj)) tips.push('✅ 格式合法，可被 commitlint 接受并用于自动生成 CHANGELOG。');
+      }
+      if (state.brk) tips.push('破坏性变更：除 <code>!</code> 外还要有 <code>BREAKING CHANGE:</code> 页脚，semver 进 <b>major</b>。');
+      $('#b-tips').innerHTML = tips.join(' ');
+    }
+
+    $('#b-type').addEventListener('click', function (e) {
+      var p = e.target.closest('.pill'); if (!p) return;
+      $$('#b-type .pill').forEach(function (x) { x.classList.remove('on'); });
+      p.classList.add('on'); state.type = p.dataset.t; render();
+    });
+    $('#b-scope').addEventListener('input', function () { state.scope = this.value.trim().replace(/[()\s]/g, ''); render(); });
+    $('#b-subj').addEventListener('input', function () { state.subj = this.value.trim(); render(); });
+    $('#b-body').addEventListener('input', function () { state.body = this.value.trim(); render(); });
+    $('#b-break').addEventListener('change', function () { state.brk = this.checked; render(); });
+    render();
+  })();
+
+  /* ---------- 6) 速查表 ---------- */
+  (function cheatsheet() {
+    var tbody = $('#cmd-table tbody');
+    if (!tbody) return;
+    var CATS = ['全部', '入门', '暂存提交', '分支', '查看历史', '远程', '协作', '撤销恢复', '技巧'];
+    var DATA = [
+      ['git init', '把当前目录变成 Git 仓库（新增 .git 目录）', '入门'],
+      ['git clone &lt;url&gt;', '克隆远程仓库（含全部分支与完整历史）', '入门'],
+      ['git config --global user.name "…"', '设置提交作者名（写进每个提交）', '入门'],
+      ['git config --list', '查看当前生效的配置', '入门'],
+      ['git status', '当前分支、已改动、已暂存、未跟踪 —— 卡住先跑它', '入门'],
+      ['git add &lt;file&gt;', '暂存指定文件', '暂存提交'],
+      ['git add .', '暂存当前目录下所有已跟踪+新文件', '暂存提交'],
+      ['git add -p', '逐块交互式挑选要暂存的改动', '暂存提交'],
+      ['git commit -m "msg"', '把暂存区内容做成一次提交', '暂存提交'],
+      ['git commit -am "msg"', '自动暂存已跟踪文件的改动后提交（不含新文件）', '暂存提交'],
+      ['git commit --amend', '修改最后一次提交的信息或内容（未推送时用）', '暂存提交'],
+      ['git switch -c &lt;br&gt;', '新建并切换到分支（旧写法 git checkout -b）', '分支'],
+      ['git switch &lt;br&gt;', '切换分支', '分支'],
+      ['git branch', '列出本地分支；-a 含远程；-d 删除；-D 强删', '分支'],
+      ['git merge &lt;br&gt;', '把分支并入当前分支（可能生成 merge commit）', '分支'],
+      ['git merge --no-ff &lt;br&gt;', '禁止快进，强制保留一个合并提交', '分支'],
+      ['git rebase &lt;base&gt;', '把当前分支的提交重放到 base 之后（重写历史）', '分支'],
+      ['git cherry-pick &lt;sha&gt;', '把某一次提交单独摘到当前分支', '分支'],
+      ['git log --oneline --graph', '单行历史图，最实用的查看方式', '查看历史'],
+      ['git show &lt;sha&gt;', '某次提交的元信息与完整差异', '查看历史'],
+      ['git diff', '工作区 vs 暂存区（还没 add 的改动）', '查看历史'],
+      ['git diff --staged', '暂存区 vs 仓库（即将提交的内容）', '查看历史'],
+      ['git blame &lt;file&gt;', '每行代码由哪个提交、谁写的', '查看历史'],
+      ['git tag -a v1.0 -m "…"', '给提交打标签（版本发布）', '查看历史'],
+      ['git remote -v', '查看远程别名与地址', '远程'],
+      ['git remote add origin &lt;url&gt;', '添加远程仓库', '远程'],
+      ['git fetch --all --prune', '下载远程状态但不改动工作区', '远程'],
+      ['git pull', 'fetch + merge（--rebase 则 fetch + rebase）', '远程'],
+      ['git push -u origin &lt;br&gt;', '推送并建立跟踪关系，之后可裸 push', '远程'],
+      ['git push --force-with-lease', '安全强推：远程被别人动过就拒绝', '远程'],
+      ['git push origin --delete &lt;br&gt;', '删除远程分支（PR 合并后收尾）', '协作'],
+      ['git branch -d &lt;br&gt;', '删除已合并的本地分支（-D 不强检查）', '协作'],
+      ['git log origin/main..HEAD', '列出「我有、上游没有」的提交，PR 里就是这些', '协作'],
+      ['gh pr create / view / checkout', 'GitHub CLI：命令行开 PR、看状态、拉对方分支', '协作'],
+      ['gh pr checks / merge --squash', '看 CI 状态 / 用 squash 方式合并 PR', '协作'],
+      ['git config pull.rebase true', '让 pull 默认用 rebase，避免满天飞 Merge branch', '协作'],
+      ['git restore &lt;file&gt;', '丢弃工作区里某文件的未暂存改动', '撤销恢复'],
+      ['git restore --staged &lt;file&gt;', '取消暂存，保留文件内容（旧写法 git reset &lt;file&gt;）', '撤销恢复'],
+      ['git reset --soft HEAD~1', '撤销上一次提交，改动留在暂存区', '撤销恢复'],
+      ['git reset --mixed HEAD~1', '撤销提交并取消暂存，改动留在工作区（默认）', '撤销恢复'],
+      ['git reset --hard HEAD~1', '彻底丢弃提交与改动（可用 reflog 找回）', '撤销恢复'],
+      ['git revert &lt;sha&gt;', '用一次新提交抵消某次提交，适合已推送的历史', '撤销恢复'],
+      ['git clean -nd / -fd', '删除未跟踪文件；先 -n 预演再动手', '撤销恢复'],
+      ['git stash push -u -m "…"', '把当前改动（含未跟踪）临时收起', '撤销恢复'],
+      ['git stash pop / list / drop', '恢复并删除 / 列表 / 丢弃某条 stash', '撤销恢复'],
+      ['git reflog', 'HEAD 移动流水账，误删提交的救命稻草', '撤销恢复'],
+      ['git rm --cached &lt;file&gt;', '停止跟踪某文件但保留本地副本', '技巧'],
+      ['git checkout --ours / --theirs &lt;file&gt;', '冲突时整个文件选自己或选对方', '技巧'],
+      ['git mergetool', '调用图形化合并工具解决冲突', '技巧'],
+      ['git bisect start / good / bad', '二分定位引入 bug 的提交，自动 checkout', '技巧'],
+      ['git worktree add ../w dev', '同一仓库同时检出多个分支到不同目录', '技巧'],
+      ['git blame -L 10,20 &lt;file&gt;', '只看第 10~20 行的来源', '技巧'],
+      ['git &lt;cmd&gt; -h', '任何命令的用法速查（比 man 更快）', '技巧']
+    ];
+    tbody.innerHTML = DATA.map(function (r) {
+      return '<tr data-cat="' + r[2] + '"><td><code>' + r[0] + '</code></td><td>' + r[1] + '</td></tr>';
+    }).join('');
+
+    var tabs = $('#cmd-tabs');
+    tabs.innerHTML = CATS.map(function (c, i) {
+      return '<button type="button" class="tab' + (i === 0 ? ' on' : '') + '" data-cat="' + c + '">' + c + '</button>';
+    }).join('');
+
+    var input = $('#cmd-search'), empty = $('#cmd-empty');
+    function apply() {
+      var cat = ($('.tab.on', tabs) || {}).dataset.cat || '全部';
+      var q = (input.value || '').trim().toLowerCase();
+      var shown = 0;
+      $$('tr', tbody).forEach(function (tr) {
+        var okCat = cat === '全部' || tr.dataset.cat === cat;
+        var okQ = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+        var show = okCat && okQ;
+        tr.classList.toggle('hide', !show);
+        if (show) shown++;
+      });
+      empty.hidden = shown !== 0;
+    }
+    tabs.addEventListener('click', function (e) {
+      var b = e.target.closest('.tab');
+      if (!b) return;
+      $$('.tab', tabs).forEach(function (t) { t.classList.remove('on'); });
+      b.classList.add('on');
+      apply();
+    });
+    input.addEventListener('input', apply);
+    apply();
+  })();
+
+  /* ---------- 5) 测验 ---------- */
+  (function quiz() {
+    var box = $('#quiz-box'), form = $('#quiz-form');
+    if (!box) return;
+    var QS = [
+      {
+        q: 'git add 的作用是？',
+        opts: ['把文件改动立即保存到仓库历史中', '把当前改动放进暂存区，作为下一次提交的内容', '把本地提交上传到远程仓库'],
+        a: 1,
+        why: 'add 只做「暂存」，仓库历史里什么都没有；只有 commit 才生成快照，push 才上传。'
+      },
+      {
+        q: 'git status 显示 <code>Changes to be committed</code>，这些改动处于哪个区域？',
+        opts: ['工作区（未 add）', '暂存区（已 add、未 commit）', '仓库（已 commit）'],
+        a: 1,
+        why: '这段标题就是暂存区内容，即「下次 commit 会带上它们」。<code>Changes not staged for commit</code> 才是工作区改动。'
+      },
+      {
+        q: '把 main 分支上的工作换成 feat 分支的内容，现代推荐写法是？',
+        opts: ['git checkout feat', 'git switch feat', 'git merge feat'],
+        a: 1,
+        why: 'Git 2.23 起 switch 负责切分支、restore 负责还原文件，把旧 checkout 的两个职责拆开，语义更清楚。merge 是合并不是切换。'
+      },
+      {
+        q: '工作区有未提交改动，需要马上切分支，最稳妥的做法是？',
+        opts: ['git stash 把改动临时收起来', '直接删掉改动文件', 'git reset --hard 后切换'],
+        a: 0,
+        why: 'stash 可逆；reset --hard 会连带丢掉未提交内容（虽可用 reflog 尝试救，但通常救不回来 —— 因为它根本没进过仓库）。'
+      },
+      {
+        q: 'main 已有新提交，想把 dev 改成「基于最新 main」且只保留一条直线历史：在 dev 上执行？',
+        opts: ['git merge main', 'git pull origin main', 'git rebase main'],
+        a: 2,
+        why: 'rebase 把 dev 的提交重放到 main 之后，历史线性；但会重写哈希，dev 若已共享需 --force-with-lease 推送。'
+      },
+      {
+        q: 'main 上已有新提交，此时把 dev 并入 main，结果是？',
+        opts: ['一定是快进（fast-forward）', '生成一个新的 merge commit', 'Git 直接拒绝合并'],
+        a: 1,
+        why: '快进只在目标分支是当前分支祖先时发生。双方各自前进后，Git 会做三方合并并创建有两个父提交的 merge commit（--no-ff 可强制如此）。'
+      },
+      {
+        q: '解决冲突时，处理完文件内容后下一步是？',
+        opts: ['git add &lt;文件&gt;，然后 git commit 或 git rebase --continue', '直接 git push', '删掉 .git 目录重新 clone'],
+        a: 0,
+        why: 'add 就是告诉 Git「这个文件我处理好了」。全部处理完再 commit（merge 场景）或 rebase --continue（rebase 场景）。'
+      },
+      {
+        q: '不小心执行了 git reset --hard，丢了 3 个提交，怎么找回？',
+        opts: ['git reflog 找到那几次提交，再 reset --hard 或 cherry-pick 回去', '不可能找回，Git 是单向的', '重新 git init'],
+        a: 0,
+        why: 'reflog 记录 HEAD 的每一步移动，被 reset 掉的提交默认至少保留 30 天。以后折腾历史前先 git branch backup 更保险。'
+      },
+      {
+        q: 'GitHub Flow 里，PR 评审时被要求修改，正确做法是？',
+        opts: ['在同一个分支继续 commit + push，PR 自动更新', '关掉 PR，新开一个分支重新开 PR', '直接在 main 上改并 push'],
+        a: 0,
+        why: 'PR 跟踪的是分支，往同一分支 push 会自动刷新 diff 与评论线。main 通常受保护，也不该被直接推送。'
+      },
+      {
+        q: '团队希望 main 的历史就是「功能清单」，一个 PR 只留一条提交，合并方式选？',
+        opts: ['Squash and merge', 'Create a merge commit', 'Rebase and merge'],
+        a: 0,
+        why: 'Squash 把 PR 里的 wip / typo 等提交压成一个功能单位；merge commit 会保留全部细节，rebase merge 保留细节且改哈希。配套纪律是「一个 PR 只做一件事」。'
+      }
+    ];
+
+    box.innerHTML = QS.map(function (x, i) {
+      return '<div class="q" data-i="' + i + '"><p class="qt">' + (i + 1) + '. ' + x.q + '</p>' +
+        x.opts.map(function (o, j) {
+          return '<label><input type="radio" name="q' + i + '" value="' + j + '"><span>' + o + '</span></label>';
+        }).join('') +
+        '<div class="why"></div></div>';
+    }).join('');
+
+    function scoreShow() {
+      var right = 0;
+      $$('.q', box).forEach(function (card) {
+        var i = +card.dataset.i, ans = QS[i].a;
+        var sel = $('input:checked', card);
+        card.classList.add('done');
+        card.classList.toggle('right', !!sel && +sel.value === ans);
+        card.classList.toggle('wrong', !!sel && +sel.value !== ans);
+        var ok = !!sel && +sel.value === ans;
+        if (ok) right++;
+        card.querySelector('.why').innerHTML =
+          (ok ? '<span class="tag ok">正确</span>' : '<span class="tag no">再看看</span>') +
+          ' 正确答案：' + String.fromCharCode(65 + ans) + '。' + QS[i].why;
+      });
+      var s = $('#quiz-score');
+      s.textContent = '得分 ' + right + ' / ' + QS.length + '　' +
+        (right === QS.length ? '🎉 全对，可以去带别人了' :
+         right >= QS.length - 2 ? '👍 很稳，错的看解释' :
+         right >= QS.length / 2 ? '🙂 基础有了，重点复习「三区流转」与「急救包」' : '💪 建议先回到第 2 节把三区流转点几遍');
+    }
+    form.addEventListener('submit', function (e) { e.preventDefault(); scoreShow(); });
+    $('#quiz-reset').addEventListener('click', function (e) {
+      e.preventDefault();
+      $$('input', box).forEach(function (i) { i.checked = false; });
+      $$('.q', box).forEach(function (c) { c.classList.remove('done', 'right', 'wrong'); });
+      $$('.why', box).forEach(function (w) { w.innerHTML = ''; });
+      $('#quiz-score').textContent = '';
+    });
+  })();
+
+  /* ---------- 7) TOC 高亮 ---------- */
+  (function toc() {
+    var links = $$('#toc a');
+    if (!links.length || !window.IntersectionObserver) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.style.background = ''; a.style.borderColor = ''; a.style.color = ''; });
+        var a = map[e.target.id];
+        if (a) { a.style.background = '#4f8cff'; a.style.borderColor = '#4f8cff'; a.style.color = '#fff'; }
+      });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+    $$('main section').forEach(function (s) { io.observe(s); });
+  })();
+})();
+</script>
+</body>
+</html>
