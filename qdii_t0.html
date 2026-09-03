@@ -99,7 +99,7 @@
             background: #f8f9fa;
             color: #1e2b3c;
             font-weight: 600;
-            padding: 11px 8px;
+            padding: 11px 6px;
             border-bottom: 1px solid #dee2e6;
             text-align: center;
             font-size: 12.5px;
@@ -108,8 +108,9 @@
         thead th.sortable { cursor: pointer; }
         thead th.sortable:hover { background: #eef1f6; color: #4263eb; }
         thead th .arrow { color: #4263eb; font-size: 10px; margin-left: 2px; }
+        thead th .arrow.idle { color: #ced4da; font-size: 9px; }
         tbody td {
-            padding: 10px 8px;
+            padding: 10px 6px;
             border-bottom: 1px solid #f1f3f5;
             text-align: center;
             background: white;
@@ -126,7 +127,7 @@
         .down { color: #0ca678; }
         .flat { color: #868e96; }
         .muted { color: #adb5bd; }
-        .idx-col { text-align: left !important; color: #495057; font-size: 12.5px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+        .idx-col { text-align: left !important; color: #495057; font-size: 12.5px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
         .t0-tag {
             display: inline-block; font-size: 11px; font-weight: 600; color: #1971c2;
             background: #e7f5ff; border-radius: 20px; padding: 1px 8px;
@@ -145,12 +146,24 @@
         .company { text-align: left !important; color: #495057; font-size: 12.5px; }
         .operate { white-space: nowrap; }
         .operate a, .operate button {
-            color: #4263eb; text-decoration: none; font-size: 14px; display: inline-block;
-            width: 26px; height: 24px; line-height: 22px; background: #f1f3f5; border-radius: 30px;
+            color: #4263eb; text-decoration: none; font-size: 12.5px; display: inline-block;
+            width: 24px; height: 22px; line-height: 20px; background: #f1f3f5; border-radius: 30px;
             text-align: center; border: none; cursor: pointer; padding: 0; font-family: inherit;
         }
         .operate a:hover, .operate button:hover { background: #e7ebf5; }
         .operate button.starred { background: #fff9db; color: #f08c00; }
+        .operate button.pin .ico { filter: grayscale(1); opacity: .4; }
+        .operate button.pin.pinned { background: #edf2ff; }
+        .operate button.pin.pinned .ico { filter: none; opacity: 1; }
+
+        /* 自选 / 置顶行高亮（需位于斑马纹与 hover 规则之后才能覆盖） */
+        tbody tr.starred-row td { background: #fffbea; }
+        tbody tr.starred-row:hover td { background: #fff4d6; }
+        tbody tr.starred-row td:first-child { box-shadow: inset 3px 0 0 #f59f00; }
+        tbody tr.pinned-row td { background: #edf2ff; }
+        tbody tr.pinned-row:hover td { background: #e3ecfd; }
+        tbody tr.pinned-row td:first-child { box-shadow: inset 3px 0 0 #4263eb; }
+        tbody tr.pinned-row.pinned-last td { border-bottom: 2px solid #bac8ff; }
         .empty-row td { text-align: center; color: #868e96; padding: 28px; }
 
         /* 底部说明 */
@@ -203,7 +216,7 @@
 
     <div class="table-footer">
         <span id="footTip"></span>
-        <span>点击表头可排序 · ☆ 自选保存在本机浏览器</span>
+        <span>点击表头可排序 · ☆ 自选高亮 · 📌 置顶 · 均保存在本机浏览器</span>
     </div>
 
     <!-- 数据说明区块 -->
@@ -251,7 +264,9 @@ const COLS = [
 
 const DATA = load();
 const STAR_KEY = 'qdii_t0_stars';
+const PIN_KEY  = 'qdii_t0_pins';
 let stars = loadStars();
+let pins = loadPins();
 let sortKey = null, sortDir = 1;
 let onlyStar = false;
 
@@ -265,6 +280,13 @@ function loadStars() {
 }
 function saveStars() {
     try { localStorage.setItem(STAR_KEY, JSON.stringify([...stars])); } catch (e) {}
+}
+function loadPins() {
+    try { return new Set(JSON.parse(localStorage.getItem(PIN_KEY) || '[]')); }
+    catch (e) { return new Set(); }
+}
+function savePins() {
+    try { localStorage.setItem(PIN_KEY, JSON.stringify([...pins])); } catch (e) {}
 }
 
 // ==================== 工具 ====================
@@ -294,16 +316,21 @@ function sortValue(row, key) {
 }
 
 // ==================== 渲染 ====================
+const TEXT_KEYS = ['id', 'nm', 'navdt', 'idx', 'issuer']; // 文本列首次点击升序，数值列首次点击降序
+
 function renderHead() {
     document.getElementById('headRow').innerHTML = COLS.map(c => {
-        const arrow = c.sortable && sortKey === c.key
-            ? `<span class="arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : '';
+        const active = c.sortable && sortKey === c.key;
+        const arrow = c.sortable
+            ? `<span class="arrow${active ? '' : ' idle'}">${active ? (sortDir === 1 ? '▲' : '▼') : '⇅'}</span>`
+            : '';
         return `<th class="${c.sortable ? 'sortable' : ''} ${c.cls || ''}" data-key="${c.key}">${c.label}${arrow}</th>`;
     }).join('');
     document.querySelectorAll('#headRow th.sortable').forEach(th => {
         th.addEventListener('click', () => {
             const k = th.dataset.key;
-            if (sortKey === k) { sortDir = -sortDir; } else { sortKey = k; sortDir = -1; }
+            if (sortKey === k) { sortDir = -sortDir; }
+            else { sortKey = k; sortDir = TEXT_KEYS.includes(k) ? 1 : -1; }
             render();
         });
     });
@@ -326,8 +353,8 @@ function cellHtml(col, r) {
         case 'ast':    return `<td>${statusBadge(r.ast)}</td>`;
         case 'issuer': return `<td class="company">${esc(r.issuer || '-')}</td>`;
         case 'op': {
-            const on = stars.has(r.id);
-            return `<td class="operate"><button class="star ${on ? 'starred' : ''}" data-id="${r.id}" title="${on ? '取消自选' : '加入自选'}">${on ? '★' : '☆'}</button> <a href="${url}" target="_blank" rel="noopener" title="基金详情">📈</a></td>`;
+            const on = stars.has(r.id), pin = pins.has(r.id);
+            return `<td class="operate"><button class="pin${pin ? ' pinned' : ''}" data-id="${r.id}" title="${pin ? '取消置顶' : '置顶'}"><span class="ico">📌</span></button> <button class="star ${on ? 'starred' : ''}" data-id="${r.id}" title="${on ? '取消自选' : '加入自选'}">${on ? '★' : '☆'}</button> <a href="${url}" target="_blank" rel="noopener" title="基金详情">📈</a></td>`;
         }
         default: return '<td></td>';
     }
@@ -349,15 +376,30 @@ function visibleRows() {
             return (va - vb) * sortDir;
         });
     }
+    if (pins.size) {
+        // 置顶基金固定在最上方，置顶组内部仍保持当前排序
+        const top = list.filter(r => pins.has(r.id));
+        const rest = list.filter(r => !pins.has(r.id));
+        list = top.concat(rest);
+    }
     return list;
 }
 
 function render() {
     renderHead();
     const list = visibleRows();
+    let lastPinIdx = -1;
+    list.forEach((r, i) => { if (pins.has(r.id)) lastPinIdx = i; });
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = list.length
-        ? list.map(r => `<tr>${COLS.map(c => cellHtml(c, r)).join('')}</tr>`).join('')
+        ? list.map((r, i) => {
+              const cls = [
+                  stars.has(r.id) ? 'starred-row' : '',
+                  pins.has(r.id) ? 'pinned-row' : '',
+                  i === lastPinIdx ? 'pinned-last' : ''
+              ].filter(Boolean).join(' ');
+              return `<tr${cls ? ` class="${cls}"` : ''}>${COLS.map(c => cellHtml(c, r)).join('')}</tr>`;
+          }).join('')
         : `<tr class="empty-row"><td colspan="${COLS.length}">暂无数据</td></tr>`;
 
     tbody.querySelectorAll('button.star').forEach(b => {
@@ -365,6 +407,14 @@ function render() {
             const id = b.dataset.id;
             stars.has(id) ? stars.delete(id) : stars.add(id);
             saveStars();
+            render();
+        });
+    });
+    tbody.querySelectorAll('button.pin').forEach(b => {
+        b.addEventListener('click', () => {
+            const id = b.dataset.id;
+            pins.has(id) ? pins.delete(id) : pins.add(id);
+            savePins();
             render();
         });
     });

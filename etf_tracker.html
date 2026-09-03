@@ -10,20 +10,6 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; padding: 16px; }
   .container { max-width: 1800px; margin: 0 auto; }
 
-  /* Index Banner */
-  .index-banner { background: linear-gradient(135deg, #1a237e, #3949ab); color: #fff; border-radius: 14px; padding: 14px 20px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .index-group { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .index-item { display: flex; align-items: center; gap: 8px; }
-  .index-item .name { font-size: 11px; opacity: .7; }
-  .index-item .value { font-size: 17px; font-weight: 700; }
-  .index-item .change { font-size: 12px; font-weight: 600; }
-  .index-item .change.up { color: #a5d6a7; }
-  .index-item .change.down { color: #ef9a9a; }
-  .index-divider { width: 1px; height: 32px; background: rgba(255,255,255,.2); }
-  .index-status { font-size: 11px; opacity: .5; }
-  .idx-refresh { background: rgba(255,255,255,.2); border: none; color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
-  .idx-refresh:disabled { opacity: .5; cursor: not-allowed; }
-
   /* Two Columns */
   .funds-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 1100px) { .funds-row { grid-template-columns: 1fr; } }
@@ -32,20 +18,20 @@
   /* Fund Header */
   .fund-header { background: linear-gradient(135deg, #1a237e, #283593); color: #fff; padding: 18px 20px; }
   .fund-header .top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .fund-header .code { background: rgba(255,255,255,.15); padding: 2px 10px; border-radius: 6px; font-size: 12px; display: inline-block; }
-  .fund-header h2 { font-size: 18px; margin: 4px 0 2px; }
-  .fund-header .sub { font-size: 12px; opacity: .7; }
+  .fund-header .code { background: rgba(255,255,255,.15); padding: 2px 10px; border-radius: 6px; font-size: 14px; display: inline-block; }
+  .fund-header h2 { font-size: 22px; margin: 4px 0 2px; }
+  .fund-header .sub { font-size: 14px; opacity: .7; }
   .fund-header .nav-row { display: flex; align-items: baseline; gap: 12px; margin-top: 6px; }
-  .fund-header .nav-big { font-size: 28px; font-weight: 700; }
-  .fund-header .nav-label { font-size: 11px; opacity: .6; }
-  .fund-header .info { font-size: 11px; opacity: .6; text-align: right; }
+  .fund-header .nav-big { font-size: 32px; font-weight: 700; }
+  .fund-header .nav-label { font-size: 13px; opacity: .6; }
+  .fund-header .info { font-size: 13px; opacity: .6; text-align: right; }
 
   /* Metrics */
   .fund-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid #eee; }
   .fund-metric { padding: 10px 14px; border-right: 1px solid #f0f0f0; }
   .fund-metric:last-child { border-right: none; }
-  .fund-metric .lbl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .3px; }
-  .fund-metric .val { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .fund-metric .lbl { font-size: 13px; color: #999; text-transform: uppercase; letter-spacing: .3px; }
+  .fund-metric .val { font-size: 19px; font-weight: 700; margin-top: 2px; }
   .fund-metric .val.blue { color: #1565c0; }
   .fund-metric .val.orange { color: #e65100; }
   .fund-metric .val.green { color: #2e7d32; }
@@ -53,82 +39,49 @@
   /* Charts in column */
   .fund-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
   .fund-chart { }
-  .fund-chart h4 { font-size: 12px; color: #666; margin-bottom: 4px; }
+  .fund-chart h4 { font-size: 15px; color: #666; margin-bottom: 4px; }
   .fund-chart canvas { width: 100% !important; height: auto !important; max-height: 200px; }
-
-  /* Sectors */
-  .fund-sectors { padding: 8px 12px 12px; border-bottom: 1px solid #eee; }
-  .fund-sectors h4 { font-size: 12px; color: #666; margin-bottom: 6px; }
-  .sec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 4px; }
-  .sec-item { display: flex; justify-content: space-between; padding: 4px 8px; background: #f5f7fa; border-radius: 4px; font-size: 11px; }
-  .sec-item .sn { font-weight: 500; }
-  .sec-item .sw { font-weight: 600; }
 
   /* History bar */
   .fund-hist { padding: 8px 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .fund-hist .hlbl { font-size: 11px; color: #888; }
-  .fund-hist .htag { background: #f5f7fa; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; border: 1px solid transparent; }
+  .fund-hist .hlbl { font-size: 13px; color: #888; }
+  .fund-hist .htag { background: #f5f7fa; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
   .fund-hist .htag.active { border-color: #1565c0; background: #e3f2fd; }
-  .fund-hist .hchg { font-size: 11px; font-weight: 600; }
+  .fund-hist .hchg { font-size: 13px; font-weight: 600; }
   .fund-hist .hchg.up { color: #2e7d32; }
   .fund-hist .hchg.down { color: #c62828; }
 
   /* Table */
   .fund-table-wrap { padding: 8px 12px 12px; overflow-x: auto; }
   .fund-table-wrap .tb-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .fund-table-wrap .tb-top h4 { font-size: 12px; color: #666; }
-  .fund-table-wrap .tb-top input { padding: 3px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 11px; width: 120px; }
-  .fund-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  .fund-table th { background: #f5f7fa; padding: 5px 6px; text-align: left; font-weight: 600; color: #555; cursor: pointer; white-space: nowrap; font-size: 10px; }
+  .fund-table-wrap .tb-top h4 { font-size: 15px; color: #666; }
+  .fund-table-wrap .tb-top input { padding: 4px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; width: 140px; }
+  .fund-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .fund-table th { background: #f5f7fa; padding: 6px 8px; text-align: left; font-weight: 600; color: #555; cursor: pointer; white-space: nowrap; font-size: 13px; }
   .fund-table th:hover { background: #eef0f4; }
-  .fund-table td { padding: 4px 6px; border-bottom: 1px solid #f0f0f0; }
+  .fund-table td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; }
   .fund-table tr:hover td { background: #fafbfc; }
-  .rn { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 50%; font-size: 9px; font-weight: 600; }
+  .rn { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; font-size: 11px; font-weight: 600; }
   .rn-1,.rn-2,.rn-3 { background: #ffd700; color: #333; }
   .rn-o { background: #e8eaf6; color: #555; }
-  .wb { display: inline-block; height: 6px; border-radius: 3px; background: #1565c0; vertical-align: middle; min-width: 2px; }
-  .rt { font-size: 9px; padding: 1px 5px; border-radius: 3px; }
+  .rt { font-size: 11px; padding: 2px 6px; border-radius: 3px; }
   .rt.us { background: #e8f5e9; color: #2e7d32; }
   .rt.kr { background: #fce4ec; color: #c62828; }
   .rt.cn { background: #e3f2fd; color: #1565c0; }
 
-  .drop-zone { border: 2px dashed #bbb; border-radius: 10px; padding: 12px; text-align: center; color: #888; transition: .2s; margin-bottom: 16px; background: #fff; cursor: pointer; font-size: 12px; }
+  .drop-zone { border: 2px dashed #bbb; border-radius: 10px; padding: 12px; text-align: center; color: #888; transition: .2s; margin-bottom: 16px; background: #fff; cursor: pointer; font-size: 15px; }
   .drop-zone:hover, .drop-zone.drag-over { border-color: #1565c0; background: #e3f2fd; color: #1565c0; }
   .drop-zone input[type="file"] { display: none; }
 
   .legend { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
-  .legend-item { display: flex; align-items: center; gap: 3px; font-size: 9px; }
-  .legend-color { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+  .legend-color { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
-  .controls { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .btn { padding: 5px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; }
-  .btn-outline { background: transparent; border: 1px solid #ddd; color: #555; }
-  .btn-outline:hover { background: #f5f5f5; }
-  .btn-danger { background: #c62828; color: #fff; }
-  .btn-danger:hover { background: #b71c1c; }
-
-  .loading-spinner { display: inline-block; width: 10px; height: 10px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="drop-zone" id="dropZone">📂 <strong>拖拽PCF/SSE XML文件</strong> 或点击选择（支持深交所PCF和上交所SSE格式）<input type="file" id="fileInput" accept=".xml"></div>
-  <div class="controls">
-    <button class="btn btn-outline" onclick="exportCSV('159509')">📥 159509导出CSV</button>
-    <button class="btn btn-outline" onclick="exportCSV('513310')">📥 513310导出CSV</button>
-    <button class="btn btn-danger" onclick="clearAllHist()">🗑️ 清除历史</button>
-    <span style="font-size:11px;color:#888;margin-left:auto;" id="globalStatus"></span>
-  </div>
-
-  <!-- Index Banner -->
-  <div class="index-banner">
-    <div class="index-group" id="indexContainer"></div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span class="index-status" id="indexStatus">刷新中...</span>
-      <button class="idx-refresh" id="idxBtn" onclick="refreshAllIndex()">🔄</button>
-    </div>
-  </div>
 
   <!-- Two Columns -->
   <div class="funds-row">
@@ -142,7 +95,6 @@
 const FUNDS = {
   '159509': {
     code:'159509', name:'纳指科技ETF景顺', manager:'景顺长城基金管理有限公司', idxName:'NDXTMC (纳斯达克科技指数)',
-    indices:[{id:'sp500',yahoo:'^GSPC',label:'S&P 500',short:'SP500'},{id:'ndx',yahoo:'^NDX',label:'纳斯达克100',short:'NDX'}],
     data:{
       TradingDay:'20260623', NAV:'2.3207', NAVperCU:'2320691.71', CreationRedemptionUnit:'1000000.00',
       EstimateCashComponent:'363.32', CashComponent:'-1819.26',
@@ -162,7 +114,6 @@ const FUNDS = {
   },
   '513310': {
     code:'513310', name:'半导体ETF', manager:'上交所', idxName:'中韩半导体指数',
-    indices:[{id:'kospi',yahoo:'^KS11',label:'KOSPI',short:'KOSPI'},{id:'ssec',yahoo:'000001.SS',label:'上证指数',short:'SH'}],
     data:{
       TradingDay:'20260623', NAV:'5.6724', NAVperCU:'5672417.35', CreationRedemptionUnit:'1000000',
       EstimateCashComponent:'610.16', CashComponent:'-3596.88',
@@ -174,27 +125,10 @@ const FUNDS = {
   }
 };
 const RL = {us:'美股',kr:'韩国',cn:'A股'};
-const SM = {
-  AAPL:"消费电子",MSFT:"软件",META:"互联网",GOOGL:"互联网",GOOG:"互联网",PLTR:"软件",
-  PANW:"网络安全",CRWD:"网络安全",FTNT:"网络安全",SNPS:"EDA",CDNS:"EDA",SHOP:"电商SaaS",
-  DDOG:"云监控",DASH:"外卖配送",APP:"移动互联网",MSTR:"比特币",PDD:"电商",ARM:"芯片设计",
-  ASML:"光刻机",ADBE:"设计软件",INTU:"财税软件",ADSK:"设计软件",ROP:"企业软件",
-  WDAY:"HR软件",TRI:"金融信息",MPWR:"电源管理",ALAB:"AI硬件",CRWV:"AI云",NBIS:"AI基础",
-  NVDA:"半导体",AMD:"半导体",INTC:"半导体",AVGO:"半导体",MU:"半导体",QCOM:"半导体",TXN:"半导体",
-  AMAT:"半导体设备",LRCX:"半导体设备",KLAC:"半导体设备",ADI:"半导体",NXPI:"半导体",MCHP:"半导体",
-  MRVL:"半导体",STX:"半导体",WDC:"半导体",SNDK:"半导体",TER:"半导体设备",
-  A000660:"半导体",A005930:"半导体",A000990:"半导体",A036930:"半导体设备",A039030:"半导体设备",
-  A042700:"半导体设备",A058470:"半导体设备",A064760:"材料",A084370:"半导体设备",A095340:"半导体",
-  A222800:"半导体",A240810:"半导体设备",A403870:"半导体设备",A440110:"半导体",A030530:"半导体",
-  "600584":"封测","603501":"芯片设计","603893":"芯片设计","603986":"芯片设计","688008":"芯片设计",
-  "688256":"AI芯片","688521":"芯片设计","002049":"芯片设计","002371":"半导体设备","688012":"半导体设备",
-  "688072":"半导体设备","688082":"半导体设备","688041":"芯片设计","688396":"半导体","688981":"代工"
-};
 let histories = {};
 const HP = 'etf_h_';
 
 function getFC(c) { return FUNDS[c]; }
-function comps(c) { return FUNDS[c].data.Components; }
 
 // ===== BUILD COLUMN HTML =====
 function buildColumn(code) {
@@ -226,7 +160,6 @@ function buildColumn(code) {
       <div class="fund-chart"><h4>🏆 前10持仓</h4><canvas id="pie_${code}" height="200"></canvas><div class="legend" id="pieL_${code}"></div></div>
       <div class="fund-chart"><h4>📊 权重分布</h4><canvas id="bar_${code}" height="200"></canvas></div>
     </div>
-    <div class="fund-sectors" id="sec_${code}"><h4>🏭 行业分布</h4><div class="sec-grid" id="secG_${code}"></div></div>
     <div class="fund-hist" id="hist_${code}">
       <span class="hlbl">📅 PCF:</span>
       <span id="histTag_${code}"></span>
@@ -245,8 +178,6 @@ function buildColumn(code) {
           <th onclick="sortBy('${code}','shares')">数量</th>
           <th onclick="sortBy('${code}','amount')">金额</th>
           <th onclick="sortBy('${code}','weight')">权重</th>
-          <th>条</th>
-          <th>区</th>
         </tr></thead>
         <tbody id="tb_${code}"></tbody>
       </table>
@@ -276,7 +207,6 @@ function renderFund(code) {
 
   drawPie(code, cs.slice(0,10));
   drawBar(code, cs);
-  renderSectors(code, cs);
   renderTable(code, cs);
   saveHist(code, d, cs);
   renderHist(code);
@@ -286,7 +216,6 @@ function calc(components) {
   const total = components.reduce((s,c)=>s+(c.A||0),0);
   return components.map(c=>({
     ...c, N: c.N || c.Code, S: c.S || 0,
-    Sec: SM[c.Code]||(c.R==='kr'?'韩国半导体':c.R==='cn'?'中国半导体':'其他'),
     W: total>0 ? ((c.A||0)/total*100) : 0
   })).sort((a,b)=>b.W-a.W);
 }
@@ -295,20 +224,19 @@ function calc(components) {
 const sortState = {};
 
 function renderTable(code, comps) {
-  if (!comps) { comps = calc(comps(code)); }
+  if (!comps) { comps = calc(FUNDS[code].data.Components); }
   const q = (document.getElementById('srch_'+code)||{}).value||'';
   const ss = sortState[code]||{f:'weight',d:-1};
   const sorted = [...comps].filter(c => !q || c.Code.toLowerCase().includes(q) || c.N.toLowerCase().includes(q))
     .sort((a,b)=>{ let va=a[ss.f],vb=b[ss.f]; if(ss.f==='amount'||ss.f==='A'){va=a.A||0;vb=b.A||0;} if(ss.f==='shares'){va=a.S||0;vb=b.S||0;} if(ss.f==='name'){va=(a.N||'').toLowerCase();vb=(b.N||'').toLowerCase();} if(ss.f==='code'){va=a.Code.toLowerCase();vb=b.Code.toLowerCase();} if(ss.f==='weight'||ss.f==='W'){va=a.W||0;vb=b.W||0;} return va<vb?-ss.d:va>vb?ss.d:0; });
-  const mw = sorted[0]?.W||1;
   const tb = document.getElementById('tb_'+code);
   if (!tb) return;
   tb.innerHTML = sorted.map((c,i)=>{
     const r = comps.findIndex(x=>x.Code===c.Code)+1;
     const rc = r<=3?'rn-'+r:'rn-o';
-    return `<tr><td><span class="rn ${rc}">${r}</span></td><td><strong>${c.Code}</strong></td><td>${c.N||c.Code}${c.R?` <span class="rt ${c.R}">${RL[c.R]||c.R}</span>`:''}</td><td>${c.S}</td><td>${(c.A||0).toLocaleString('zh-CN',{minFD:2})}</td><td>${c.W.toFixed(2)}%</td><td><div class="wb" style="width:${Math.max(2,c.W/mw*120)}px;background:${gc(r)}"></div></td><td>${c.R?`<span class="rt ${c.R}">${RL[c.R]||c.R}</span>`:''}</td></tr>`;
+    return `<tr><td><span class="rn ${rc}">${r}</span></td><td><strong>${c.Code}</strong></td><td>${c.N||c.Code}${c.R?` <span class="rt ${c.R}">${RL[c.R]||c.R}</span>`:''}</td><td>${c.S}</td><td>${(c.A||0).toLocaleString('zh-CN',{minFD:2})}</td><td>${c.W.toFixed(2)}%</td></tr>`;
   }).join('');
-  if (!sorted.length) tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:16px;color:#888;">无匹配</td></tr>';
+  if (!sorted.length) tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:16px;color:#888;">无匹配</td></tr>';
 }
 
 function sortBy(code, field) {
@@ -318,15 +246,6 @@ function sortBy(code, field) {
   if (ss.f===f) ss.d=-ss.d; else { ss.f=f; ss.d=field==='rank'?1:-1; }
   sortState[code]=ss;
   renderTable(code);
-}
-
-// ===== SECTORS =====
-function renderSectors(code, comps) {
-  const m = {}; comps.forEach(c=>{m[c.Sec]=(m[c.Sec]||0)+c.W;});
-  const arr = Object.entries(m).sort((a,b)=>b[1]-a[1]);
-  const g = document.getElementById('secG_'+code);
-  if (!g) return;
-  g.innerHTML = arr.map(s=>`<div class="sec-item"><span class="sn">${s[0]}</span><span class="sw">${s[1].toFixed(1)}%</span></div>`).join('');
 }
 
 // ===== CHARTS =====
@@ -347,11 +266,11 @@ function drawPie(code, comps) {
     const a=(c.W/100)*2*Math.PI, col=c.Code==='其他'?'#ddd':gc(i+1);
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,sa,sa+a); ctx.closePath();
     ctx.fillStyle=col; ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
-    if(a>0.25){const m=sa+a/2; ctx.fillStyle='#333'; ctx.font='9px -apple-system, sans-serif'; ctx.textAlign=m>Math.PI/2&&m<3*Math.PI/2?'right':'left'; ctx.fillText(`${c.Code} ${c.W.toFixed(1)}%`,cx+Math.cos(m)*(r+14),cy+Math.sin(m)*(r+14)+3);}
+    if(a>0.25){const m=sa+a/2; ctx.fillStyle='#333'; ctx.font='12px -apple-system, sans-serif'; ctx.textAlign=m>Math.PI/2&&m<3*Math.PI/2?'right':'left'; ctx.fillText(`${c.Code} ${c.W.toFixed(1)}%`,cx+Math.cos(m)*(r+16),cy+Math.sin(m)*(r+16)+4);}
     sa+=a;
   });
-  ctx.fillStyle='#333'; ctx.font='bold 11px -apple-system, sans-serif'; ctx.textAlign='center';
-  ctx.fillText('前10',cx,cy-4); ctx.font='10px -apple-system, sans-serif'; ctx.fillStyle='#888';
+  ctx.fillStyle='#333'; ctx.font='bold 14px -apple-system, sans-serif'; ctx.textAlign='center';
+  ctx.fillText('前10',cx,cy-5); ctx.font='13px -apple-system, sans-serif'; ctx.fillStyle='#888';
   ctx.fillText(`${total.toFixed(1)}%`,cx,cy+8);
   const lg = document.getElementById('pieL_'+code);
   if(lg) lg.innerHTML=comps.map((c,i)=>`<div class="legend-item"><div class="legend-color" style="background:${gc(i+1)}"></div><span>${c.Code} (${c.W.toFixed(1)}%)</span></div>`).join('');
@@ -365,72 +284,18 @@ function drawBar(code, comps) {
   cnv.width=w*dpr; cnv.height=h*dpr; cnv.style.width=w+'px'; cnv.style.height=h+'px';
   const ctx=cnv.getContext('2d'); ctx.scale(dpr,dpr);
   const top=comps.slice(0,12), mw=top[0]?.W||1;
-  const pad={top:10,right:40,bottom:20,left:48}, cw=w-pad.left-pad.right, ch=h-pad.top-pad.bottom;
+  const pad={top:10,right:46,bottom:20,left:56}, cw=w-pad.left-pad.right, ch=h-pad.top-pad.bottom;
   const bh=Math.min(13,(ch-(top.length-1)*2)/top.length), sy=pad.top+(ch-(bh*top.length+(top.length-1)*2))/2;
   ctx.clearRect(0,0,w,h);
   top.forEach((c,i)=>{
     const y=sy+i*(bh+2), bw=(c.W/mw)*cw, x=pad.left;
-    ctx.fillStyle='#333'; ctx.font='9px -apple-system, sans-serif'; ctx.textAlign='right';
-    ctx.fillText(c.Code,x-4,y+bh/2+3);
+    ctx.fillStyle='#333'; ctx.font='12px -apple-system, sans-serif'; ctx.textAlign='right';
+    ctx.fillText(c.Code,x-4,y+bh/2+4);
     const g=ctx.createLinearGradient(x,y,x+bw,y); g.addColorStop(0,gc(i+1)); g.addColorStop(1,gc(i+1)+'88');
     ctx.fillStyle=g; ctx.beginPath(); ctx.roundRect(x,y,Math.max(bw,2),bh,2); ctx.fill();
-    ctx.fillStyle='#333'; ctx.textAlign='left'; ctx.font='8px -apple-system, sans-serif';
-    ctx.fillText(`${c.W.toFixed(1)}%`,x+bw+3,y+bh/2+3);
+    ctx.fillStyle='#333'; ctx.textAlign='left'; ctx.font='11px -apple-system, sans-serif';
+    ctx.fillText(`${c.W.toFixed(1)}%`,x+bw+3,y+bh/2+4);
   });
-}
-
-// ===== INDEX =====
-let indexCache = {};
-const ICK = 'etf_idx_v3';
-
-function renderIndex() {
-  const c = document.getElementById('indexContainer');
-  const st = document.getElementById('indexStatus');
-  let items = '';
-  Object.keys(FUNDS).forEach(code => {
-    const fc = getFC(code);
-    fc.indices.forEach(idx => {
-      const d = indexCache[idx.id];
-      if (d && d.p) {
-        const cls = d.cp>=0?'up':'down', arr = d.cp>=0?'▲':'▼';
-        items += `<div class="index-item"><div><div class="name">${idx.short}</div><div><span class="value">${d.p.toFixed(2)}</span><span class="change ${cls}">${arr}${Math.abs(d.cp).toFixed(2)}%</span></div></div></div>`;
-      } else {
-        items += `<div class="index-item"><div><div class="name">${idx.short}</div><div><span class="value" style="color:rgba(255,255,255,.4);">---</span></div></div></div>`;
-      }
-      items += '<div class="index-divider"></div>';
-    });
-  });
-  c.innerHTML = items.slice(0, -items.indexOf('<div class="index-divider"></div>'));
-  const ts = Object.values(indexCache).filter(d=>d.t).map(d=>d.t);
-  if (ts.length) {
-    const age = Math.round((Date.now()-Math.max(...ts))/1000/60);
-    st.textContent = `更新于 ${age>60?Math.round(age/60)+'h':age+'min'}`;
-  } else st.textContent = '刷新中...';
-}
-
-function loadIdxCache() { try {const d=localStorage.getItem(ICK); if(d) indexCache=JSON.parse(d); renderIndex();}catch(e){} }
-
-async function refreshAllIndex() {
-  const btn = document.getElementById('idxBtn');
-  btn.disabled=true; btn.innerHTML='<span class="loading-spinner"></span>';
-  const allSym = []; const idxMap = {};
-  Object.keys(FUNDS).forEach(code => { getFC(code).indices.forEach(idx => { allSym.push(idx.yahoo); idxMap[idx.yahoo]=idx.id; }); });
-
-  let data = null;
-  try { const r = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${allSym.join(',')}`); if(r.ok) data=await r.json(); } catch(e){}
-  if (!data) {
-    try { const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://query1.finance.yahoo.com/v7/finance/quote?symbols='+allSym.join(','))}`); if(r.ok) data=await r.json(); } catch(e){}
-  }
-  if (data && data.quoteResponse) {
-    const now = Date.now();
-    data.quoteResponse.result.forEach(item => {
-      const p = item.regularMarketPrice, pc = item.regularMarketPreviousClose, id = idxMap[item.symbol];
-      if (p && p>0 && id) { indexCache[id] = {p, cp: pc?((p-pc)/pc*100):0, t: now}; }
-    });
-    try { localStorage.setItem(ICK, JSON.stringify(indexCache)); } catch(e) {}
-    renderIndex();
-  }
-  btn.disabled=false; btn.innerHTML='🔄';
 }
 
 // ===== HISTORY =====
@@ -456,19 +321,6 @@ function renderHist(code) {
     const l=h[h.length-1], p=h[h.length-2], c=((l.nav-p.nav)/p.nav*100);
     chg.innerHTML = `<span class="hchg ${c>=0?'up':'down'}">${c>=0?'▲':'▼'}${Math.abs(c).toFixed(2)}%</span>`;
   } else chg.textContent = '';
-}
-
-// ===== EXPORT / CLEAR =====
-function exportCSV(code) {
-  const cs = calc(comps(code));
-  const csv = '排名,代码,名称,地区,数量,金额,权重%\n'+cs.map((c,i)=>`${i+1},${c.Code},${c.N||c.Code},${c.R||''},${c.S||0},${(c.A||0).toFixed(2)},${c.W.toFixed(2)}`).join('\n');
-  const b=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`${code}_${FUNDS[code].data.TradingDay}.csv`;a.click();
-}
-
-function clearAllHist() {
-  if (!confirm('清除所有ETF历史快照？')) return;
-  histories={}; Object.keys(FUNDS).forEach(k=>{localStorage.removeItem(HP+k); renderHist(k);});
 }
 
 // ===== FILE LOADING =====
@@ -506,20 +358,16 @@ function loadFile(file) {
   reader.onload=e=>{
     try {
       const d=parseXML(e.target.result), code='_loaded_'+Date.now();
-      FUNDS[code]={code:file.name.replace('.xml',''),name:file.name,manager:'加载文件',idxName:'--',indices:[{id:'tmp',yahoo:'^GSPC',label:'',short:''}],data:d};
+      FUNDS[code]={code:file.name.replace('.xml',''),name:file.name,manager:'加载文件',idxName:'--',data:d};
       buildColumn(code); renderFund(code);
-      document.getElementById('globalStatus').textContent='✅ 已加载: '+file.name;
     } catch(err){alert('解析失败: '+err.message);}
   };
   reader.readAsText(file);
 }
 
 // ===== INIT =====
-loadIdxCache();
 Object.keys(FUNDS).forEach(k=>{try{const s=localStorage.getItem(HP+k);if(s)histories[k]=JSON.parse(s);else histories[k]=[];}catch(e){histories[k]=[];}});
 Object.keys(FUNDS).forEach(k=>{buildColumn(k); renderFund(k);});
-refreshAllIndex();
-setInterval(refreshAllIndex, 5*60*1000);
 </script>
 
 <!-- ═══════════ 广告位（Google AdSense） ═══════════
@@ -530,6 +378,6 @@ setInterval(refreshAllIndex, 5*60*1000);
 <div style="max-width:1100px;margin:26px auto;padding:0 clamp(10px,2vw,28px)">
   <div class="adslot">AD · 广告位招租 · 此处展示 Google AdSense 广告</div>
 </div>
-<style>.adslot{min-height:70px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#94a3b8;font-size:11px;letter-spacing:.5px}</style>
+<style>.adslot{min-height:70px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#94a3b8;font-size:13px;letter-spacing:.5px}</style>
 </body>
 </html>
