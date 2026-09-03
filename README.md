@@ -7,7 +7,7 @@
 | 页面 | 说明 |
 | --- | --- |
 | [qdii-nav.html](qdii-nav.html) | QDII-LOF 持仓净值估算看板：按季报持仓 + 实时行情推算「海外科技LOF / 全球芯片LOF」最新净值，含持仓明细、日度涨跌与净值走势对比 |
-| [qdii_t0.html](qdii_t0.html) | T+0 QDII · 欧美市场（仿集思录列表）：跟踪美/欧指数的场内 T+0 ETF/LOF，现价涨幅、成交额、净值、净值日涨跌、溢价率、相关指数与申购状态，支持排序 / 搜索 / 自选 |
+| [qdii_t0.html](qdii_t0.html) | T+0 QDII · 欧美市场：跟踪美/欧指数的场内 T+0 ETF/LOF，现价涨幅、成交额、净值、净值日涨跌、溢价率、相关指数与申购状态，支持排序 / 搜索 / 自选 |
 | [etf_tracker.html](etf_tracker.html) | ETF 并排看板：多只 ETF 横向对比行情表现 |
 | [weather.html](weather.html) | 多城月度天气对比：同城同月每日天气、最低/最高气温与紫外线强度 |
 | [git-tutorial.html](git-tutorial.html) | **Git 交互式教学**：三区流转动画、可点击的分支/合并/rebase 实验室、GitHub Flow 与 PR 工作流图示、提交信息生成器、命令速查表与自测题 |
