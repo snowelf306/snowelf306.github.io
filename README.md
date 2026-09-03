@@ -36,9 +36,13 @@
 
 ## 本地构建
 
-修改 Git 教学页时，**只改 `build/git-tutorial.{html,css,js}`**，然后重新生成发布页：
+> ⚠️ 先 `cd qdii-publish`（本仓库根目录）。在别处执行会报 cannot find module；
+> 从仓库外运行请用完整路径：`node <路径>/qdii-publish/build/build-git-tutorial.js`。
+
+修改 Git 教学页时，**只改 `build/git-tutorial.{html,css,js}`（编辑用源文件，别直接上传它们）**，然后重新生成发布页：
 
 ```bash
+cd qdii-publish
 node build/build-git-tutorial.js
 ```
 
