@@ -42,14 +42,12 @@
   .fund-chart h4 { font-size: 15px; color: #666; margin-bottom: 4px; }
   .fund-chart canvas { width: 100% !important; height: auto !important; max-height: 200px; }
 
-  /* History bar */
-  .fund-hist { padding: 8px 12px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .fund-hist .hlbl { font-size: 13px; color: #888; }
-  .fund-hist .htag { background: #f5f7fa; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
-  .fund-hist .htag.active { border-color: #1565c0; background: #e3f2fd; }
-  .fund-hist .hchg { font-size: 13px; font-weight: 600; }
-  .fund-hist .hchg.up { color: #2e7d32; }
-  .fund-hist .hchg.down { color: #c62828; }
+  /* PCF history tags (inline in table header) */
+  .htag { background: #f5f7fa; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
+  .htag.active { border-color: #1565c0; background: #e3f2fd; }
+  .hchg { font-size: 13px; font-weight: 600; }
+  .hchg.up { color: #2e7d32; }
+  .hchg.down { color: #c62828; }
 
   /* Table */
   .fund-table-wrap { padding: 8px 12px 12px; overflow-x: auto; }
@@ -69,7 +67,8 @@
   .rt.kr { background: #fce4ec; color: #c62828; }
   .rt.cn { background: #e3f2fd; color: #1565c0; }
 
-  .drop-zone { border: 2px dashed #bbb; border-radius: 10px; padding: 12px; text-align: center; color: #888; transition: .2s; margin-bottom: 16px; background: #fff; cursor: pointer; font-size: 15px; }
+  .drop-row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .drop-zone { border: 2px dashed #bbb; border-radius: 10px; padding: 10px 12px; text-align: center; color: #888; transition: .2s; background: #fff; cursor: pointer; font-size: 14px; flex: 1; }
   .drop-zone:hover, .drop-zone.drag-over { border-color: #1565c0; background: #e3f2fd; color: #1565c0; }
   .drop-zone input[type="file"] { display: none; }
 
@@ -81,7 +80,10 @@
 </head>
 <body>
 <div class="container">
-  <div class="drop-zone" id="dropZone">📂 <strong>拖拽PCF/SSE XML文件</strong> 或点击选择（支持深交所PCF和上交所SSE格式）<input type="file" id="fileInput" accept=".xml"></div>
+  <div class="drop-row">
+    <div class="drop-zone" id="dz_159509">📂 <strong>导入左栏 · 159509</strong>（拖拽或点击选择 PCF/SSE XML）<input type="file" id="fi_159509" accept=".xml"></div>
+    <div class="drop-zone" id="dz_513310">📂 <strong>导入右栏 · 513310</strong>（拖拽或点击选择 PCF/SSE XML）<input type="file" id="fi_513310" accept=".xml"></div>
+  </div>
 
   <!-- Two Columns -->
   <div class="funds-row">
@@ -160,14 +162,9 @@ function buildColumn(code) {
       <div class="fund-chart"><h4>🏆 前10持仓</h4><canvas id="pie_${code}" height="200"></canvas><div class="legend" id="pieL_${code}"></div></div>
       <div class="fund-chart"><h4>📊 权重分布</h4><canvas id="bar_${code}" height="200"></canvas></div>
     </div>
-    <div class="fund-hist" id="hist_${code}">
-      <span class="hlbl">📅 PCF:</span>
-      <span id="histTag_${code}"></span>
-      <span id="hchg_${code}"></span>
-    </div>
     <div class="fund-table-wrap">
       <div class="tb-top">
-        <h4>📋 成分股</h4>
+        <h4>📋 成分股 <span id="histTag_${code}"></span> <span id="hchg_${code}"></span></h4>
         <input type="text" id="srch_${code}" placeholder="🔍 搜索..." oninput="renderTable('${code}')">
       </div>
       <table class="fund-table">
@@ -315,7 +312,7 @@ function renderHist(code) {
   const tag = document.getElementById('histTag_'+code);
   const chg = document.getElementById('hchg_'+code);
   if (!tag) return;
-  if (h.length===0) { tag.innerHTML = '<span style="font-size:10px;color:#999;">暂无</span>'; chg.textContent=''; return; }
+  if (h.length===0) { tag.innerHTML = '<span style="font-size:12px;color:#999;">暂无</span>'; chg.textContent=''; return; }
   tag.innerHTML = h.map(x => `<span class="htag${x.date===(FUNDS[code].data.TradingDay||'')?' active':''}">${x.disp}</span>`).join('');
   if (h.length>=2) {
     const l=h[h.length-1], p=h[h.length-2], c=((l.nav-p.nav)/p.nav*100);
@@ -324,11 +321,14 @@ function renderHist(code) {
 }
 
 // ===== FILE LOADING =====
-document.getElementById('dropZone').addEventListener('click',()=>document.getElementById('fileInput').click());
-document.getElementById('dropZone').addEventListener('dragover',e=>{e.preventDefault();e.target.classList.add('drag-over');});
-document.getElementById('dropZone').addEventListener('dragleave',e=>{e.target.classList.remove('drag-over');});
-document.getElementById('dropZone').addEventListener('drop',e=>{e.preventDefault();e.target.classList.remove('drag-over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
-document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0]);});
+['159509','513310'].forEach(code=>{
+  const dz=document.getElementById('dz_'+code), fi=document.getElementById('fi_'+code);
+  dz.addEventListener('click',()=>fi.click());
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0],code);});
+  fi.addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0],code); e.target.value='';});
+});
 
 function parseXML(xmlText) {
   const p=new DOMParser(), xml=p.parseFromString(xmlText,'text/xml');
@@ -353,13 +353,12 @@ function parseETFDef(xml) {
   return {TradingDay:g('TradingDay'),NAV:g('NAV'),NAVperCU:g('NAVperCU'),CreationRedemptionUnit:g('CreationRedemptionUnit'),EstimateCashComponent:g('EstimatedCashComponent'),CashComponent:g('PreCashComponent'),Components:cs};
 }
 
-function loadFile(file) {
+function loadFile(file, code) {
   const reader=new FileReader();
   reader.onload=e=>{
     try {
-      const d=parseXML(e.target.result), code='_loaded_'+Date.now();
-      FUNDS[code]={code:file.name.replace('.xml',''),name:file.name,manager:'加载文件',idxName:'--',data:d};
-      buildColumn(code); renderFund(code);
+      FUNDS[code].data=parseXML(e.target.result);
+      renderFund(code);
     } catch(err){alert('解析失败: '+err.message);}
   };
   reader.readAsText(file);
