@@ -13,6 +13,7 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Roboto, Arial, sans-serif;
             color: #2e3b4e;
         }
@@ -91,22 +92,22 @@
             margin-top: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1080px; white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 1080px; white-space: nowrap; }
         thead th {
             position: sticky;
             top: 0;
             z-index: 2;
-            background: #f8f9fa;
-            color: #1e2b3c;
+            background: #dce9f7;
+            color: #1c3a5e;
             font-weight: 600;
             padding: 11px 6px;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #b9cfe6;
             text-align: center;
-            font-size: 12.5px;
+            font-size: 13.5px;
             line-height: 1.35;
         }
         thead th.sortable { cursor: pointer; }
-        thead th.sortable:hover { background: #eef1f6; color: #4263eb; }
+        thead th.sortable:hover { background: #cfe0f2; color: #1864ab; }
         thead th .arrow { color: #4263eb; font-size: 10px; margin-left: 2px; }
         thead th .arrow.idle { color: #ced4da; font-size: 9px; }
         tbody td {
@@ -115,9 +116,9 @@
             text-align: center;
             background: white;
         }
-        tbody tr:nth-child(even) td { background: #fcfcfd; }
+        tbody tr:nth-child(even) td { background: #f3f6fb; }
         tbody tr:hover td { background: #f5f8ff; }
-        .num { font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace; font-size: 12.5px; }
+        .num { font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace; font-size: 13.5px; }
         .code-col { font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace; font-weight: 500; color: #0b3b5c; }
         .name-col { text-align: left !important; font-weight: 500; color: #1e2b3c; }
         .name-col a { color: inherit; text-decoration: none; }
@@ -127,23 +128,22 @@
         .down { color: #0ca678; }
         .flat { color: #868e96; }
         .muted { color: #adb5bd; }
-        .idx-col { text-align: left !important; color: #495057; font-size: 12.5px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
-        .t0-tag {
-            display: inline-block; font-size: 11px; font-weight: 600; color: #1971c2;
-            background: #e7f5ff; border-radius: 20px; padding: 1px 8px;
-        }
+        .idx-col { text-align: left !important; color: #495057; font-size: 13px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
         .kind-tag {
-            display: inline-block; font-size: 10.5px; color: #7048e8; background: #f3f0ff;
-            border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px;
+            display: inline-block; font-size: 11px; border-radius: 4px;
+            padding: 1px 6px; margin-left: 6px; vertical-align: 1px; font-weight: 600;
         }
+        .kind-tag.etf { color: #1971c2; background: #e7f5ff; }
+        .kind-tag.lof { color: #2b8a3e; background: #ebfbee; }
+        .kind-tag.t1  { color: #c2255c; background: #fff0f6; }
         .status-badge {
-            display: inline-block; padding: 3px 10px; border-radius: 30px; font-size: 11.5px;
+            display: inline-block; padding: 3px 10px; border-radius: 30px; font-size: 12.5px;
             font-weight: 500; background: #f1f3f5; color: #2e3b4e; min-width: 62px;
         }
         .status-badge.open { background: #e6fcf5; color: #087f5b; }
         .status-badge.limited { background: #fff3e0; color: #b85e00; }
         .status-badge.closed { background: #fee9e7; color: #b81b1b; }
-        .company { text-align: left !important; color: #495057; font-size: 12.5px; }
+        .company { text-align: left !important; color: #495057; font-size: 13px; }
         .operate { white-space: nowrap; }
         .operate a, .operate button {
             color: #4263eb; text-decoration: none; font-size: 12.5px; display: inline-block;
@@ -164,6 +164,30 @@
         tbody tr.pinned-row:hover td { background: #e3ecfd; }
         tbody tr.pinned-row td:first-child { box-shadow: inset 3px 0 0 #4263eb; }
         tbody tr.pinned-row.pinned-last td { border-bottom: 2px solid #bac8ff; }
+
+        /* 份额历史侧栏（紧贴列表右侧，列表宽度不变，可关闭） */
+        td.sh-cell.clickable { cursor: pointer; }
+        td.sh-cell.clickable .sh-main { border-bottom: 1px dotted #adb5bd; }
+        .sh-panel {
+            display: none; position: fixed; z-index: 40; width: 300px;
+            top: 76px; left: 0; /* left 由 JS 依据列表右缘计算，留 8px 间距 */
+            max-height: calc(100vh - 96px); overflow-y: auto;
+            background: white; border: 1px solid #dbe4f0; border-radius: 12px;
+            box-shadow: 0 10px 28px rgba(30, 60, 100, .16);
+            padding: 10px 12px; font-size: 12.5px;
+        }
+        .sh-panel.show { display: block; }
+        .sh-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+        .sh-panel-head h4 { margin: 0; font-size: 13px; color: #1c3a5e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sh-close {
+            border: none; background: #f1f3f5; color: #495057; width: 22px; height: 22px;
+            border-radius: 50%; cursor: pointer; font-size: 13px; line-height: 1; flex: 0 0 22px; font-family: inherit;
+        }
+        .sh-close:hover { background: #e7ebf5; color: #1c3a5e; }
+        .sh-panel table { min-width: 0; width: 100%; font-size: 12.5px; }
+        .sh-panel th, .sh-panel td { padding: 3px 8px; border-bottom: 1px solid #f1f3f5; text-align: right; white-space: nowrap; }
+        .sh-panel th { position: static; z-index: auto; background: #f4f7fb; color: #1c3a5e; font-weight: 600; }
+        .sh-panel tr.latest td { background: #f8faff; }
         .empty-row td { text-align: center; color: #868e96; padding: 28px; }
 
         /* 底部说明 */
@@ -219,10 +243,14 @@
         <span>点击表头可排序 · ☆ 自选高亮 · 📌 置顶 · 均保存在本机浏览器</span>
     </div>
 
+    <!-- 份额历史：固定显示在页面右侧空白区，不占用/不改变列表宽度 -->
+    <aside id="shPanel" class="sh-panel"></aside>
+
     <!-- 数据说明区块 -->
     <div class="data-note">
         <p><strong>📌 覆盖范围：</strong>跟踪美国 / 欧洲市场指数、可 T+0 回转交易的场内 ETF 与 LOF（跨境 QDII 场内品种均为 T+0），不含港股、日韩、中东等品种。</p>
         <p><strong>📌 溢价率：</strong>= 现价 ÷ T-1 单位净值 − 1。QDII 净值滞后 1 个交易日，溢价率仅粗略反映价格与最近公布净值的偏离。</p>
+        <p><strong>📌 盘前份额：</strong>沪深交易所每日盘前披露的基金份额（万份），下行数字为较前一交易日的新增份额（正值为净申购）。份额明显增长通常伴随溢价收敛，份额受限（暂停申购）时溢价易走高。点击份额可查看近 30 日份额历史。</p>
         <p><strong>📌 数据来源：</strong>东方财富公开行情与基金信息接口（push2 / fundmobapi），由 GitHub Actions 每个交易日定时抓取重建，抓取失败时保留上一次数据。信息仅供研究参考，不构成投资建议。</p>
     </div>
 </div>
@@ -232,14 +260,14 @@
      ① 在本文件 <head> 中加入 AdSense 加载脚本（含你的 ca-pub-****）
      ② 将下方占位 div 的文字替换为 AdSense 后台生成的 <ins> 广告代码
 -->
-<div style="max-width:1100px;margin:26px auto;padding:0 clamp(10px,2vw,28px)">
+<div style="flex:0 0 100%;max-width:1100px;margin:26px auto;padding:0 clamp(10px,2vw,28px)">
   <div class="adslot">AD · 广告位招租 · 此处展示 Google AdSense 广告</div>
 </div>
 <style>.adslot{min-height:70px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#94a3b8;font-size:11px;letter-spacing:.5px}</style>
 
 <!-- QDII_DATA:BEGIN build/qdii_fetch.js 每个交易日替换此标记之间的 JSON，勿手改 -->
 <script id="qdii-data" type="application/json">
-{"updated":"2026-09-04 07:36","funds":[{"id":"513100","nm":"纳指ETF国泰","kind":"ETF","price":2.196,"pct":0.05,"volW":25648.4,"nav":1.9702,"navdt":"26-09-02","navpct":0.25,"prem":11.46,"idx":"纳斯达克100指数","ast":"暂停申购","issuer":"国泰基金"},{"id":"159941","nm":"纳指ETF广发","kind":"ETF","price":1.636,"pct":0.12,"volW":57584.2,"nav":1.4751,"navdt":"26-09-02","navpct":0.25,"prem":10.91,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"广发基金"},{"id":"513300","nm":"纳斯达克ETF华夏","kind":"ETF","price":2.655,"pct":0,"volW":25086.9,"nav":2.4386,"navdt":"26-09-02","navpct":0.22,"prem":8.87,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"华夏基金"},{"id":"513390","nm":"纳指100ETF博时","kind":"ETF","price":2.396,"pct":0.34,"volW":9840.9,"nav":2.2116,"navdt":"26-09-02","navpct":0.25,"prem":8.34,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"博时基金"},{"id":"159632","nm":"纳斯达克ETF华安","kind":"ETF","price":2.427,"pct":0.29,"volW":16083.6,"nav":2.2375,"navdt":"26-09-02","navpct":0.25,"prem":8.47,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"华安基金"},{"id":"159659","nm":"纳斯达克100ETF招商","kind":"ETF","price":2.316,"pct":0.13,"volW":9040.5,"nav":2.1282,"navdt":"26-09-02","navpct":0.25,"prem":8.82,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"招商基金"},{"id":"161130","nm":"纳斯达克100LOF","kind":"LOF","price":4.53,"pct":-0.11,"volW":1563.1,"nav":4.3967,"navdt":"26-09-02","navpct":0.24,"prem":3.03,"idx":"纳斯达克100指数","ast":"暂停申购","issuer":"易方达基金"},{"id":"159509","nm":"纳指科技ETF景顺","kind":"ETF","price":2.776,"pct":0.07,"volW":50352.6,"nav":2.2419,"navdt":"26-09-02","navpct":0.34,"prem":23.82,"idx":"纳斯达克科技市值加权指数","ast":"场内交易","issuer":"景顺长城基金"},{"id":"513290","nm":"纳指生物科技ETF汇添富","kind":"ETF","price":1.845,"pct":3.48,"volW":51247.9,"nav":1.7819,"navdt":"26-09-02","navpct":1.33,"prem":3.54,"idx":"纳斯达克生物科技指数","ast":"场内交易","issuer":"汇添富基金"},{"id":"513500","nm":"标普500ETF博时","kind":"ETF","price":2.66,"pct":0.61,"volW":32351.9,"nav":2.4595,"navdt":"26-09-02","navpct":0.5,"prem":8.15,"idx":"标准普尔500指数","ast":"场内交易","issuer":"博时基金"},{"id":"513650","nm":"标普500ETF南方","kind":"ETF","price":2,"pct":0.35,"volW":23611.7,"nav":1.8734,"navdt":"26-09-02","navpct":0.49,"prem":6.76,"idx":"标准普尔500指数","ast":"场内交易","issuer":"南方基金"},{"id":"161125","nm":"标普500LOF","kind":"LOF","price":3.219,"pct":0.28,"volW":1242,"nav":3.1496,"navdt":"26-09-02","navpct":0.46,"prem":2.2,"idx":"标准普尔500指数","ast":"暂停申购","issuer":"易方达基金"},{"id":"161128","nm":"标普信息科技LOF","kind":"LOF","price":6.948,"pct":0.49,"volW":4312.5,"nav":6.7254,"navdt":"26-09-02","navpct":0.33,"prem":3.31,"idx":"标普500信息科技指数","ast":"暂停申购","issuer":"易方达基金"},{"id":"161127","nm":"标普生物科技LOF","kind":"LOF","price":2.171,"pct":1.4,"volW":883.3,"nav":2.1806,"navdt":"26-09-02","navpct":1.16,"prem":-0.44,"idx":"标普生物科技精选行业指数","ast":"暂停申购","issuer":"易方达基金"},{"id":"159502","nm":"标普生物科技ETF嘉实","kind":"ETF","price":1.656,"pct":1.91,"volW":39196,"nav":1.6551,"navdt":"26-09-02","navpct":1.22,"prem":0.05,"idx":"标普生物科技精选行业指数","ast":"场内交易","issuer":"嘉实基金"},{"id":"161126","nm":"标普医疗保健LOF","kind":"LOF","price":2.182,"pct":1.07,"volW":345.9,"nav":2.1845,"navdt":"26-09-02","navpct":0.81,"prem":-0.11,"idx":"标普500医疗保健等权重指数","ast":"暂停申购","issuer":"易方达基金"},{"id":"162415","nm":"美国消费LOF","kind":"LOF","price":2.813,"pct":0.04,"volW":209.7,"nav":2.82,"navdt":"26-09-02","navpct":0.25,"prem":-0.25,"idx":"标普美国品质消费股票指数","ast":"限大额","issuer":"华宝基金"},{"id":"159529","nm":"标普消费ETF景顺","kind":"ETF","price":1.275,"pct":0.55,"volW":3296.6,"nav":1.2613,"navdt":"26-09-02","navpct":0.21,"prem":1.09,"idx":"标普500消费精选指数","ast":"场内交易","issuer":"景顺长城基金"},{"id":"159518","nm":"标普油气ETF嘉实","kind":"ETF","price":1.299,"pct":-0.92,"volW":28859.1,"nav":1.3039,"navdt":"26-09-02","navpct":0.25,"prem":-0.38,"idx":"S&P Oil & Gas Exploration & Production Select Industry","ast":"场内交易","issuer":"嘉实基金"},{"id":"162411","nm":"华宝油气LOF","kind":"LOF","price":1.005,"pct":-0.89,"volW":6236.4,"nav":1.0119,"navdt":"26-09-02","navpct":0.25,"prem":-0.68,"idx":"S&P Oil & Gas Exploration & Production Select Industry","ast":"暂停申购","issuer":"华宝基金"},{"id":"162719","nm":"石油LOF","kind":"LOF","price":3.146,"pct":-0.29,"volW":2897.8,"nav":3.1541,"navdt":"26-09-02","navpct":0.53,"prem":-0.26,"idx":"道琼斯美国石油开发与生产指数","ast":"暂停申购","issuer":"广发基金"},{"id":"160140","nm":"美国REIT精选LOF","kind":"LOF","price":1.425,"pct":0.14,"volW":233.7,"nav":1.4262,"navdt":"26-09-02","navpct":-0.44,"prem":-0.08,"idx":"道琼斯美国精选REIT指数","ast":"开放申购","issuer":"南方基金"},{"id":"501300","nm":"美元债LOF","kind":"LOF","price":0.925,"pct":-0.11,"volW":914.1,"nav":0.9349,"navdt":"26-09-02","navpct":0.09,"prem":-1.06,"idx":null,"ast":"限大额","issuer":"海富通基金"},{"id":"513030","nm":"德国ETF华安","kind":"ETF","price":1.861,"pct":0,"volW":9337.5,"nav":1.8448,"navdt":"26-09-02","navpct":-0.67,"prem":0.88,"idx":"法兰克福DAX指数","ast":"场内交易","issuer":"华安基金"},{"id":"513080","nm":"法国ETF华安","kind":"ETF","price":1.772,"pct":-0.28,"volW":4539,"nav":1.737,"navdt":"26-09-02","navpct":-0.44,"prem":2.01,"idx":"法国CAC40指数","ast":"场内交易","issuer":"华安基金"}]}
+{"updated":"2026-09-05 00:44","funds":[{"id":"513100","nm":"纳指ETF国泰","kind":"ETF","price":2.222,"pct":1.18,"volW":28499.6,"nav":1.9925,"navdt":"26-09-03","navpct":1.13,"prem":11.52,"idx":"纳斯达克100指数","ast":"暂停申购","issuer":"国泰基金","shWan":946511.06,"shChgWan":0,"shHist":[{"d":"2026-09-04","v":946511.06},{"d":"2026-09-03","v":946511.06}]},{"id":"159941","nm":"纳指ETF广发","kind":"ETF","price":1.664,"pct":1.71,"volW":70933.9,"nav":1.4918,"navdt":"26-09-03","navpct":1.13,"prem":11.54,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"广发基金","shWan":2254621.01,"shChgWan":130,"shHist":[{"d":"2026-09-04","v":2254621.01},{"d":"2026-09-03","v":2254491.01},{"d":"2026-09-02","v":2254361.01},{"d":"2026-09-01","v":2254231.01},{"d":"2026-08-31","v":2254101.01},{"d":"2026-08-28","v":2253971.01},{"d":"2026-08-27","v":2253841.01},{"d":"2026-08-26","v":2253711.01},{"d":"2026-08-25","v":2253581.01},{"d":"2026-08-24","v":2253451.01},{"d":"2026-08-21","v":2253321.01}]},{"id":"513300","nm":"纳斯达克ETF华夏","kind":"ETF","price":2.692,"pct":1.39,"volW":34264.8,"nav":2.4657,"navdt":"26-09-03","navpct":1.11,"prem":9.18,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"华夏基金","shWan":534817.1,"shChgWan":375,"shHist":[{"d":"2026-09-04","v":534817.1},{"d":"2026-09-03","v":534442.1}]},{"id":"513390","nm":"纳指100ETF博时","kind":"ETF","price":2.437,"pct":1.71,"volW":8997.8,"nav":2.2365,"navdt":"26-09-03","navpct":1.13,"prem":8.96,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"博时基金","shWan":214837.91,"shChgWan":100,"shHist":[{"d":"2026-09-04","v":214837.91},{"d":"2026-09-03","v":214737.91}]},{"id":"159632","nm":"纳斯达克ETF华安","kind":"ETF","price":2.466,"pct":1.61,"volW":23308.2,"nav":2.2629,"navdt":"26-09-03","navpct":1.14,"prem":8.98,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"华安基金","shWan":500272.06,"shChgWan":400,"shHist":[{"d":"2026-09-04","v":500272.06},{"d":"2026-09-03","v":499872.06},{"d":"2026-09-02","v":499472.06},{"d":"2026-09-01","v":499072.06},{"d":"2026-08-31","v":498672.06},{"d":"2026-08-28","v":498272.06},{"d":"2026-08-27","v":497872.06},{"d":"2026-08-26","v":497472.06},{"d":"2026-08-25","v":497072.06},{"d":"2026-08-24","v":496672.06},{"d":"2026-08-21","v":496272.06}]},{"id":"159659","nm":"纳斯达克100ETF招商","kind":"ETF","price":2.35,"pct":1.47,"volW":13933.3,"nav":2.1523,"navdt":"26-09-03","navpct":1.13,"prem":9.19,"idx":"纳斯达克100指数","ast":"场内交易","issuer":"招商基金","shWan":456974.4,"shChgWan":200,"shHist":[{"d":"2026-09-04","v":456974.4},{"d":"2026-09-03","v":456774.4},{"d":"2026-09-02","v":456574.4},{"d":"2026-09-01","v":456374.4},{"d":"2026-08-31","v":456174.4},{"d":"2026-08-28","v":455974.4},{"d":"2026-08-27","v":455774.4},{"d":"2026-08-26","v":455574.4},{"d":"2026-08-25","v":455374.4},{"d":"2026-08-24","v":455174.4},{"d":"2026-08-21","v":454974.4}]},{"id":"161130","nm":"纳斯达克100LOF","kind":"LOF","price":4.583,"pct":1.17,"volW":1554.5,"nav":4.4441,"navdt":"26-09-03","navpct":1.08,"prem":3.13,"idx":"纳斯达克100指数","ast":"暂停申购","issuer":"易方达基金","shWan":15752.13,"shChgWan":0.03,"shHist":[{"d":"2026-09-04","v":15752.13},{"d":"2026-09-03","v":15752.1},{"d":"2026-09-02","v":15751.7},{"d":"2026-09-01","v":15751.46},{"d":"2026-08-31","v":15751.44},{"d":"2026-08-28","v":15751.38},{"d":"2026-08-27","v":15751.3},{"d":"2026-08-26","v":15751.21},{"d":"2026-08-25","v":15751.16},{"d":"2026-08-24","v":15750.84},{"d":"2026-08-21","v":15750.79}]},{"id":"159509","nm":"纳指科技ETF景顺","kind":"ETF","price":2.833,"pct":2.05,"volW":61164.6,"nav":2.27,"navdt":"26-09-03","navpct":1.25,"prem":24.8,"idx":"纳斯达克科技市值加权指数","ast":"场内交易","issuer":"景顺长城基金","shWan":662156.41,"shChgWan":0,"shHist":[{"d":"2026-09-04","v":662156.41},{"d":"2026-09-03","v":662156.41},{"d":"2026-09-02","v":662156.41},{"d":"2026-09-01","v":662156.41},{"d":"2026-08-31","v":662156.41},{"d":"2026-08-28","v":662156.41},{"d":"2026-08-27","v":662156.41},{"d":"2026-08-26","v":662156.41},{"d":"2026-08-25","v":662156.41},{"d":"2026-08-24","v":662156.41},{"d":"2026-08-21","v":662156.41}]},{"id":"513290","nm":"纳指生物科技ETF汇添富","kind":"ETF","price":1.821,"pct":-1.3,"volW":47736.7,"nav":1.7814,"navdt":"26-09-03","navpct":-0.03,"prem":2.22,"idx":"纳斯达克生物科技指数","ast":"场内交易","issuer":"汇添富基金","shWan":106057.21,"shChgWan":400,"shHist":[{"d":"2026-09-04","v":106057.21},{"d":"2026-09-03","v":105657.21}]},{"id":"513500","nm":"标普500ETF博时","kind":"ETF","price":2.698,"pct":1.43,"volW":23931.5,"nav":2.4849,"navdt":"26-09-03","navpct":1.03,"prem":8.58,"idx":"标准普尔500指数","ast":"场内交易","issuer":"博时基金","shWan":1026963.86,"shChgWan":500,"shHist":[{"d":"2026-09-04","v":1026963.86},{"d":"2026-09-03","v":1026463.86}]},{"id":"513650","nm":"标普500ETF南方","kind":"ETF","price":2.032,"pct":1.6,"volW":25048.5,"nav":1.8926,"navdt":"26-09-03","navpct":1.02,"prem":7.37,"idx":"标准普尔500指数","ast":"场内交易","issuer":"南方基金","shWan":437173.4,"shChgWan":200,"shHist":[{"d":"2026-09-04","v":437173.4},{"d":"2026-09-03","v":436973.4}]},{"id":"161125","nm":"标普500LOF","kind":"LOF","price":3.254,"pct":1.09,"volW":1462.1,"nav":3.1804,"navdt":"26-09-03","navpct":0.98,"prem":2.31,"idx":"标准普尔500指数","ast":"暂停申购","issuer":"易方达基金","shWan":24541.27,"shChgWan":0.01,"shHist":[{"d":"2026-09-04","v":24541.27},{"d":"2026-09-03","v":24541.26},{"d":"2026-09-02","v":24541.15},{"d":"2026-09-01","v":24541.12},{"d":"2026-08-31","v":24541.11},{"d":"2026-08-28","v":24541.04},{"d":"2026-08-27","v":24540.24},{"d":"2026-08-26","v":24540.15},{"d":"2026-08-25","v":24539.94},{"d":"2026-08-24","v":24539.82},{"d":"2026-08-21","v":24540.05}]},{"id":"161128","nm":"标普信息科技LOF","kind":"LOF","price":7.055,"pct":1.54,"volW":8395.2,"nav":6.8032,"navdt":"26-09-03","navpct":1.16,"prem":3.7,"idx":"标普500信息科技指数","ast":"暂停申购","issuer":"易方达基金","shWan":47906.17,"shChgWan":-0.04,"shHist":[{"d":"2026-09-04","v":47906.17},{"d":"2026-09-03","v":47906.21},{"d":"2026-09-02","v":47906.18},{"d":"2026-09-01","v":47906.14},{"d":"2026-08-31","v":47906.63},{"d":"2026-08-28","v":47907.81},{"d":"2026-08-27","v":47907.72},{"d":"2026-08-26","v":47907.63},{"d":"2026-08-25","v":47907.32},{"d":"2026-08-24","v":47916.57},{"d":"2026-08-21","v":47916.54}]},{"id":"161127","nm":"标普生物科技LOF","kind":"LOF","price":2.155,"pct":-0.74,"volW":610,"nav":2.1691,"navdt":"26-09-03","navpct":-0.53,"prem":-0.65,"idx":"标普生物科技精选行业指数","ast":"暂停申购","issuer":"易方达基金","shWan":6101.27,"shChgWan":-0.26,"shHist":[{"d":"2026-09-04","v":6101.27},{"d":"2026-09-03","v":6101.53},{"d":"2026-09-02","v":6101.53},{"d":"2026-09-01","v":6102.03},{"d":"2026-08-31","v":6102.03},{"d":"2026-08-28","v":6102.03},{"d":"2026-08-27","v":6102.04},{"d":"2026-08-26","v":6116.48},{"d":"2026-08-25","v":6118.99},{"d":"2026-08-24","v":6156.43},{"d":"2026-08-21","v":6184.24}]},{"id":"159502","nm":"标普生物科技ETF嘉实","kind":"ETF","price":1.639,"pct":-1.03,"volW":35761.2,"nav":1.6459,"navdt":"26-09-03","navpct":-0.56,"prem":-0.42,"idx":"标普生物科技精选行业指数","ast":"场内交易","issuer":"嘉实基金","shWan":112832.3,"shChgWan":100,"shHist":[{"d":"2026-09-04","v":112832.3},{"d":"2026-09-03","v":112732.3},{"d":"2026-09-02","v":112632.3},{"d":"2026-09-01","v":112532.3},{"d":"2026-08-31","v":112432.3},{"d":"2026-08-28","v":112332.3},{"d":"2026-08-27","v":112232.3},{"d":"2026-08-26","v":112132.3},{"d":"2026-08-25","v":112032.3},{"d":"2026-08-24","v":111932.3},{"d":"2026-08-21","v":111832.3}]},{"id":"161126","nm":"标普医疗保健LOF","kind":"LOF","price":2.182,"pct":0,"volW":260.3,"nav":2.1858,"navdt":"26-09-03","navpct":0.06,"prem":-0.17,"idx":"标普500医疗保健等权重指数","ast":"暂停申购","issuer":"易方达基金","shWan":4478.79,"shChgWan":0,"shHist":[{"d":"2026-09-04","v":4478.79},{"d":"2026-09-03","v":4478.79},{"d":"2026-09-02","v":4478.79},{"d":"2026-09-01","v":4481.07},{"d":"2026-08-31","v":4481.07},{"d":"2026-08-28","v":4481.07},{"d":"2026-08-27","v":4482.99},{"d":"2026-08-26","v":4483.72},{"d":"2026-08-25","v":4483.73},{"d":"2026-08-24","v":4484.7},{"d":"2026-08-21","v":4499.94}]},{"id":"162415","nm":"美国消费LOF","kind":"LOF","price":2.838,"pct":0.89,"volW":390.7,"nav":2.856,"navdt":"26-09-03","navpct":1.28,"prem":-0.63,"idx":"标普美国品质消费股票指数","ast":"暂停申购","issuer":"华宝基金","shWan":6695.87,"shChgWan":0.48,"shHist":[{"d":"2026-09-04","v":6695.87},{"d":"2026-09-03","v":6695.39},{"d":"2026-09-02","v":6695.31},{"d":"2026-09-01","v":6708.81},{"d":"2026-08-31","v":6710.83},{"d":"2026-08-28","v":6714.94},{"d":"2026-08-27","v":6715.74},{"d":"2026-08-26","v":6728.53},{"d":"2026-08-25","v":6764.71},{"d":"2026-08-24","v":6766.59},{"d":"2026-08-21","v":6788.99}]},{"id":"159529","nm":"标普消费ETF景顺","kind":"ETF","price":1.283,"pct":0.63,"volW":3964.6,"nav":1.2737,"navdt":"26-09-03","navpct":0.98,"prem":0.73,"idx":"标普500消费精选指数","ast":"场内交易","issuer":"景顺长城基金","shWan":81153.67,"shChgWan":0,"shHist":[{"d":"2026-09-04","v":81153.67},{"d":"2026-09-03","v":81153.67},{"d":"2026-09-02","v":81153.67},{"d":"2026-09-01","v":81153.67},{"d":"2026-08-31","v":81153.67},{"d":"2026-08-28","v":81153.67},{"d":"2026-08-27","v":81153.67},{"d":"2026-08-26","v":81153.67},{"d":"2026-08-25","v":81153.67},{"d":"2026-08-24","v":81153.67},{"d":"2026-08-21","v":81153.67}]},{"id":"159518","nm":"标普油气ETF嘉实","kind":"ETF","price":1.296,"pct":-0.23,"volW":21495.3,"nav":1.2984,"navdt":"26-09-03","navpct":-0.42,"prem":-0.18,"idx":"S&P Oil & Gas Exploration & Production Select Industry","ast":"场内交易","issuer":"嘉实基金","shWan":166132.53,"shChgWan":100,"shHist":[{"d":"2026-09-04","v":166132.53},{"d":"2026-09-03","v":166032.53},{"d":"2026-09-02","v":165932.53},{"d":"2026-09-01","v":165832.53},{"d":"2026-08-31","v":165732.53},{"d":"2026-08-28","v":165632.53},{"d":"2026-08-27","v":166432.53},{"d":"2026-08-26","v":166332.53},{"d":"2026-08-25","v":166232.53},{"d":"2026-08-24","v":166132.53},{"d":"2026-08-21","v":166032.53}]},{"id":"162411","nm":"华宝油气LOF","kind":"LOF","price":1.002,"pct":-0.3,"volW":6353.4,"nav":1.0078,"navdt":"26-09-03","navpct":-0.41,"prem":-0.58,"idx":"S&P Oil & Gas Exploration & Production Select Industry","ast":"暂停申购","issuer":"华宝基金","shWan":95597.19,"shChgWan":-262.37,"shHist":[{"d":"2026-09-04","v":95597.19},{"d":"2026-09-03","v":95859.56},{"d":"2026-09-02","v":97243.36},{"d":"2026-09-01","v":97801.8},{"d":"2026-08-31","v":98453.75},{"d":"2026-08-28","v":99159.14},{"d":"2026-08-27","v":99899.9},{"d":"2026-08-26","v":100340.7},{"d":"2026-08-25","v":100803.54},{"d":"2026-08-24","v":100827.78},{"d":"2026-08-21","v":101037.25}]},{"id":"162719","nm":"石油LOF","kind":"LOF","price":3.128,"pct":-0.57,"volW":1660,"nav":3.1407,"navdt":"26-09-03","navpct":-0.42,"prem":-0.4,"idx":"道琼斯美国石油开发与生产指数","ast":"暂停申购","issuer":"广发基金","shWan":7677.7,"shChgWan":57.95,"shHist":[{"d":"2026-09-04","v":7677.7},{"d":"2026-09-03","v":7619.75},{"d":"2026-09-02","v":7618.2},{"d":"2026-09-01","v":7634.95},{"d":"2026-08-31","v":7752.52},{"d":"2026-08-28","v":7790.53},{"d":"2026-08-27","v":7813.68},{"d":"2026-08-26","v":7879.15},{"d":"2026-08-25","v":8053.83},{"d":"2026-08-24","v":8075.93},{"d":"2026-08-21","v":8272.05}]},{"id":"160140","nm":"美国REIT精选LOF","kind":"LOF","price":1.431,"pct":0.42,"volW":263.7,"nav":1.434,"navdt":"26-09-03","navpct":0.55,"prem":-0.21,"idx":"道琼斯美国精选REIT指数","ast":"暂停申购","issuer":"南方基金","shWan":7058.37,"shChgWan":-19.74,"shHist":[{"d":"2026-09-04","v":7058.37},{"d":"2026-09-03","v":7078.11},{"d":"2026-09-02","v":7079.77},{"d":"2026-09-01","v":7083.27},{"d":"2026-08-31","v":7081.41},{"d":"2026-08-28","v":7088.06},{"d":"2026-08-27","v":7091.67},{"d":"2026-08-26","v":7147.48},{"d":"2026-08-25","v":7147.55},{"d":"2026-08-24","v":7173.55},{"d":"2026-08-21","v":7192.53}]},{"id":"501300","nm":"美元债LOF","kind":"LOF","price":0.926,"pct":0.11,"volW":366.3,"nav":0.9354,"navdt":"26-09-03","navpct":0.05,"prem":-1,"idx":null,"ast":"暂停申购","issuer":"海富通基金","shWan":null,"shChgWan":null,"shHist":[]},{"id":"513030","nm":"德国ETF华安","kind":"ETF","price":1.872,"pct":0.59,"volW":7613.9,"nav":1.855,"navdt":"26-09-03","navpct":0.55,"prem":0.92,"idx":"法兰克福DAX指数","ast":"场内交易","issuer":"华安基金","shWan":102077.9,"shChgWan":100,"shHist":[{"d":"2026-09-04","v":102077.9},{"d":"2026-09-03","v":101977.9}]},{"id":"513080","nm":"法国ETF华安","kind":"ETF","price":1.785,"pct":0.73,"volW":4472.8,"nav":1.7369,"navdt":"26-09-03","navpct":-0.01,"prem":2.77,"idx":"法国CAC40指数","ast":"场内交易","issuer":"华安基金","shWan":66391.6,"shChgWan":100,"shHist":[{"d":"2026-09-04","v":66391.6},{"d":"2026-09-03","v":66291.6}]}]}
 </script>
 <!-- QDII_DATA:END -->
 
@@ -248,7 +276,6 @@
 const COLS = [
     { key:'id',     label:'代码',          cls:'code-col', sortable:true },
     { key:'nm',     label:'名称',          cls:'name-col', sortable:true },
-    { key:'t0',     label:'T+0' },
     { key:'price',  label:'现价',          cls:'num price-col', sortable:true },
     { key:'pct',    label:'涨幅',          cls:'num', sortable:true },
     { key:'volW',   label:'成交额<br>(万元)', cls:'num', sortable:true },
@@ -256,8 +283,9 @@ const COLS = [
     { key:'navdt',  label:'净值日期',      cls:'muted', sortable:true },
     { key:'navpct', label:'净值<br>日涨跌', cls:'num', sortable:true },
     { key:'prem',   label:'溢价率',        cls:'num', sortable:true },
+    { key:'sh',     label:'盘前份额<br>(万份)', cls:'num', sortable:true },
     { key:'idx',    label:'相关指数',      cls:'idx-col', sortable:true },
-    { key:'ast',    label:'申购状态' },
+    { key:'ast',    label:'申购状态', sortable:true },
     { key:'issuer', label:'基金公司',      cls:'company', sortable:true },
     { key:'op',     label:'操作' }
 ];
@@ -267,7 +295,7 @@ const STAR_KEY = 'qdii_t0_stars';
 const PIN_KEY  = 'qdii_t0_pins';
 let stars = loadStars();
 let pins = loadPins();
-let sortKey = null, sortDir = 1;
+let sortKey = 'prem', sortDir = -1; // 默认按溢价率降序，点击表头可切换
 let onlyStar = false;
 
 function load() {
@@ -292,12 +320,19 @@ function savePins() {
 // ==================== 工具 ====================
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
 const signCls = v => v == null || isNaN(v) ? 'muted' : (v > 0 ? 'up' : v < 0 ? 'down' : 'flat');
-const signPfx = v => v > 0 ? '+' : '';
 const numFmt  = (v, d) => v == null || isNaN(v) ? '<span class="muted">-</span>'
-    : `${signPfx(v)}${v.toFixed(d)}%`;
+    : `${v.toFixed(d)}%`;
 const priceFmt = v => v == null || isNaN(v) ? '<span class="muted">-</span>' : v.toFixed(3);
 const wanFmt  = v => v == null || isNaN(v) ? '<span class="muted">-</span>'
     : v.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+// 份额格式化：≥1万份 → 万份（去掉全零小数）；<1万份 → 显示准确的份数；不加正号
+const fmtShareParts = v => {
+    if (v == null || isNaN(v)) return null;
+    if (Math.abs(v) < 1) return { txt: String(Math.round(v * 10000)), unit: '份' };
+    let s = v.toFixed(2);
+    if (s.includes('.')) s = s.replace(/\.?0+$/, '');
+    return { txt: Number(s).toLocaleString('en-US'), unit: '万' };
+};
 const statusBadge = s => {
     if (!s || s === '-') return '<span class="muted">-</span>';
     if (/开放/.test(s)) return `<span class="status-badge open">${esc(s)}</span>`;
@@ -309,6 +344,12 @@ const statusBadge = s => {
 function sortValue(row, key) {
     switch (key) {
         case 'id': case 'nm': case 'navdt': case 'idx': case 'issuer': return String(row[key] ?? '');
+        case 'ast': { // 申购状态按「开放 > 限大额 > 场内交易 > 暂停」分组排序
+            const s = row.ast || '';
+            const i = ['开放申购', '限大额', '场内交易', '暂停申购'].findIndex(o => s.includes(o));
+            return i < 0 ? 4 : i;
+        }
+        case 'sh': return row.shWan == null ? -Infinity : row.shWan;
         case 'price': case 'pct': case 'volW': case 'nav': case 'navpct': case 'prem':
             return row[key] == null ? -Infinity : row[key];
         default: return '';
@@ -316,7 +357,7 @@ function sortValue(row, key) {
 }
 
 // ==================== 渲染 ====================
-const TEXT_KEYS = ['id', 'nm', 'navdt', 'idx', 'issuer']; // 文本列首次点击升序，数值列首次点击降序
+const TEXT_KEYS = ['id', 'nm', 'navdt', 'idx', 'issuer', 'ast']; // 文本列首次点击升序，数值列首次点击降序
 
 function renderHead() {
     document.getElementById('headRow').innerHTML = COLS.map(c => {
@@ -340,8 +381,7 @@ function cellHtml(col, r) {
     const url = `https://fund.eastmoney.com/${r.id}.html`;
     switch (col.key) {
         case 'id':     return `<td class="code-col"><a href="${url}" target="_blank" rel="noopener">${r.id}</a></td>`;
-        case 'nm':     return `<td class="name-col"><a href="${url}" target="_blank" rel="noopener" title="${esc(r.nm)}">${esc(r.nm)}</a>${r.kind ? `<span class="kind-tag">${esc(r.kind)}</span>` : ''}</td>`;
-        case 't0':     return `<td><span class="t0-tag">T+0</span></td>`;
+        case 'nm':     return `<td class="name-col"><a href="${url}" target="_blank" rel="noopener" title="${esc(r.nm)}">${esc(r.nm)}</a>${r.kind ? `<span class="kind-tag ${r.kind === 'LOF' ? 'lof' : 'etf'}">${esc(r.kind)}</span>` : ''}${r.t1 ? '<span class="kind-tag t1" title="该品种为 T+1 交易，非 T+0">T+1</span>' : ''}</td>`;
         case 'price':  return `<td class="num price-col">${priceFmt(r.price)}</td>`;
         case 'pct':    return `<td class="num ${signCls(r.pct)}">${numFmt(r.pct, 2)}</td>`;
         case 'volW':   return `<td class="num" title="当日累计成交额（万元）">${wanFmt(r.volW)}</td>`;
@@ -349,6 +389,15 @@ function cellHtml(col, r) {
         case 'navdt':  return `<td class="muted">${esc(r.navdt || '-')}</td>`;
         case 'navpct': return `<td class="num ${signCls(r.navpct)}">${numFmt(r.navpct, 2)}</td>`;
         case 'prem':   return `<td class="num ${signCls(r.prem)}" title="现价 ÷ T-1净值 − 1（QDII 净值滞后一天，仅供参考）">${numFmt(r.prem, 2)}</td>`;
+        case 'sh': {
+            const chg = fmtShareParts(r.shChgWan);
+            const chgHtml = chg ? `<br><span class="${signCls(r.shChgWan)}" style="font-size:12px">${chg.txt}${chg.unit}</span>` : '';
+            const main = r.shWan == null ? null
+                : (Math.abs(r.shWan) < 1 ? `${Math.round(r.shWan * 10000)}份`
+                   : r.shWan.toLocaleString('en-US', { maximumFractionDigits: 0 }));
+            const clickable = Array.isArray(r.shHist) && r.shHist.length > 1;
+            return `<td class="num sh-cell${clickable ? ' clickable' : ''}" data-id="${r.id}" title="${clickable ? '点击查看近30日份额历史；下行数字为较前一交易日新增，正值为净申购' : '交易所盘前披露的最新份额(万份)；下行数字为较前一交易日新增，正值为净申购'}"><span class="sh-main">${main == null ? '<span class="muted">-</span>' : main}</span>${chgHtml}</td>`;
+        }
         case 'idx':    return `<td class="idx-col" title="${esc(r.idx || '')}">${esc(r.idx || '-')}</td>`;
         case 'ast':    return `<td>${statusBadge(r.ast)}</td>`;
         case 'issuer': return `<td class="company">${esc(r.issuer || '-')}</td>`;
@@ -418,9 +467,64 @@ function render() {
             render();
         });
     });
+    tbody.querySelectorAll('td.sh-cell.clickable').forEach(td => {
+        td.addEventListener('click', e => {
+            e.stopPropagation();
+            const r = DATA.funds.find(x => x.id === td.dataset.id);
+            if (!r || !Array.isArray(r.shHist) || r.shHist.length === 0) return;
+            if (shPanel.classList.contains('show') && shPanel.dataset.id === r.id) { closeShPanel(); return; }
+            showShPanel(td, r);
+        });
+    });
 
     document.getElementById('countTip').textContent = `显示 ${list.length} / ${DATA.funds.length} 条`;
 }
+
+// ==================== 份额历史侧栏（列表右侧，可关闭） ====================
+const shPanel = document.getElementById('shPanel');
+
+function closeShPanel() { shPanel.classList.remove('show'); delete shPanel.dataset.id; }
+
+// 面板左缘 = 列表右缘 + 8px，始终与列表紧贴相邻、不重叠：
+//   屏幕够宽 → 固定定位（滚动页面保持可见）；
+//   屏幕不够宽 → 绝对定位靠在列表右侧，页面横向滚动即可查看。
+function positionShPanel() {
+    if (!shPanel.classList.contains('show')) return;
+    const cardRight = document.querySelector('.container').getBoundingClientRect().right;
+    const fits = cardRight + 8 + shPanel.offsetWidth <= window.innerWidth;
+    if (fits) {
+        shPanel.style.position = 'fixed';
+        shPanel.style.left = (cardRight + 8) + 'px';
+        shPanel.style.top = '76px';
+    } else {
+        shPanel.style.position = 'absolute';
+        shPanel.style.left = (cardRight + window.scrollX + 8) + 'px';
+        shPanel.style.top = '76px';
+    }
+}
+
+function showShPanel(td, r) {
+    const hist = r.shHist || [];
+    const rowsHtml = hist.map((h, i) => {
+        const prev = hist[i + 1];
+        const cur = fmtShareParts(h.v) || { txt: '-', unit: '' };
+        const chg = prev && prev.v != null ? h.v - prev.v : null;
+        const f = fmtShareParts(chg);
+        return `<tr${i === 0 ? ' class="latest"' : ''}><td>${esc(h.d)}</td><td>${cur.txt}${cur.unit}</td>` +
+               `<td class="${chg == null ? 'muted' : signCls(chg)}">${f ? f.txt + f.unit : '-'}</td></tr>`;
+    }).join('');
+    shPanel.innerHTML = `<div class="sh-panel-head"><h4 title="${esc(r.id)} ${esc(r.nm)} · 近30日份额">${esc(r.id)} ${esc(r.nm)} · 近30日份额</h4>` +
+        `<button class="sh-close" type="button" title="关闭">✕</button></div>` +
+        `<table><tr><th>日期</th><th>份额(万份)</th><th>日增</th></tr>${rowsHtml}</table>`;
+    shPanel.dataset.id = r.id;
+    shPanel.classList.add('show');
+    shPanel.querySelector('.sh-close').addEventListener('click', closeShPanel);
+    positionShPanel();
+}
+shPanel.addEventListener('click', e => e.stopPropagation());
+document.addEventListener('click', closeShPanel);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShPanel(); });
+window.addEventListener('resize', positionShPanel);
 
 // ==================== 初始化 ====================
 document.getElementById('updTime').textContent = DATA.updated;
