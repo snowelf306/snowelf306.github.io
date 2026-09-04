@@ -23,6 +23,13 @@
   #go:active{transform:none}
   .controls .nav{padding:8px 13px;border:none;border-radius:8px;background:rgba(255,255,255,.28);color:#fff;font-size:13px;cursor:pointer}
   .controls .nav:hover{background:rgba(255,255,255,.42)}
+  .histdrop{position:fixed;z-index:60;background:#fff;color:#1e2430;border-radius:10px;box-shadow:0 10px 28px rgba(15,30,60,.3);padding:5px;max-width:280px;max-height:250px;overflow:auto}
+  .histdrop .hd-item{display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:7px;font-size:13.5px;cursor:pointer;user-select:none}
+  .histdrop .hd-item:hover{background:#eff6ff}
+  .histdrop .hd-item .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .histdrop .hd-item .del{flex:none;border:none;background:transparent;color:#cbd5e1;font-size:12px;line-height:1;cursor:pointer;padding:2px 5px;border-radius:5px;font-weight:700}
+  .histdrop .hd-item .del:hover{color:#dc2626;background:#fee2e2}
+  .histdrop .hd-empty{padding:12px 7px;text-align:center;color:#94a3b8;font-size:11.5px}
   .hint{margin-top:11px;font-size:11.5px;opacity:.85;line-height:1.6}
 
   main{padding:14px clamp(10px,2vw,28px) 40px;max-width:1880px;margin:0 auto}
@@ -45,6 +52,8 @@
   .d-date{width:34px;flex:none;font-size:13px;color:#475569;font-variant-numeric:tabular-nums}
   .wtxt{width:32px;flex:none;font-size:12.5px;font-weight:700;text-align:center;color:#64748b;line-height:1.2}
   .wtxt.snow{color:#dc2626}
+  .wtxt.rain{color:#1e2430}
+  .wtxt.sunny{color:#16a34a}
   .tcol{margin-left:auto;font-size:17px;font-weight:600;color:#1e2430;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.2px}
   .tcol .ext{color:#dc2626;font-weight:700}
   .tcol .sep{color:#94a3b8;font-weight:400;margin:0 4px;font-size:15px}
@@ -63,6 +72,8 @@
   .legend .demo{display:inline-flex;align-items:center;gap:6px}
   .legend .grad{width:56px;height:7px;border-radius:4px;background:linear-gradient(90deg,hsl(212 70% 50%),hsl(140 70% 45%),hsl(50 80% 50%),hsl(0 72% 50%))}
   .legend .red{color:#dc2626}
+  .legend .ink{color:#1e2430}
+  .legend .sun{color:#16a34a}
 </style>
 </head>
 <body>
@@ -83,6 +94,7 @@
     <button id="nextM" class="nav" type="button" title="查询下一月">下月 ›</button>
     <button id="go" type="submit">查询</button>
   </form>
+  <div class="histdrop" id="histDrop" hidden></div>
   <p class="hint">数据来源 Open-Meteo / Nominatim（免费、无需密钥）；常用城市已内置坐标，无需在线定位 · 历史数据延迟约 5 天；未来日期最多可查 16 天内的预报</p>
 </header>
 
@@ -92,8 +104,9 @@
     <span class="demo">温度格式：<b>低温 / 高温</b>；<b class="red">红色</b> = 低于 0&nbsp;°C 或高于 30&nbsp;°C</span>
     <span class="demo">行末彩色短线 + 数字 = 当日最大紫外线指数（无数据则不显示）</span>
     <span class="demo">每 5 天一组：交替底色 + 分隔线，方便跨城市对齐同一天</span>
-    <span class="demo">天气分五类显示；<b class="red">红字</b> = 雪</span>
+    <span class="demo">天气分五类显示；<b class="sun">绿字</b> = 晴 · <b class="red">红字</b> = 雪 · <b class="ink">黑字</b> = 雨</span>
     <span class="demo">悬停任意一行可查看天气详情</span>
+    <span class="demo">输入框为空且光标在框内时，显示该输入框专属的历史城市下拉（点击填入，✕ 删除）</span>
   </div>
 </main>
 
@@ -312,7 +325,7 @@ function dayRow(day,todayISO){
   const d=new Date(day.date+"T00:00:00");
   const [desc]=wmo(day.code);
   const wx=catWx(day.code);
-  const snow=(wx==="雪");                                        // 仅下雪用红字
+  const snow=(wx==="雪"), rain=(wx==="雨"), sunny=(wx==="晴");   // 下雪红字，下雨黑字，晴天绿字
   const dom=d.getDate();
   const band=(Math.floor((dom-1)/5)%2)?"band-b":"band-a";       // 每5天一组交替底色
   const gline=((dom-1)%5===0&&dom>1)?"gstart":"";               // 每组首行加分隔线
@@ -322,7 +335,7 @@ function dayRow(day,todayISO){
   el.title=(d.getMonth()+1)+"月"+d.getDate()+"日 · "+desc;
   el.innerHTML=
     '<span class="d-date">'+d.getDate()+'日</span>'+
-    '<span class="wtxt'+(snow?' snow':'')+'" title="'+desc+'">'+wx+'</span>'+
+    '<span class="wtxt'+(snow?' snow':(rain?' rain':(sunny?' sunny':'')))+'" title="'+desc+'">'+wx+'</span>'+
     '<span class="tcol">'+tempHTML(day.min)+'<span class="sep">/</span>'+tempHTML(day.max)+'</span>'+
     uvChip(day.uv);
   return el;
@@ -382,7 +395,7 @@ function showLoading(names){
   });
 }
 
-async function run(){
+async function run(save){
   const inputs=[...document.querySelectorAll("#cityInputs input")];
   const names=inputs.map(i=>i.value.trim());
   const active=names.filter(Boolean);
@@ -396,6 +409,7 @@ async function run(){
   const todayISO=localISO(new Date());
 
   if(!active.length){ board.innerHTML='<div class="empty" style="grid-column:1/-1">请至少填写一个城市名</div>'; return; }
+  if(save) inputs.forEach((inp,i)=>{ const v=inp.value.trim(); if(v) saveSlot(i,v); });  // 各自记入所属输入框
   showLoading(active);
 
   const tasks=active.map(name=>loadCity(name,s,e,todayISO).then(
@@ -408,10 +422,108 @@ async function run(){
   results.forEach((r,i)=>board.appendChild(renderCard(r,i,todayISO)));
 }
 
+/* ---------- 城市历史记录（每个输入框独立保存，localStorage） ---------- */
+const LS_KEY="weather_city_hist_slots";
+const histDrop=document.getElementById("histDrop");
+const CITY_DEFAULTS=["南京","玉溪","临沧","兴义","安顺","凯里"];
+let histStore=loadHistStore();
+let dropFor=null;                                              // 下拉当前对应的输入框
+
+function loadHistStore(){
+  try{
+    localStorage.removeItem("weather_city_history");           // 清理旧版全局记录
+    const o=JSON.parse(localStorage.getItem(LS_KEY)||"{}");
+    return (o&&typeof o==="object"&&!Array.isArray(o))?o:{};
+  }catch(e){ return {}; }
+}
+function persistHist(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(histStore)); }catch(e){} }
+function slotHist(i){                                          // 第 i 个输入框自己的记录
+  const a=histStore[i];
+  return Array.isArray(a)?a.filter(x=>typeof x==="string"&&x.trim()):[];
+}
+function saveSlot(i,name){
+  const h=slotHist(i).filter(x=>x!==name);
+  h.unshift(name);                                             // 去重，最近使用的排最前
+  histStore[i]=h.slice(0,30);                                  // 每框最多 30 条
+  persistHist();
+}
+function delSlot(i,name){
+  histStore[i]=slotHist(i).filter(x=>x!==name);
+  persistHist();
+}
+function histInit(){                                           // 默认城市视为已输入过
+  let changed=false;
+  CITY_DEFAULTS.forEach((def,i)=>{
+    if(!Array.isArray(histStore[i])){ histStore[i]=[def]; changed=true; }
+  });
+  if(changed) persistHist();
+}
+function slotInputs(){ return [...document.querySelectorAll("#cityInputs input")]; }
+function renderDrop(i){
+  const h=slotHist(i);
+  histDrop.innerHTML=(h.length
+    ? h.map(n=>'<div class="hd-item" data-name="'+esc(n)+'"><span class="nm">'+esc(n)+'</span>'+
+        '<button class="del" type="button" title="删除该记录">✕</button></div>').join("")
+    : '<div class="hd-empty">此输入框暂无历史记录</div>');
+}
+function showDrop(inp){
+  const i=slotInputs().indexOf(inp);
+  if(i<0) return;
+  dropFor=inp;
+  renderDrop(i);
+  const r=inp.getBoundingClientRect();
+  const w=Math.max(r.width,140);
+  let x=r.left;
+  if(x+w>window.innerWidth-8) x=window.innerWidth-8-w;
+  histDrop.style.left=Math.max(x,8)+"px";
+  histDrop.style.top=(r.bottom+6)+"px";
+  histDrop.style.minWidth=w+"px";
+  histDrop.hidden=false;
+}
+function hideDrop(){ dropFor=null; histDrop.hidden=true; }
+
+histDrop.addEventListener("mousedown",ev=>ev.preventDefault());          // 交互时不让输入框失焦
+histDrop.addEventListener("click",ev=>{
+  if(!dropFor) return;
+  const item=ev.target.closest(".hd-item");
+  if(!item) return;
+  const i=slotInputs().indexOf(dropFor);
+  const name=item.dataset.name;
+  if(ev.target.closest(".del")){ delSlot(i,name); renderDrop(i); return; } // 删除该框的这一条
+  dropFor.value=name;                                                      // 点击填入该输入框
+  hideDrop();
+});
+const cityWrap=document.getElementById("cityInputs");
+function emptyFocused(inp){ return document.activeElement===inp&&!inp.value.trim(); }
+cityWrap.addEventListener("focusin",ev=>{                      // 仅当为空且光标在框内时显示
+  const inp=ev.target.closest("input");
+  if(inp&&!inp.value.trim()) showDrop(inp);
+});
+cityWrap.addEventListener("click",ev=>{
+  const inp=ev.target.closest("input");
+  if(inp&&emptyFocused(inp)&&histDrop.hidden) showDrop(inp);
+});
+cityWrap.addEventListener("input",ev=>{
+  const inp=ev.target.closest("input");
+  if(!inp) return;
+  inp.value.trim() ? hideDrop() : showDrop(inp);
+});
+cityWrap.addEventListener("focusout",()=>{
+  setTimeout(()=>{
+    const a=document.activeElement;
+    if(!(a&&a.tagName==="INPUT"&&cityWrap.contains(a)&&!a.value.trim())) hideDrop();
+  },0);
+});
+document.addEventListener("mousedown",ev=>{                    // 点击输入区和下拉之外关闭（兜底）
+  if(!histDrop.hidden && !cityWrap.contains(ev.target) && !histDrop.contains(ev.target)) hideDrop();
+});
+window.addEventListener("scroll",hideDrop,{passive:true});
+window.addEventListener("resize",hideDrop);
+
 /* ---------- 控件初始化 ---------- */
 (function init(){
   const wrap=document.getElementById("cityInputs");
-  ["南京","玉溪","临沧","兴义","安顺","凯里"].forEach((def,i)=>{
+  CITY_DEFAULTS.forEach((def,i)=>{
     const lb=document.createElement("label");
     lb.className="fieldset";
     lb.textContent=String.fromCharCode(9312+i)+" 城市";
@@ -440,7 +552,8 @@ async function run(){
   document.getElementById("prevM").addEventListener("click",()=>shiftMonth(-1));
   document.getElementById("nextM").addEventListener("click",()=>shiftMonth(1));
 
-  document.getElementById("f").addEventListener("submit",ev=>{ev.preventDefault();run();});
+  document.getElementById("f").addEventListener("submit",ev=>{ev.preventDefault();run(true);});
+  histInit();  // 首次使用时把默认城市记为各输入框的历史
   run();  // 首次自动查询
 })();
 
