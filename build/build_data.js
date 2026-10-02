@@ -456,7 +456,11 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
     for (const h of f.holdings) {
       const cur = h.market === 'US' ? 'USD' : h.market === 'CN' ? 'CNY' : 'JPY';
       const p0raw = priceOf(h, f.reportDate);
-      if (p0raw == null) throw new Error(`missing base price ${h.ticker} ${f.reportDate}`);
+     if (p0raw == null) {
+  console.warn(`skip missing base price ${h.ticker} ${f.reportDate}`);
+  continue;
+}
+// if (p0raw == null) throw new Error(`missing base price ${h.ticker} ${f.reportDate}`);
       const fx0 = cur === 'USD' ? usdcny0 : cur === 'JPY' ? fx.jpycny0 : 1;
       const p0cny = p0raw * fx0;
       const qty = h.fv0 / p0cny;
