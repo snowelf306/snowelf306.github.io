@@ -98,12 +98,12 @@ const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 // 数据源自动降级：腾讯实时(NBI/SPX/NDX) → CNBC(.SPLRCT/NDXTMC, 实测可取真实板块指数)
 // → TradingView(机房环境) → Yahoo cookie/crumb → 跟踪同指数ETF表征(XLK/QTEC/XBI, 前端标"ETF替代")
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'S5INFT',  cnbcSym: '.SPLRCT',    tvSym: 'SP:S5INFT', yahooSym: '^S5INFT', etfCode: 'usXLK',  etfName: 'XLK' },
-  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
-  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
-  { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
-  { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
-  { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'S5INFT',  cnbcSym: '.SPLRCT',    tvSym: 'SP:S5INFT', yahooSym: '^S5INFT', etfCode: 'usXLK',  etfName: 'XLK',  histSym: '^S5INFT' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC', histSym: 'QTEC' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI',  histSym: '^SPSIBI' },
+  { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI',      histSym: '^NBI' },
+  { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX',      histSym: '^GSPC' },
+  { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX',      histSym: '^NDX' },
 ];
 
 async function fetchCnbcIndex(sym) {
@@ -181,6 +181,61 @@ async function fetchYahooIdxChg(symbol) {
   throw lastErr || new Error('yahoo unreachable');
 }
 
+// 返回最近5个交易日的每日涨跌幅 [{date, chgPct}, ...]（时间升序，最新在最后）
+// 抓不到则抛错，由调用方兜底；日期用 Yahoo 交易日（美股=UTC 日期，日经=东京日已+9h 对齐）
+async function fetchYahooIdxHist(symbol) {
+  const UA = { 'User-Agent': BROWSER_UA };
+  await fetchRaw('https://fc.yahoo.com', UA, 8000).catch(() => null);
+  const r0 = await fetchRaw('https://finance.yahoo.com', UA, 8000);
+  const cookie = r0.setCookie.map(c => c.split(';')[0]).join('; ');
+  let crumb = '';
+  if (cookie) {
+    const r1 = await fetchRaw('https://query2.finance.yahoo.com/v1/test/getcrumb', { ...UA, Cookie: cookie, Referer: 'https://finance.yahoo.com/' }, 8000);
+    if (r1.status === 200 && r1.body && r1.body.length < 24) crumb = r1.body.trim();
+  }
+  const suffix = crumb ? '&crumb=' + encodeURIComponent(crumb) : '';
+  const path = '/v8/finance/chart/' + encodeURIComponent(symbol) + '?range=1mo&interval=1d' + suffix;
+  const hosts = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
+  const proxies = [
+    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+    u => 'https://api.cors.lol/?url=' + encodeURIComponent(u),
+  ];
+  let lastErr;
+  const attempts = [
+    () => fetchRaw(hosts[0] + path, { ...UA, Cookie: cookie }),
+    () => fetchRaw(hosts[1] + path, { ...UA, Cookie: cookie }),
+    ...[0, 1, 2].map(i => () => fetchRaw(proxies[i](hosts[0] + path))),
+  ];
+  for (const attempt of attempts) {
+    try {
+      const r = await attempt();
+      if (r.status !== 200) throw new Error('HTTP ' + r.status);
+      const res = JSON.parse(r.body).chart.result[0];
+      const ts = res.timestamp || [];
+      const cl = (res.indicators.quote[0].close || []);
+      const map = {}; // date -> close（升序字典序即时间序）
+      for (let i = 0; i < ts.length; i++) {
+        const v = cl[i];
+        if (v == null || !isFinite(v)) continue;
+        map[new Date(ts[i] * 1000).toISOString().slice(0, 10)] = v;
+      }
+      const ds = Object.keys(map).sort();
+      if (ds.length >= 2) {
+        const last6 = ds.slice(-6); // 最近6个交易日 → 5 个日涨跌幅
+        const hist = [];
+        for (let i = 1; i < last6.length; i++) {
+          hist.push({ date: last6[i], chgPct: Math.round((map[last6[i]] / map[last6[i - 1]] - 1) * 10000) / 100 });
+        }
+        return hist;
+      }
+      lastErr = new Error('not enough closes');
+    } catch (e) { lastErr = e instanceof Error ? e : new Error(String(e)); }
+    await sleep(300);
+  }
+  throw lastErr || new Error('yahoo unreachable');
+}
+
 function assembleIndices(rt) {
   return Promise.all(INDICES.map(async ix => {
     // 1) 腾讯实时（真实指数）
@@ -224,8 +279,14 @@ function assembleIndices(rt) {
       if (q && isFinite(q.chgPct)) out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.etfCode, source: 'etf-proxy', viaEtf: true, etfName: ix.etfName };
     }
     if (!out) { log('WARN index missing:', ix.label); return null; }
+    // 最近5个交易日每日涨跌幅（尽力抓取，失败则留空）
+    let hist = null;
+    if (ix.histSym) {
+      try { hist = await fetchYahooIdxHist(ix.histSym); }
+      catch (e) { log('WARN index hist failed for', ix.label, ix.histSym, '-', String(e.message).slice(0, 50)); }
+    }
     return { key: ix.key, label: ix.label, code: ix.code, chgPct: out.chgPct, price: out.price ?? null,
-      rtCode: out.rtCode || null, viaEtf: !!out.viaEtf, etfName: ix.etfName || null, source: out.source };
+      rtCode: out.rtCode || null, viaEtf: !!out.viaEtf, etfName: ix.etfName || null, source: out.source, hist };
   })).then(a => a.filter(Boolean));
 }
 
@@ -588,6 +649,19 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
     const lastOffA = (() => { const m = offMaps[f.codeA]; if (!m) return null; const ks = Object.keys(m).filter(k => k <= dates[dates.length - 1]).sort(); return ks.length ? { date: ks[ks.length - 1], navA: m[ks[ks.length - 1]] } : null; })();
     const lastOffC = (() => { const m = offMaps[f.codeC]; if (!m) return null; const ks = Object.keys(m).filter(k => k <= dates[dates.length - 1]).sort(); return ks.length ? { date: ks[ks.length - 1], navC: m[ks[ks.length - 1]] } : null; })();
 
+    // 最近5个交易日每日涨跌幅（估算净值口径，{date, chgPct} 升序）
+    const hist5 = (() => {
+      const pts = series.filter(p => p.estNavA != null);
+      if (pts.length < 2) return null;
+      const last6 = pts.slice(-6);
+      const out = [];
+      for (let i = 1; i < last6.length; i++) {
+        const prev = last6[i - 1].estNavA;
+        if (prev > 0) out.push({ date: last6[i].date, chgPct: Math.round((last6[i].estNavA / prev - 1) * 10000) / 100 });
+      }
+      return out;
+    })();
+
     fundsOut.push({
       key: f.key, nameFull: f.nameFull, nameShort: f.nameShort,
       codeA: f.codeA, codeC: f.codeC, reportDate: f.reportDate,
@@ -598,6 +672,7 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
       holdings: holdingsOut,
       residual: { fv0: residualFV, note: '报告未披露的其余基金持仓（按已披露持仓平均涨幅估算）' },
       series,
+      hist5,
       live: {
         estNavA: estNavA_live, estNavC: estNavC_live,
         chgSinceReportA: +((estNavA_live / f.navA0 - 1) * 100).toFixed(2),
