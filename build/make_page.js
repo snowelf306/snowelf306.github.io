@@ -111,9 +111,9 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 <div class="notes">
 <h3>计算方法与说明</h3>
 <ul>
-  <li><b>持仓来源：</b>两份《2026年第2季度报告》PDF（报告期截止 2026-06-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
+  <li><b>持仓来源：</b>两份《2026年第3季度报告》PDF（报告期截止 2026-09-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
   <li><b>持仓数量推算：</b>季报未直接披露持有份数，按 <code>数量 = 报告期公允价值 ÷（报告期末收盘价 × 报告期末汇率中间价）</code> 推算。美国 ETF 价格取自 Nasdaq 日线（USD），A 股 ETF 取腾讯行情前复权日线（CNY，自动消除 159995 于 2026-07-07 的 1:2 份额拆分跳变），日本 2644.T 取 Yahoo Finance 日线（JPY）。</li>
-  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-06-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
+  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-09-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
   <li><b>估算净值公式：</b><code>估算净值(t) = 报告期净值 × [净资产−基金投资 + Σ 数量ᵢ×价格ᵢ(t)×汇率ᵢ(t) + 未披露持仓×平均涨幅] ÷ 净资产</code>。其中"未披露持仓"= 季报基金投资合计 − 前十（八）大披露合计，按已披露持仓的平均涨幅估值。该公式在报告日恰好还原官方净值。</li>
   <li><b>银行存款 / 其他资产的处理：</b>季报中"银行存款和结算备付金""其他资产"（主要为应收证券清算款、应收申购款）扣除负债后并入公式的静态项，按面值持有、不随股价波动——该项占净值比例：海外科技约 ${pctHb}%，全球芯片约 ${pctJsq}%。此处理保证报告日还原精确。</li>
   <li><b>申赎流量是最主要的误差来源：</b>海外科技LOF 持续开放申购，报告期份额大幅净增长（场内溢价吸引申购-卖出套利）。新申购款以现金形态停留数日（美元换汇+建仓时滞），摊薄了组合波动，而本估算按季报结构满仓计算，故官方净值常低于估算值；新资金随后的投向与建仓成本季报不再披露，构成无法从公开数据消除的偏差。全球芯片LOF 处于暂停申购状态、仅有小额持续赎回，赎回对每份净值中性，组合结构与季报基本一致，因此静态估算与官方净值高度贴合（残余偏差≈费用水平）。</li>
@@ -143,7 +143,6 @@ function kpi(label, valueHtml, note) {
 function fundCard(f, fi) {
   const L = f.live;
   const offA = L.officialLatestA;
-  const offChgA = offA ? sign((offA.navA / f.navA0 - 1) * 100) + '% 较报告期' : '';
   let hrows = '';
   f.holdings.forEach((h, i) => {
     const srcTxt = h.pLastSrc === 'qt-intraday' ? '盘中' : h.pLastSrc === 'qt-close' ? '收盘' : 'EOD';
@@ -151,8 +150,7 @@ function fundCard(f, fi) {
       + '<td><span class="nm">' + (SHORT[h.ticker] || h.name) + '</span><span class="tk">' + h.ticker + '</span></td>'
       + '<td>' + Math.round(h.qty).toLocaleString('zh-CN') + '</td>'
       + '<td>' + h.pLast.toFixed(h.pLast > 100 ? 2 : 4) + '<span class="srcdot">' + srcTxt + '</span></td>'
-      + '<td class="' + cls(h.dailyChgPct ?? 0) + '">' + (h.dailyChgPct == null ? '-' : sign(h.dailyChgPct) + '%')
-      + '<span class="srcdot">较6/30累计 ' + sign(h.chgPct) + '%</span></td>'
+      + '<td class="' + cls(h.dailyChgPct ?? 0) + '">' + (h.dailyChgPct == null ? '-' : sign(h.dailyChgPct) + '%') + '</td>'
       + '<td>' + fmtWan(h.valLast) + '</td>'
       + '<td>' + h.weightNowPct.toFixed(2) + '%</td>'
       + '</tr>';
@@ -162,7 +160,7 @@ function fundCard(f, fi) {
     hrows += '<tr style="color:var(--muted)">'
       + '<td>其余未披露基金持仓<small>（按已披露平均涨幅估算）</small></td>'
       + '<td>-</td><td>-</td>'
-      + '<td class="' + cls(L.chgSinceReportA) + '">≈' + sign(L.chgSinceReportA) + '%<span class="srcdot">随组合平均</span></td>'
+      + '<td>随组合平均</td>'
       + '<td>' + fmtWan(residVal) + '</td>'
       + '<td>' + (residVal / L.estTotalAssetsCny * 100).toFixed(2) + '%</td></tr>';
   }
@@ -175,17 +173,17 @@ function fundCard(f, fi) {
     + '<span class="tag" style="margin-left:auto">' + f.nameFull.replace(/（QDII-LOF）/, '') + '（QDII-LOF）</span></div>'
     + '<div class="kpis">'
     + kpi('较前日收盘', '<span class="' + cls(L.fundDailyChgPct ?? 0) + '">' + sign(L.fundDailyChgPct ?? 0) + '%</span>', L.estNavAPrev != null ? '前日估算净值 ' + L.estNavAPrev.toFixed(4) : '')
-    + kpi('最新估算净值', L.estNavA.toFixed(4) + ' <span style="font-size:13px" class="' + cls(L.chgSinceReportA) + '">' + sign(L.chgSinceReportA) + '%</span>', 'A类 · 较季报净值 ' + f.navA0.toFixed(4))
-    + (offA ? kpi('官方公布净值（A类）', offA.navA.toFixed(4), offA.date + ' 公布 · ' + offChgA) : '')
+    + kpi('最新估算净值', L.estNavA.toFixed(4), 'A类估算')
+    + (offA ? kpi('官方公布净值（A类）', offA.navA.toFixed(4), offA.date + ' 公布') : '')
     + (estVsOff != null ? kpi('估算 vs 最新官方', '<span class="' + cls(estVsOff) + '">' + sign(estVsOff) + '%</span>', '估算领先于 T+2 发布的官方净值') : '')
     + '</div>'
     + (f.warnings && f.warnings.length ? '<div class="warn">⚠ 价格序列检测到异常跳动：' + f.warnings.join('；') + '</div>' : '')
-    + '<section class="holdings"><h3><span>持仓明细（数量由季报公允价值 ÷ 报告期末价格 × 汇率反推，按占估算总资产降序）</span><span>涨幅以前一交易日收盘为基准 · 单位：份 / 元人民币</span></h3>'
+    + '<section class="holdings"><h3><span>持仓明细（数量由季报公允价值 ÷ 报告期末价格 × 汇率反推，按占估算总资产降序）</span><span>涨幅以前一交易日收盘为基准</span></h3>'
     + '<table><thead><tr>'
     + '<th style="width:32%">基金名称</th><th>持仓数量<br>(份)</th><th>最新价<br>(本币)</th><th>较前日<br>收盘涨幅</th><th>最新市值<br>(万元)</th><th>占估算<br>总资产</th>'
     + '</tr></thead><tbody>' + hrows + '</tbody></table></section>'
     + '<div class="chartbox"><h3>估算净值走势 vs 官方公布净值（A类）</h3><div id="chart' + fi + '"></div>'
-    + '<div class="legend"><span><b style="background:var(--accent)"></b>静态持仓估算净值</span><span><b style="background:#8b949e"></b>官方公布净值（T+2）</span><span><b style="background:var(--gold)"></b>季报净值基准</span></div></div>'
+    + '<div class="legend"><span><b style="background:var(--accent)"></b>静态持仓估算净值</span><span><b style="background:#8b949e"></b>官方公布净值（T+2）</span></div></div>'
     + '</div>';
 }
 
@@ -212,10 +210,6 @@ function drawChart(container, series, nav0) {
     const x = xs(pts[i].date);
     g += '<line x1="' + x + '" y1="' + padT + '" x2="' + x + '" y2="' + (H - padB) + '" stroke="#1b2130"/>';
     g += '<text x="' + x + '" y="' + (H - padB + 16) + '" fill="#8b949e" font-size="11" text-anchor="middle">' + pts[i].date.slice(5) + '</text>';
-  }
-  // base reference line at report NAV
-  if (nav0 > lo && nav0 < hi) {
-    g += '<line x1="' + padL + '" y1="' + ys(nav0) + '" x2="' + (W - padR) + '" y2="' + ys(nav0) + '" stroke="#d29922" stroke-dasharray="2 4" opacity=".7"/>';
   }
   // official line (gray dashed)
   const offPts = pts.filter(p => p.officialA != null);
@@ -378,7 +372,7 @@ function applyLive(usTime, cnTime) {
         k.querySelector('.value').innerHTML = '<span class="' + cls(L.fundDailyChgPct ?? 0) + '">' + sign(L.fundDailyChgPct ?? 0) + '%</span>';
         k.querySelector('.note').textContent = L.estNavAPrev != null ? '前日估算净值 ' + L.estNavAPrev.toFixed(4) : '';
       } else if (t.includes('最新估算净值')) {
-        k.querySelector('.value').innerHTML = L.estNavA.toFixed(4) + ' <span style="font-size:13px" class="' + cls(L.chgA) + '">' + sign(L.chgA) + '%</span>';
+        k.querySelector('.value').textContent = L.estNavA.toFixed(4);
       } else if (t.includes('估算 vs') && f.live.officialLatestA) {
         const d = (L.estNavA / f.live.officialLatestA.navA - 1) * 100;
         k.querySelector('.value').innerHTML = '<span class="' + cls(d) + '">' + sign(d) + '%</span>';
@@ -391,8 +385,7 @@ function applyLive(usTime, cnTime) {
       if (!td || td.length < 6) return;
       td[2].innerHTML = h.pLastLive.toFixed(h.pLastLive > 100 ? 2 : 4) + '<span class="srcdot">' + (h.market === 'JP' ? 'EOD' : h.market === 'US' ? '盘中' : '收盘') + '</span>';
       td[3].className = cls(h.dailyChgLive ?? 0);
-      td[3].innerHTML = (h.dailyChgLive == null ? '-' : sign(h.dailyChgLive) + '%')
-        + '<span class="srcdot">较6/30累计 ' + sign(h.chgPctLive) + '%</span>';
+      td[3].innerHTML = (h.dailyChgLive == null ? '-' : sign(h.dailyChgLive) + '%');
       td[4].textContent = fmtWan(h.qty * h.pLastLive * h.fxLastLive);
       td[5].textContent = (h.qty * h.pLastLive * h.fxLastLive / L.estTot * 100).toFixed(2) + '%';
     });
