@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-04 18:42:47 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-04 19:46:27 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -550,6 +550,28 @@
      "officialC": 2.3944
     }
    ],
+   "hist5": [
+    {
+     "date": "2026-08-20",
+     "chgPct": -0.5
+    },
+    {
+     "date": "2026-08-21",
+     "chgPct": 1.81
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.11
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.96
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": -0.47
+    }
+   ],
    "live": {
     "estNavA": 2.579,
     "estNavC": 2.5572,
@@ -1067,6 +1089,28 @@
      "officialC": 2.913
     }
    ],
+   "hist5": [
+    {
+     "date": "2026-08-20",
+     "chgPct": -0.01
+    },
+    {
+     "date": "2026-08-21",
+     "chgPct": -0.16
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.61
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.11
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": 0.35
+    }
+   ],
    "live": {
     "estNavA": 3.2425,
     "estNavC": 3.1989,
@@ -1099,7 +1143,8 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XLK",
-   "source": "cnbc-index"
+   "source": "cnbc-index",
+   "hist": null
   },
   {
    "key": "ndx_tech",
@@ -1110,7 +1155,29 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "QTEC",
-   "source": "cnbc-index"
+   "source": "cnbc-index",
+   "hist": [
+    {
+     "date": "2026-09-28",
+     "chgPct": -1.32
+    },
+    {
+     "date": "2026-09-29",
+     "chgPct": 0.68
+    },
+    {
+     "date": "2026-09-30",
+     "chgPct": 0.39
+    },
+    {
+     "date": "2026-10-01",
+     "chgPct": 1.19
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 0.8
+    }
+   ]
   },
   {
    "key": "sp_bio",
@@ -1121,7 +1188,8 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XBI",
-   "source": "tradingview-index"
+   "source": "tradingview-index",
+   "hist": null
   },
   {
    "key": "nbi",
@@ -1132,7 +1200,29 @@
    "rtCode": "usNBI",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-09-28",
+     "chgPct": 0.6
+    },
+    {
+     "date": "2026-09-29",
+     "chgPct": 0.08
+    },
+    {
+     "date": "2026-09-30",
+     "chgPct": -0.26
+    },
+    {
+     "date": "2026-10-01",
+     "chgPct": -2.09
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": -0.26
+    }
+   ]
   },
   {
    "key": "spx",
@@ -1143,7 +1233,29 @@
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-09-28",
+     "chgPct": -0.77
+    },
+    {
+     "date": "2026-09-29",
+     "chgPct": -0.17
+    },
+    {
+     "date": "2026-09-30",
+     "chgPct": -0.25
+    },
+    {
+     "date": "2026-10-01",
+     "chgPct": 0.19
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 0.73
+    }
+   ]
   },
   {
    "key": "ndx",
@@ -1154,7 +1266,29 @@
    "rtCode": "usNDX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-09-28",
+     "chgPct": -1.08
+    },
+    {
+     "date": "2026-09-29",
+     "chgPct": 0.21
+    },
+    {
+     "date": "2026-09-30",
+     "chgPct": 0.23
+    },
+    {
+     "date": "2026-10-01",
+     "chgPct": 0.31
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 1
+    }
+   ]
   }
  ],
  "sources": {
