@@ -54,16 +54,16 @@ const FUNDS = [
     netAssetsA: 1862166774.88, netAssetsC: 559113004.06,
     totalAssets: 2585548235.16, fundInvestments: 2051362956.72,
     holdings: [
-      { name: 'ARK Innovation ETF', ticker: 'ARKK', market: 'US', fv0: 447521490.59 },
-      { name: 'ARK Genomic Revolution ETF', ticker: 'ARKG', market: 'US', fv0: 409830940.68 },
-      { name: 'ARK Autonomous Technology & Robotics ETF', ticker: 'ARKQ', market: 'US', fv0: 245725082.53 },
-      { name: 'Global X Artificial Intelligence & Technology ETF', ticker: 'AIQ', market: 'US', fv0: 153129276.45 },
-      { name: 'Global X Robotics & Artificial Intelligence ETF', ticker: 'BOTZ', market: 'US', fv0: 122360710.95 },
-      { name: 'ARK Space & Defense Innovation ETF', ticker: 'ARKX', market: 'US', fv0: 121125457.80 },
-      { name: 'Technology Select Sector SPDR Fund', ticker: 'XLK', market: 'US', fv0: 113098622.53 },
-      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 106395331.00 },
-      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 80736817.25 },
-      { name: 'Invesco QQQ Trust Series 1', ticker: 'QQQ', market: 'US', fv0: 79245638.81 },
+      { name: 'ARK Innovation ETF', ticker: 'ARKK', market: 'US', fv0: 447521490.59, p0: 80.82 },
+      { name: 'ARK Genomic Revolution ETF', ticker: 'ARKG', market: 'US', fv0: 409830940.68, p0: 42.06 },
+      { name: 'ARK Autonomous Technology & Robotics ETF', ticker: 'ARKQ', market: 'US', fv0: 245725082.53, p0: 132.22 },
+      { name: 'Global X Artificial Intelligence & Technology ETF', ticker: 'AIQ', market: 'US', fv0: 153129276.45, p0: 65.61 },
+      { name: 'Global X Robotics & Artificial Intelligence ETF', ticker: 'BOTZ', market: 'US', fv0: 122360710.95, p0: 37.94 },
+      { name: 'ARK Space & Defense Innovation ETF', ticker: 'ARKX', market: 'US', fv0: 121125457.80, p0: 34.12 },
+      { name: 'Technology Select Sector SPDR Fund', ticker: 'XLK', market: 'US', fv0: 113098622.53, p0: 190.52 },
+      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 106395331.00, p0: 655.89 },
+      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 80736817.25, p0: 640.76 },
+      { name: 'Invesco QQQ Trust Series 1', ticker: 'QQQ', market: 'US', fv0: 79245638.81, p0: 736.40 },
     ],
   },
   {
@@ -77,14 +77,14 @@ const FUNDS = [
     netAssetsA: 903349959.71, netAssetsC: 308499662.87,
     totalAssets: 1223535652.64, fundInvestments: 1131215717.33,
     holdings: [
-      { name: 'Invesco Dynamic Semiconductors ETF', ticker: 'PSI', market: 'US', fv0: 220636586.42 },
-      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 214581003.65 },
-      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 214358649.63 },
-      { name: 'Invesco PHLX Semiconductor ETF', ticker: 'SOXQ', market: 'US', fv0: 213589653.73 },
-      { name: '华夏国证半导体芯片ETF', ticker: '159995', symbol: 'sz159995', market: 'CN', fv0: 93762315.00 },
-      { name: '国泰CES半导体芯片行业ETF', ticker: '512760', symbol: 'sh512760', market: 'CN', fv0: 93052180.00 },
-      { name: '景顺长城中证芯片产业ETF', ticker: '159560', symbol: 'sz159560', market: 'CN', fv0: 60210668.80 },
-      { name: 'Global X Japan Semiconductor ETF', ticker: '2644.T', market: 'JP', currency: 'JPY', fv0: 21024660.10 },
+      { name: 'Invesco Dynamic Semiconductors ETF', ticker: 'PSI', market: 'US', fv0: 220636586.42, p0: 187.82 },
+      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 214581003.65, p0: 640.76 },
+      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 214358649.63, p0: 655.89 },
+      { name: 'Invesco PHLX Semiconductor ETF', ticker: 'SOXQ', market: 'US', fv0: 213589653.73, p0: 112.10 },
+      { name: '华夏国证半导体芯片ETF', ticker: '159995', symbol: 'sz159995', market: 'CN', fv0: 93762315.00, p0: 1.695 },
+      { name: '国泰CES半导体芯片行业ETF', ticker: '512760', symbol: 'sh512760', market: 'CN', fv0: 93052180.00, p0: 1.585 },
+      { name: '景顺长城中证芯片产业ETF', ticker: '159560', symbol: 'sz159560', market: 'CN', fv0: 60210668.80, p0: 1.648 },
+      { name: 'Global X Japan Semiconductor ETF', ticker: '2644.T', market: 'JP', currency: 'JPY', fv0: 21024660.10, p0: 4940 },
     ],
   },
 ];
@@ -365,11 +365,11 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
   const log = (...a) => console.log('[build]', ...a);
   log('fetching US histories via nasdaq...');
   const usMaps = {};
-  for (const sym of ALL_US) { usMaps[sym] = await fetchNasdaqHist(sym); log('  us', sym, 'days', Object.keys(usMaps[sym]).length, 'jun30=', usMaps[sym]['2026-06-30']); await sleep(350); }
+  for (const sym of ALL_US) { try { usMaps[sym] = await fetchNasdaqHist(sym); log('  us', sym, 'days', Object.keys(usMaps[sym]).length); } catch (e) { log('  us', sym, 'FAILED:', String(e.message).slice(0, 60), '(份数用固化 6/30 价反推，走势图缺该持仓历史)'); usMaps[sym] = {}; } await sleep(350); }
 
   log('fetching CN klines via tencent...');
   const cnMaps = {};
-  for (const s of ALL_CN) { cnMaps[s] = await fetchTencentKline(s); log('  cn', s, 'days', Object.keys(cnMaps[s]).length, 'jun30=', cnMaps[s]['2026-06-30']); await sleep(250); }
+  for (const s of ALL_CN) { try { cnMaps[s] = await fetchTencentKline(s); log('  cn', s, 'days', Object.keys(cnMaps[s]).length); } catch (e) { log('  cn', s, 'FAILED:', String(e.message).slice(0, 60), '(份数用固化 6/30 价反推)'); cnMaps[s] = {}; } await sleep(250); }
 
   let jpMap = null, jpSource = 'unavailable', jpLatest = null;
   try {
@@ -390,10 +390,13 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
   const usdcnyMap = await fetchParity('USD/CNY');
   const jpycny100Map = await fetchParity('100JPY/CNY');
   const fxBaseDate = '2026-06-30';
-  const usdcny0 = usdcnyMap[fxBaseDate], jp100_0 = jpycny100Map[fxBaseDate];
+  // 6/30 报告期末基准汇率（历史固定值，固化，不依赖每次抓取）
+  const usdcny0 = 6.8109, jp100_0 = 4.2045;
   const latestParDates = Object.keys(usdcnyMap).sort();
   const latestFxDate = latestParDates[latestParDates.length - 1];
-  const usdcnyLast = usdcnyMap[latestFxDate], jp100Last = jpycny100Map[latestFxDate] ?? jpyprevFallback();
+  // 最新汇率抓不到时回退到 6/30 固化基准汇率
+  const usdcnyLast = (latestFxDate && usdcnyMap[latestFxDate]) || usdcny0;
+  const jp100Last = (latestFxDate && jpycny100Map[latestFxDate]) || jp100_0;
   function jpyprevFallback() { const ds = Object.keys(jpycny100Map).sort(); return jp100Last = jp100Last || jpycny100Map[ds[ds.length - 1]]; }
   log('fx usdcny 6/30=', usdcny0, 'latest(', latestFxDate, ')=', usdcnyLast, '| jpycny 6/30=', jp100_0 / 100, 'latest=', jp100Last / 100);
 
@@ -455,7 +458,8 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
     let warnSplits = [];
     for (const h of f.holdings) {
       const cur = h.market === 'US' ? 'USD' : h.market === 'CN' ? 'CNY' : 'JPY';
-      const p0raw = priceOf(h, f.reportDate);
+      // 报告期末(6/30)收盘价：已固化为常量 h.p0，不再依赖网络抓取历史价
+      const p0raw = h.p0;
      if (p0raw == null) {
   console.warn(`skip missing base price ${h.ticker} ${f.reportDate}`);
   continue;
@@ -498,6 +502,7 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
         const fxd = cur === 'USD' ? usdByDate[d] : cur === 'JPY' ? jpyByDate[d] : 1;
         let eff = null;
         if (p != null && fxd != null) { eff = { p, fxd }; carry[h.ticker] = eff; }
+        else if (d === f.reportDate) { eff = { p: h.p0, fxd: cur === 'USD' ? usdcny0 : cur === 'JPY' ? fx.jpycny0 : 1 }; carry[h.ticker] = eff; }
         else eff = carry[h.ticker];
         if (!eff) continue;
         const valCny = h.qty * eff.p * eff.fxd;
@@ -537,7 +542,11 @@ function fmtNowCn(d) { return d.toISOString().replace('T', ' ').slice(0, 19).rep
         if (p != null) { eff = { p, fxd }; src = 'eod'; }
         else if (carry[h.ticker]) { eff = carry[h.ticker]; src = 'eod-carry'; }
       }
-      if (!eff) throw new Error(`no price at all for ${h.ticker}`);
+      if (!eff) {
+        // 实时价与最新历史价均不可得：用固化的报告期末(6/30)价格兜底（估算净值=报告日值，涨幅记为 0）
+        eff = { p: h.p0, fxd: cur === 'USD' ? fx.usdcny0 : cur === 'JPY' ? fx.jpycny0 : 1 };
+        src = 'eod-frozen'; prevClose = h.p0; dailyChg = 0;
+      }
       // 前一日收盘与当日涨幅（美股即上一美股交易日收盘）
       if (prevClose == null || !isFinite(dailyChg)) {
         if (h.market === 'JP' && jpLatest && jpLatest.dailyChgPct != null) { prevClose = jpLatest.prevClose; dailyChg = jpLatest.dailyChgPct; }
