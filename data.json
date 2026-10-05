@@ -1246,7 +1246,30 @@
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": null,
+   "hist": [
+    {
+     "date": "2026-09-28",
+     "chgPct": -0.77
+    },
+    {
+     "date": "2026-09-29",
+     "chgPct": -0.17
+    },
+    {
+     "date": "2026-09-30",
+     "chgPct": -0.25
+    },
+    {
+     "date": "2026-10-01",
+     "chgPct": 0.19
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 0.73
+    }
+   ]
   },
   {
    "key": "ndx",
