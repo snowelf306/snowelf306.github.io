@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-04 18:42:47 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-04 19:43:59 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -548,6 +548,35 @@
      "estNavC": 2.4316,
      "officialA": 2.416,
      "officialC": 2.3944
+    },
+    {
+     "date": "2026-10-02",
+     "estNavA": 2.4523,
+     "estNavC": 2.4316,
+     "officialA": null,
+     "officialC": null
+    }
+   ],
+   "hist5": [
+    {
+     "date": "2026-08-21",
+     "chgPct": 1.81
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.11
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.96
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": -0.47
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 0
     }
    ],
    "live": {
@@ -559,12 +588,12 @@
     "fundDailyChgPct": 1.38,
     "estNavAPrev": 2.5439,
     "officialLatestA": {
-     "date": "2026-08-26",
-     "navA": 2.416
+     "date": "2026-09-29",
+     "navA": 2.4893
     },
     "officialLatestC": {
-     "date": "2026-08-26",
-     "navC": 2.3944
+     "date": "2026-09-29",
+     "navC": 2.4664
     },
     "usQuoteTime": "2026-10-02 16:00:01",
     "cnQuoteTime": null
@@ -610,7 +639,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -4.25,
      "valLast": 205246084.06891438,
-     "weightNowPct": 19.72
+     "weightNowPct": 19.7
     },
     {
      "name": "iShares Semiconductor ETF",
@@ -632,7 +661,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -8.47,
      "valLast": 196403102.7060631,
-     "weightNowPct": 18.88
+     "weightNowPct": 18.86
     },
     {
      "name": "Invesco PHLX Semiconductor ETF",
@@ -654,7 +683,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -8.13,
      "valLast": 196222158.00004667,
-     "weightNowPct": 18.86
+     "weightNowPct": 18.84
     },
     {
      "name": "Invesco Dynamic Semiconductors ETF",
@@ -676,7 +705,7 @@
      "pLastSrc": "qt-intraday",
      "chgPct": -14.66,
      "valLast": 188282779.51625308,
-     "weightNowPct": 18.09
+     "weightNowPct": 18.08
     },
     {
      "name": "国泰CES半导体芯片行业ETF",
@@ -698,7 +727,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -36.15,
      "valLast": 59412496,
-     "weightNowPct": 5.71
+     "weightNowPct": 5.7
     },
     {
      "name": "华夏国证半导体芯片ETF",
@@ -720,7 +749,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -37.88,
      "valLast": 58248801,
-     "weightNowPct": 5.6
+     "weightNowPct": 5.59
     },
     {
      "name": "景顺长城中证芯片产业ETF",
@@ -742,7 +771,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -36.47,
      "valLast": 38252773.199999996,
-     "weightNowPct": 3.68
+     "weightNowPct": 3.67
     },
     {
      "name": "Global X Japan Semiconductor ETF",
@@ -757,14 +786,14 @@
      "p0Cny": 207.70230000000004,
      "qty": 101224.97487991225,
      "qtyDisp": "101224.97",
-     "prevClose": 4479,
-     "dailyChgPct": -5.07,
-     "pLast": 4252,
-     "fxLast": 0.041447000000000005,
-     "pLastSrc": "eod-carry",
-     "chgPct": -15.15,
-     "valLast": 17839144.96192052,
-     "weightNowPct": 1.71
+     "prevClose": null,
+     "dailyChgPct": null,
+     "pLast": 4399,
+     "fxLast": 0.04245,
+     "pLastSrc": "eod",
+     "chgPct": -10.09,
+     "valLast": 18902503.80788636,
+     "weightNowPct": 1.81
     }
    ],
    "residual": {
@@ -1065,23 +1094,52 @@
      "estNavC": 2.925,
      "officialA": 2.9546,
      "officialC": 2.913
+    },
+    {
+     "date": "2026-10-02",
+     "estNavA": 2.9682,
+     "estNavC": 2.9283,
+     "officialA": null,
+     "officialC": null
+    }
+   ],
+   "hist5": [
+    {
+     "date": "2026-08-21",
+     "chgPct": -0.16
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.61
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.11
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": 0.35
+    },
+    {
+     "date": "2026-10-02",
+     "chgPct": 0.11
     }
    ],
    "live": {
-    "estNavA": 3.2425,
-    "estNavC": 3.1989,
-    "chgSinceReportA": -14.14,
-    "chgSinceReportC": -14.14,
-    "estTotalAssetsCny": 1040541244.7031977,
-    "fundDailyChgPct": 1.28,
-    "estNavAPrev": 3.2015,
+    "estNavA": 3.2458,
+    "estNavC": 3.2021,
+    "chgSinceReportA": -14.05,
+    "chgSinceReportC": -14.05,
+    "estTotalAssetsCny": 1041604603.5491636,
+    "fundDailyChgPct": 1.37,
+    "estNavAPrev": 3.2019,
     "officialLatestA": {
-     "date": "2026-08-26",
-     "navA": 2.9546
+     "date": "2026-09-29",
+     "navA": 3.1189
     },
     "officialLatestC": {
-     "date": "2026-08-26",
-     "navC": 2.913
+     "date": "2026-09-29",
+     "navC": 3.0739
     },
     "usQuoteTime": "2026-10-02 16:00:01",
     "cnQuoteTime": "20260930161418"
@@ -1099,7 +1157,8 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XLK",
-   "source": "cnbc-index"
+   "source": "cnbc-index",
+   "hist": null
   },
   {
    "key": "ndx_tech",
@@ -1110,18 +1169,20 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "QTEC",
-   "source": "cnbc-index"
+   "source": "cnbc-index",
+   "hist": null
   },
   {
    "key": "sp_bio",
    "label": "标普生物",
    "code": "SPSIBI",
-   "chgPct": -0.06,
-   "price": 12087.94,
-   "rtCode": null,
-   "viaEtf": false,
+   "chgPct": -0.05,
+   "price": 154.43,
+   "rtCode": "usXBI",
+   "viaEtf": true,
    "etfName": "XBI",
-   "source": "tradingview-index"
+   "source": "etf-proxy",
+   "hist": null
   },
   {
    "key": "nbi",
@@ -1132,7 +1193,8 @@
    "rtCode": "usNBI",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": null
   },
   {
    "key": "spx",
@@ -1143,7 +1205,8 @@
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": null
   },
   {
    "key": "ndx",
@@ -1154,13 +1217,14 @@
    "rtCode": "usNDX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": null
   }
  ],
  "sources": {
   "usHistory": "api.nasdaq.com (日收盘价)",
   "cnHistory": "腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)",
-  "jpHistory": "unavailable",
+  "jpHistory": "已验证快照(Yahoo 6/25-7/24) + minkabu.jp 最新(2026-10-02)",
   "fx": "chinamoney.com.cn 人民币汇率中间价",
   "realtime": "qt.gtimg.cn 腾讯实时行情",
   "officialNav": "东方财富 fund.eastmoney.com 官方公布净值"

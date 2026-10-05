@@ -181,9 +181,9 @@ async function fetchYahooIdxChg(symbol) {
   throw lastErr || new Error('yahoo unreachable');
 }
 
-// 返回最近5个交易日的每日涨跌幅 [{date, chgPct}, ...]（时间升序，最新在最后）
-// 抓不到则抛错，由调用方兜底；日期用 Yahoo 交易日（美股=UTC 日期，日经=东京日已+9h 对齐）
-async function fetchYahooIdxHist(symbol) {
+// 抓取某符号近一个月日收盘价，返回 { date: close, ... }（键为 'YYYY-MM-DD'）
+// 供指数5日涨跌幅缓存使用；抓不到则抛错，由调用方兜底
+async function fetchYahooIdxCloses(symbol) {
   const UA = { 'User-Agent': BROWSER_UA };
   await fetchRaw('https://fc.yahoo.com', UA, 8000).catch(() => null);
   const r0 = await fetchRaw('https://finance.yahoo.com', UA, 8000);
@@ -214,26 +214,64 @@ async function fetchYahooIdxHist(symbol) {
       const res = JSON.parse(r.body).chart.result[0];
       const ts = res.timestamp || [];
       const cl = (res.indicators.quote[0].close || []);
-      const map = {}; // date -> close（升序字典序即时间序）
+      const map = {}; // date -> close
       for (let i = 0; i < ts.length; i++) {
         const v = cl[i];
         if (v == null || !isFinite(v)) continue;
         map[new Date(ts[i] * 1000).toISOString().slice(0, 10)] = v;
       }
-      const ds = Object.keys(map).sort();
-      if (ds.length >= 2) {
-        const last6 = ds.slice(-6); // 最近6个交易日 → 5 个日涨跌幅
-        const hist = [];
-        for (let i = 1; i < last6.length; i++) {
-          hist.push({ date: last6[i], chgPct: Math.round((map[last6[i]] / map[last6[i - 1]] - 1) * 10000) / 100 });
-        }
-        return hist;
-      }
+      if (Object.keys(map).length >= 2) return map;
       lastErr = new Error('not enough closes');
     } catch (e) { lastErr = e instanceof Error ? e : new Error(String(e)); }
     await sleep(300);
   }
   throw lastErr || new Error('yahoo unreachable');
+}
+
+// 由日期->收盘价映射计算最近5个交易日的每日涨跌幅（时间升序）
+function closesToHist(map, n = 5) {
+  const ds = Object.keys(map).sort();
+  const lastN1 = ds.slice(-(n + 1));
+  const hist = [];
+  for (let i = 1; i < lastN1.length; i++) {
+    const prev = map[lastN1[i - 1]];
+    if (prev > 0) hist.push({ date: lastN1[i], chgPct: Math.round((map[lastN1[i]] / prev - 1) * 10000) / 100 });
+  }
+  return hist;
+}
+
+/* ---- 指数5日涨跌幅缓存（只增量抓取，>10天废弃） ---- */
+const IDX_HIST_CACHE = path.join(__dirname, 'idx_hist_cache.json');
+function loadIdxHistCache() { try { return JSON.parse(fs.readFileSync(IDX_HIST_CACHE, 'utf8')); } catch (e) { return {}; } }
+function saveIdxHistCache(c) { try { fs.writeFileSync(IDX_HIST_CACHE, JSON.stringify(c, null, 1), 'utf8'); } catch (e) { log('WARN idx cache write failed:', e.message); } }
+
+// 获取某指数最近5日涨跌幅。缓存已覆盖最新交易日则直接返回（不抓取）；否则增量抓取缺失日期并合并、截断10天、写缓存。
+async function getIdxHistCached(sym) {
+  const cache = loadIdxHistCache();
+  const series = cache[sym] || {}; // date -> close
+  const cachedDates = Object.keys(series).sort();
+  const cacheMax = cachedDates.length ? cachedDates[cachedDates.length - 1] : null;
+  const today = new Date().toISOString().slice(0, 10); // 系统当天
+  // 若缓存最新日期已达今天（或很近，最近4个自然日内），直接用缓存，不抓
+  const fresh = cacheMax ? (new Date(today) - new Date(cacheMax)) / 86400000 : 999;
+  if (cacheMax && fresh <= 4) {
+    return closesToHist(series, 5);
+  }
+  // 需要抓取：抓全月，合并缺失日期
+  try {
+    const fetched = await fetchYahooIdxCloses(sym);
+    Object.assign(series, fetched); // 抓取的新日期覆盖进 series
+    const ds = Object.keys(series).sort();
+    const keep = ds.slice(-10); // 只保留最近10个交易日
+    const trimmed = {};
+    keep.forEach(d => { trimmed[d] = series[d]; });
+    cache[sym] = trimmed;
+    saveIdxHistCache(cache);
+    return closesToHist(trimmed, 5);
+  } catch (e) {
+    log('WARN index hist fetch failed for', sym, '-', String(e.message).slice(0, 50), '(用缓存数据)');
+    return closesToHist(series, 5);
+  }
 }
 
 function assembleIndices(rt) {
@@ -279,10 +317,10 @@ function assembleIndices(rt) {
       if (q && isFinite(q.chgPct)) out = { chgPct: Math.round(q.chgPct * 100) / 100, price: q.price, rtCode: ix.etfCode, source: 'etf-proxy', viaEtf: true, etfName: ix.etfName };
     }
     if (!out) { log('WARN index missing:', ix.label); return null; }
-    // 最近5个交易日每日涨跌幅（尽力抓取，失败则留空）
+    // 最近5个交易日每日涨跌幅（带缓存，只增量抓取；失败则留空）
     let hist = null;
     if (ix.histSym) {
-      try { hist = await fetchYahooIdxHist(ix.histSym); }
+      try { hist = await getIdxHistCached(ix.histSym); }
       catch (e) { log('WARN index hist failed for', ix.label, ix.histSym, '-', String(e.message).slice(0, 50)); }
     }
     return { key: ix.key, label: ix.label, code: ix.code, chgPct: out.chgPct, price: out.price ?? null,
