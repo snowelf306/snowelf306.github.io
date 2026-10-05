@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-04 19:43:59 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-04 19:46:27 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -579,6 +579,28 @@
      "chgPct": 0
     }
    ],
+   "hist5": [
+    {
+     "date": "2026-08-20",
+     "chgPct": -0.5
+    },
+    {
+     "date": "2026-08-21",
+     "chgPct": 1.81
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.11
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.96
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": -0.47
+    }
+   ],
    "live": {
     "estNavA": 2.579,
     "estNavC": 2.5572,
@@ -1125,6 +1147,28 @@
      "chgPct": 0.11
     }
    ],
+   "hist5": [
+    {
+     "date": "2026-08-20",
+     "chgPct": -0.01
+    },
+    {
+     "date": "2026-08-21",
+     "chgPct": -0.16
+    },
+    {
+     "date": "2026-08-24",
+     "chgPct": -2.61
+    },
+    {
+     "date": "2026-08-25",
+     "chgPct": 1.11
+    },
+    {
+     "date": "2026-08-26",
+     "chgPct": 0.35
+    }
+   ],
    "live": {
     "estNavA": 3.2458,
     "estNavC": 3.2021,
@@ -1169,8 +1213,7 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "QTEC",
-   "source": "cnbc-index",
-   "hist": null
+   "source": "cnbc-index"
   },
   {
    "key": "sp_bio",
@@ -1181,8 +1224,7 @@
    "rtCode": "usXBI",
    "viaEtf": true,
    "etfName": "XBI",
-   "source": "etf-proxy",
-   "hist": null
+   "source": "tradingview-index"
   },
   {
    "key": "nbi",
@@ -1193,8 +1235,7 @@
    "rtCode": "usNBI",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index",
-   "hist": null
+   "source": "tencent-index"
   },
   {
    "key": "spx",
@@ -1205,8 +1246,7 @@
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index",
-   "hist": null
+   "source": "tencent-index"
   },
   {
    "key": "ndx",
@@ -1217,8 +1257,7 @@
    "rtCode": "usNDX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index",
-   "hist": null
+   "source": "tencent-index"
   }
  ],
  "sources": {
