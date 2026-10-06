@@ -124,9 +124,9 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 <div class="notes">
 <h3>计算方法与说明</h3>
 <ul>
-  <li><b>持仓来源：</b>两份《2026年第3季度报告》PDF（报告期截止 2026-09-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
+  <li><b>持仓来源：</b>两份《2026年第2季度报告》PDF（报告期截止 2026-06-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
   <li><b>持仓数量推算：</b>季报未直接披露持有份数，按 <code>数量 = 报告期公允价值 ÷（报告期末收盘价 × 报告期末汇率中间价）</code> 推算。美国 ETF 价格取自 Nasdaq 日线（USD），A 股 ETF 取腾讯行情前复权日线（CNY，自动消除 159995 于 2026-07-07 的 1:2 份额拆分跳变），日本 2644.T 取 Yahoo Finance 日线（JPY）。</li>
-  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-09-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
+  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-06-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
   <li><b>估算净值公式：</b><code>估算净值(t) = 报告期净值 × [净资产−基金投资 + Σ 数量ᵢ×价格ᵢ(t)×汇率ᵢ(t) + 未披露持仓×平均涨幅] ÷ 净资产</code>。其中"未披露持仓"= 季报基金投资合计 − 前十（八）大披露合计，按已披露持仓的平均涨幅估值。该公式在报告日恰好还原官方净值。</li>
   <li><b>银行存款 / 其他资产的处理：</b>季报中"银行存款和结算备付金""其他资产"（主要为应收证券清算款、应收申购款）扣除负债后并入公式的静态项，按面值持有、不随股价波动——该项占净值比例：海外科技约 ${pctHb}%，全球芯片约 ${pctJsq}%。此处理保证报告日还原精确。</li>
   <li><b>申赎流量是最主要的误差来源：</b>海外科技LOF 持续开放申购，报告期份额大幅净增长（场内溢价吸引申购-卖出套利）。新申购款以现金形态停留数日（美元换汇+建仓时滞），摊薄了组合波动，而本估算按季报结构满仓计算，故官方净值常低于估算值；新资金随后的投向与建仓成本季报不再披露，构成无法从公开数据消除的偏差。全球芯片LOF 处于暂停申购状态、仅有小额持续赎回，赎回对每份净值中性，组合结构与季报基本一致，因此静态估算与官方净值高度贴合（残余偏差≈费用水平）。</li>
@@ -285,15 +285,18 @@ function renderAll() {
     ...(D.indices || []).map(ix => ({ name: ix.label, code: ix.code, hist: ix.hist || [], lof: false })),
     ...D.funds.map(f => ({ name: f.nameShort, code: f.codeA, hist: f.hist5 || [], lof: true })),
   ];
-  const allDates = [...new Set(rows5d.flatMap(r => r.hist.map(h => h.date)))].sort();
-  const top5 = allDates.slice(-5);
-  let h5html = '<h3>最近5个交易日涨跌幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径</span></h3>';
-  if (top5.length) {
-    h5html += '<table><thead><tr><th>指数 / LOF</th>' + top5.map(d => '<th>' + d.slice(5).replace('-', '/') + '</th>').join('') + '</tr></thead><tbody>';
+  // 列 = 各行"自己最近5个交易日"窗口的并集（升序，最多10列）：个别行数据滞后时仍显示自己的5日，
+  // 而不是跟着全局最新日期走导致该行整行 '-'
+  const cols = [...new Set(rows5d.flatMap(r => r.hist.map(h => h.date).sort().slice(-5)))].sort().slice(-10);
+  const etfHistRows = (D.indices || []).filter(ix => ix.histViaEtf && Array.isArray(ix.hist) && ix.hist.length).map(ix => ix.label);
+  let h5html = '<h3>最近5个交易日涨跌幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
+    + (etfHistRows.length ? ' · ' + etfHistRows.join('、') + ' 的5日历史按跟踪 ETF 收盘计算' : '') + '</span></h3>';
+  if (cols.length) {
+    h5html += '<table><thead><tr><th>指数 / LOF</th>' + cols.map(d => '<th>' + d.slice(5).replace('-', '/') + '</th>').join('') + '</tr></thead><tbody>';
     rows5d.forEach(r => {
       const map = {}; r.hist.forEach(h => map[h.date] = h.chgPct);
       h5html += '<tr class="' + (r.lof ? 'lofrow' : '') + '"><td><span class="nm">' + r.name + '</span><span class="muted" style="font-size:11px;margin-left:6px">' + r.code + '</span></td>'
-        + top5.map(d => { const v = map[d]; return '<td class="' + (v == null ? 'muted' : cls(v)) + '">' + (v == null ? '-' : sign(v) + '%') + '</td>'; }).join('') + '</tr>';
+        + cols.map(d => { const v = map[d]; return '<td class="' + (v == null ? 'muted' : cls(v)) + '">' + (v == null ? '-' : sign(v) + '%') + '</td>'; }).join('') + '</tr>';
     });
     h5html += '</tbody></table>';
   } else {
