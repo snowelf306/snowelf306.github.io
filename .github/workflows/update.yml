@@ -36,7 +36,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add qdii-nav.html data.json 
+          # 指数5日历史缓存随仓库持久化：build_data.js 抓取成功时写入，此处一并提交；
+          # 下次构建若缓存已覆盖最近一个已收盘交易日则直接复用，不访问 Yahoo
+          git add qdii-nav.html data.json
+          if [ -f build/idx_hist_cache.json ]; then git add build/idx_hist_cache.json; fi
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

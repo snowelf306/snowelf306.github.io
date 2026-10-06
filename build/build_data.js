@@ -243,24 +243,34 @@ function closesToHist(map, n = 5) {
   return hist;
 }
 
-/* ---- 指数5日涨跌幅缓存（只增量抓取，>10天废弃） ---- */
+/* ---- 指数5日涨跌幅缓存：抓取成功才落盘，随仓库提交跨构建复用 ---- */
 const IDX_HIST_CACHE = path.join(__dirname, 'idx_hist_cache.json');
 function loadIdxHistCache() { try { return JSON.parse(fs.readFileSync(IDX_HIST_CACHE, 'utf8')); } catch (e) { return {}; } }
 function saveIdxHistCache(c) { try { fs.writeFileSync(IDX_HIST_CACHE, JSON.stringify(c, null, 1), 'utf8'); } catch (e) { log('WARN idx cache write failed:', e.message); } }
 
-// 获取某指数最近5日涨跌幅。缓存已覆盖最新交易日则直接返回（不抓取）；否则增量抓取缺失日期并合并、截断10天、写缓存。
+// 最近一个已收盘的美股交易日（收盘按 21:00 UTC 保守估计：夏令时 20:00 收盘只会让判定晚 1 小时）
+function lastUsClosedSession() {
+  const now = Date.now();
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(now - i * 86400e3);
+    if (d.getUTCDay() === 0 || d.getUTCDay() === 6) continue;
+    if (now >= Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 21)) return d.toISOString().slice(0, 10);
+  }
+  return null;
+}
+
+// 获取某指数最近5日涨跌幅。缓存已覆盖最近一个已收盘交易日 → 直接复用，不访问数据源；
+// 否则抓取并合并落盘（增量只补缺失交易日）；抓取失败不写缓存，保留旧数据兜底，下次构建重试。
 async function getIdxHistCached(sym) {
   const cache = loadIdxHistCache();
   const series = cache[sym] || {}; // date -> close
   const cachedDates = Object.keys(series).sort();
-  const cacheMax = cachedDates.length ? cachedDates[cachedDates.length - 1] : null;
-  const today = new Date().toISOString().slice(0, 10); // 系统当天
-  // 若缓存最新日期已达今天（或很近，最近4个自然日内），直接用缓存，不抓
-  const fresh = cacheMax ? (new Date(today) - new Date(cacheMax)) / 86400000 : 999;
-  if (cacheMax && fresh <= 4) {
+  const cacheMax = cachedDates[cachedDates.length - 1] || null;
+  const expected = lastUsClosedSession();
+  if (cacheMax && expected && cacheMax >= expected) {
+    log('idx hist cache hit:', sym, 'through', cacheMax);
     return closesToHist(series, 5);
   }
-  // 需要抓取：抓全月，合并缺失日期
   try {
     const fetched = await fetchYahooIdxCloses(sym);
     Object.assign(series, fetched); // 抓取的新日期覆盖进 series
@@ -272,7 +282,7 @@ async function getIdxHistCached(sym) {
     saveIdxHistCache(cache);
     return closesToHist(trimmed, 5);
   } catch (e) {
-    log('WARN index hist fetch failed for', sym, '-', String(e.message).slice(0, 50), '(用缓存数据)');
+    log('WARN index hist fetch failed for', sym, '-', String(e.message).slice(0, 50), '(失败不落盘，下次重试；当前用缓存兜底)');
     return closesToHist(series, 5);
   }
 }
