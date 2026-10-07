@@ -287,7 +287,7 @@ async function getIdxHistCached(sym) {
   }
 }
 
-function assembleIndices(rt, usMaps) {
+function assembleIndices(rt, usMaps, lastUsCloseDate) {
   return Promise.all(INDICES.map(async ix => {
     // 1) 腾讯实时（真实指数）
     let out = null;
@@ -340,8 +340,11 @@ function assembleIndices(rt, usMaps) {
         catch (e) { log('WARN index hist failed for', ix.label, ix.histSym, '-', String(e.message).slice(0, 50)); }
         await sleep(1200);
       }
-      // Yahoo 取不到（限流/代码不可用）时，用跟踪 ETF 的 Nasdaq 日线兜底计算
-      if ((!Array.isArray(ix.hist) || !ix.hist.length) && ix.histEtf) {
+      // Yahoo 取不到（限流/代码不可用），或缓存兜底数据止步于 lastUsCloseDate 之前（滞后一个
+      // 交易日）时，用跟踪 ETF 的 Nasdaq 日线兜底计算——nasdaq 与截齐边界同源，窗口必然对齐
+      const histShort = !Array.isArray(ix.hist) || !ix.hist.length
+        || (lastUsCloseDate && ix.hist[ix.hist.length - 1].date < lastUsCloseDate);
+      if (histShort && ix.histEtf) {
         try {
           const m = (usMaps[ix.histEtf] && Object.keys(usMaps[ix.histEtf]).length) ? usMaps[ix.histEtf] : await fetchNasdaqHist(ix.histEtf);
           const h = closesToHist(m, 5);
@@ -540,7 +543,14 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
   const rt = await fetchRealtimeQuotes(rtCodes);
   const rtSample = rt['usARKK'];
   log('rt sample usARKK:', JSON.stringify(rtSample));
-  const indicesOut = await assembleIndices(rt, usMaps);
+  // 统一截齐边界：lastUsCloseDate = 纳斯达克历史接口已入库的最后一个美股收盘日。
+  // Yahoo 收盘后几分钟就有当日 bar，nasdaq 滞后 1 小时+，若不截齐，5 日表会出现
+  // "指数行多一天、LOF 行少一天" 的稀疏末列。指数 hist 与基金估算序列共用这一边界。
+  const lastUsCloseDate = (() => { let mx = null; for (const m of Object.values(usMaps)) for (const k of Object.keys(m)) if (!mx || k > mx) mx = k; return mx; })();
+  const indicesOut = await assembleIndices(rt, usMaps, lastUsCloseDate);
+  if (lastUsCloseDate) for (const ix of indicesOut) {
+    if (Array.isArray(ix.hist)) ix.hist = ix.hist.filter(h => h.date <= lastUsCloseDate);
+  }
   log('indices strip:', indicesOut.map(i => i.label + '(' + i.code + (i.viaEtf ? '~' + i.etfName : '') + ') ' + (i.chgPct > 0 ? '+' : '') + i.chgPct + '%').join(' | '));
 
   log('fetching official NAV series (eastmoney)...');
@@ -723,9 +733,8 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     const lastOffC = (() => { const m = offMaps[f.codeC]; if (!m) return null; const ks = Object.keys(m).filter(k => k <= dates[dates.length - 1]).sort(); return ks.length ? { date: ks[ks.length - 1], navC: m[ks[ks.length - 1]] } : null; })();
 
     // 最近5个交易日每日涨跌幅（估算净值口径，{date, chgPct} 升序）
-    // 只统计到最后一个完整美股收盘日：盘中构建时当日尚未收盘（估算净值=前收平推），
-    // 且指数 hist 也是收盘口径，截齐后表格各行列才一一对应
-    const lastUsCloseDate = (() => { let mx = null; for (const m of Object.values(usMaps)) for (const k of Object.keys(m)) if (!mx || k > mx) mx = k; return mx; })();
+    // 只统计到 lastUsCloseDate（与指数 5 日历史共用同一截齐边界，见 indices 处注释），
+    // 盘中构建时当日尚未收盘（估算净值=前收平推），截齐后表格 8 行窗口一一对应
     const hist5 = (() => {
       const pts = series.filter(p => p.estNavA != null && (!lastUsCloseDate || p.date <= lastUsCloseDate));
       if (pts.length < 2) return null;
