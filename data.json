@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-07 02:26:20 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-07 08:22:33 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -43,13 +43,13 @@
      "qty": 1430641.999987894,
      "qtyDisp": "1,430,642",
      "prevClose": 56.77,
-     "dailyChgPct": -7.5,
-     "pLast": 52.52,
+     "dailyChgPct": -8.84,
+     "pLast": 51.75,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": 23.48,
-     "valLast": 506057349.3799018,
-     "weightNowPct": 19.8
+     "chgPct": 21.67,
+     "valLast": 498638001.34063053,
+     "weightNowPct": 19.62
     },
     {
      "name": "ARK Innovation ETF",
@@ -65,12 +65,12 @@
      "qty": 812999.9999927334,
      "qtyDisp": "813000.00",
      "prevClose": 92.78,
-     "dailyChgPct": -1.9,
-     "pLast": 91.02,
+     "dailyChgPct": -2.47,
+     "pLast": 90.49,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": 11.37,
-     "valLast": 498392416.0215453,
+     "chgPct": 10.72,
+     "valLast": 495490328.78257126,
      "weightNowPct": 19.5
     },
     {
@@ -87,13 +87,13 @@
      "qty": 272864.99999747926,
      "qtyDisp": "272865.00",
      "prevClose": 125.84,
-     "dailyChgPct": 1.3,
-     "pLast": 127.47,
+     "dailyChgPct": 1.08,
+     "pLast": 127.2,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -4.67,
-     "valLast": 234260932.1472409,
-     "weightNowPct": 9.17
+     "chgPct": -4.87,
+     "valLast": 233764733.4206405,
+     "weightNowPct": 9.2
     },
     {
      "name": "Global X Artificial Intelligence & Technology ETF",
@@ -109,13 +109,13 @@
      "qty": 342676.0000073311,
      "qtyDisp": "342676.00",
      "prevClose": 66.85,
-     "dailyChgPct": 0.62,
-     "pLast": 67.27,
+     "dailyChgPct": 0.3,
+     "pLast": 67.05,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": 1.39,
-     "valLast": 155256275.9769735,
-     "weightNowPct": 6.08
+     "chgPct": 1.06,
+     "valLast": 154748525.40889063,
+     "weightNowPct": 6.09
     },
     {
      "name": "Technology Select Sector SPDR Fund",
@@ -131,13 +131,13 @@
      "qty": 87158.99999983661,
      "qtyDisp": "87159.00",
      "prevClose": 200.93,
-     "dailyChgPct": 0.75,
-     "pLast": 202.43,
+     "dailyChgPct": 0.53,
+     "pLast": 202,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": 5.07,
-     "valLast": 118831385.91136423,
-     "weightNowPct": 4.65
+     "chgPct": 4.85,
+     "valLast": 118578965.34157771,
+     "weightNowPct": 4.67
     },
     {
      "name": "ARK Space & Defense Innovation ETF",
@@ -153,13 +153,13 @@
      "qty": 521221.0000186413,
      "qtyDisp": "521221.00",
      "prevClose": 32.91,
-     "dailyChgPct": 1.23,
-     "pLast": 33.32,
+     "dailyChgPct": 0.97,
+     "pLast": 33.23,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -3.43,
-     "valLast": 116969045.56675535,
-     "weightNowPct": 4.58
+     "chgPct": -3.69,
+     "valLast": 116653102.76660503,
+     "weightNowPct": 4.59
     },
     {
      "name": "Global X Robotics & Artificial Intelligence ETF",
@@ -175,13 +175,13 @@
      "qty": 473521.9999883439,
      "qtyDisp": "473522.00",
      "prevClose": 36.2,
-     "dailyChgPct": 0.06,
-     "pLast": 36.22,
+     "dailyChgPct": -0.08,
+     "pLast": 36.17,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -5.6,
-     "valLast": 115513476.76124056,
-     "weightNowPct": 4.52
+     "chgPct": -5.73,
+     "valLast": 115354015.86013448,
+     "weightNowPct": 4.54
     },
     {
      "name": "VanEck Semiconductor ETF",
@@ -197,12 +197,12 @@
      "qty": 23816.99999905601,
      "qtyDisp": "23817.00",
      "prevClose": 633.9,
-     "dailyChgPct": 0.21,
-     "pLast": 635.23,
+     "dailyChgPct": -0.22,
+     "pLast": 632.5,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -4.23,
-     "valLast": 101897165.9721023,
+     "chgPct": -4.64,
+     "valLast": 101459247.00872865,
      "weightNowPct": 3.99
     },
     {
@@ -219,13 +219,13 @@
      "qty": 15800.00000039876,
      "qtyDisp": "15800.00",
      "prevClose": 756.2,
-     "dailyChgPct": 0.61,
-     "pLast": 760.8,
+     "dailyChgPct": 0.46,
+     "pLast": 759.66,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": 2.16,
-     "valLast": 80960212.46604328,
-     "weightNowPct": 3.17
+     "chgPct": 2.01,
+     "valLast": 80838899.84484021,
+     "weightNowPct": 3.18
     },
     {
      "name": "iShares Semiconductor ETF",
@@ -241,12 +241,12 @@
      "qty": 18499.999999083444,
      "qtyDisp": "18500.00",
      "prevClose": 589.51,
-     "dailyChgPct": 0.54,
-     "pLast": 592.69,
+     "dailyChgPct": -0.01,
+     "pLast": 589.45,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -8.53,
-     "valLast": 73848788.74784127,
+     "chgPct": -9.03,
+     "valLast": 73445086.85386127,
      "weightNowPct": 2.89
     }
    ],
@@ -744,13 +744,6 @@
      "estNavC": 2.5963,
      "officialA": null,
      "officialC": null
-    },
-    {
-     "date": "2026-10-06",
-     "estNavA": 2.6185,
-     "estNavC": 2.5963,
-     "officialA": null,
-     "officialC": null
     }
    ],
    "hist5": [
@@ -776,12 +769,12 @@
     }
    ],
    "live": {
-    "estNavA": 2.5711,
-    "estNavC": 2.5494,
-    "chgSinceReportA": 5.54,
-    "chgSinceReportC": 5.54,
-    "estTotalAssetsCny": 2555351589.6740646,
-    "fundDailyChgPct": -1.81,
+    "estNavA": 2.5568,
+    "estNavC": 2.5352,
+    "chgSinceReportA": 4.95,
+    "chgSinceReportC": 4.95,
+    "estTotalAssetsCny": 2541142741.5275764,
+    "fundDailyChgPct": -2.36,
     "estNavAPrev": 2.6185,
     "officialLatestA": {
      "date": "2026-09-29",
@@ -791,7 +784,7 @@
      "date": "2026-09-29",
      "navC": 2.4664
     },
-    "usQuoteTime": "2026-10-06 14:23:59",
+    "usQuoteTime": "2026-10-06 16:00:01",
     "cnQuoteTime": null
    },
    "warnings": []
@@ -829,13 +822,13 @@
      "qty": 47985.00000000336,
      "qtyDisp": "47985.00",
      "prevClose": 633.9,
-     "dailyChgPct": 0.21,
-     "pLast": 635.23,
+     "dailyChgPct": -0.22,
+     "pLast": 632.5,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -4.23,
-     "valLast": 205296028.44041938,
-     "weightNowPct": 19.74
+     "chgPct": -4.64,
+     "valLast": 204413736.73876432,
+     "weightNowPct": 19.76
     },
     {
      "name": "Invesco PHLX Semiconductor ETF",
@@ -851,13 +844,13 @@
      "qty": 279750.00000327436,
      "qtyDisp": "279750.00",
      "prevClose": 103.71,
-     "dailyChgPct": 0.66,
-     "pLast": 104.39,
+     "dailyChgPct": 0.31,
+     "pLast": 104.03,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -7.91,
-     "valLast": 196685815.65005213,
-     "weightNowPct": 18.91
+     "chgPct": -8.23,
+     "valLast": 196007523.7290442,
+     "weightNowPct": 18.95
     },
     {
      "name": "iShares Semiconductor ETF",
@@ -873,12 +866,12 @@
      "qty": 49168.99999954264,
      "qtyDisp": "49169.00",
      "prevClose": 589.51,
-     "dailyChgPct": 0.54,
-     "pLast": 592.69,
+     "dailyChgPct": -0.01,
+     "pLast": 589.45,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -8.53,
-     "valLast": 196274113.1939853,
+     "chgPct": -9.03,
+     "valLast": 195201160.8466393,
      "weightNowPct": 18.87
     },
     {
@@ -895,13 +888,13 @@
      "qty": 172476.9999995888,
      "qtyDisp": "172477.00",
      "prevClose": 160.12,
-     "dailyChgPct": -0.43,
-     "pLast": 159.44,
+     "dailyChgPct": -0.78,
+     "pLast": 158.87,
      "fxLast": 6.7351,
      "pLastSrc": "qt-intraday",
-     "chgPct": -16.05,
-     "valLast": 185213450.91964644,
-     "weightNowPct": 17.81
+     "chgPct": -16.36,
+     "valLast": 184551310.50930902,
+     "weightNowPct": 17.84
     },
     {
      "name": "国泰CES半导体芯片行业ETF",
@@ -923,7 +916,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -36.15,
      "valLast": 59412496,
-     "weightNowPct": 5.71
+     "weightNowPct": 5.74
     },
     {
      "name": "华夏国证半导体芯片ETF",
@@ -945,7 +938,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -37.88,
      "valLast": 58248801,
-     "weightNowPct": 5.6
+     "weightNowPct": 5.63
     },
     {
      "name": "景顺长城中证芯片产业ETF",
@@ -967,7 +960,7 @@
      "pLastSrc": "qt-close",
      "chgPct": -36.47,
      "valLast": 38252773.199999996,
-     "weightNowPct": 3.68
+     "weightNowPct": 3.7
     },
     {
      "name": "Global X Japan Semiconductor ETF",
@@ -982,14 +975,14 @@
      "p0Cny": 207.70230000000004,
      "qty": 101224.97487991225,
      "qtyDisp": "101224.97",
-     "prevClose": 4550,
-     "dailyChgPct": 1.58,
-     "pLast": 4622,
-     "fxLast": 0.042727,
-     "pLastSrc": "eod",
-     "chgPct": -4.92,
-     "valLast": 19990332.576829717,
-     "weightNowPct": 1.92
+     "prevClose": 4479,
+     "dailyChgPct": -5.07,
+     "pLast": 4252,
+     "fxLast": 0.041447000000000005,
+     "pLastSrc": "eod-carry",
+     "chgPct": -15.15,
+     "valLast": 17839144.96192052,
+     "weightNowPct": 1.72
     }
    ],
    "residual": {
@@ -1486,13 +1479,6 @@
      "estNavC": 3.1845,
      "officialA": null,
      "officialC": null
-    },
-    {
-     "date": "2026-10-06",
-     "estNavA": 3.2347,
-     "estNavC": 3.1911,
-     "officialA": null,
-     "officialC": null
     }
    ],
    "hist5": [
@@ -1518,13 +1504,13 @@
     }
    ],
    "live": {
-    "estNavA": 3.2408,
-    "estNavC": 3.1972,
-    "chgSinceReportA": -14.18,
-    "chgSinceReportC": -14.18,
-    "estTotalAssetsCny": 1040007716.230933,
-    "fundDailyChgPct": -0.24,
-    "estNavAPrev": 3.2486,
+    "estNavA": 3.2238,
+    "estNavC": 3.1805,
+    "chgSinceReportA": -14.63,
+    "chgSinceReportC": -14.63,
+    "estTotalAssetsCny": 1034560852.2356774,
+    "fundDailyChgPct": -0.68,
+    "estNavAPrev": 3.2459,
     "officialLatestA": {
      "date": "2026-09-29",
      "navA": 3.1189
@@ -1533,7 +1519,7 @@
      "date": "2026-09-29",
      "navC": 3.0739
     },
-    "usQuoteTime": "2026-10-06 14:23:46",
+    "usQuoteTime": "2026-10-06 16:00:01",
     "cnQuoteTime": "20260930161418"
    },
    "warnings": []
@@ -1544,7 +1530,7 @@
    "key": "sp_it",
    "label": "标普信息科技",
    "code": "S5INFT",
-   "chgPct": 0.8,
+   "chgPct": 0.55,
    "price": null,
    "rtCode": null,
    "viaEtf": false,
@@ -1578,7 +1564,7 @@
    "key": "ndx_tech",
    "label": "纳指科技",
    "code": "NDXTMC",
-   "chgPct": 0.63,
+   "chgPct": 0.28,
    "price": null,
    "rtCode": null,
    "viaEtf": false,
@@ -1612,12 +1598,12 @@
    "key": "sp_bio",
    "label": "标普生物",
    "code": "SPSIBI",
-   "chgPct": -3.14,
-   "price": 151.29,
-   "rtCode": "usXBI",
-   "viaEtf": true,
+   "chgPct": -3.35,
+   "price": 11811.77,
+   "rtCode": null,
+   "viaEtf": false,
    "etfName": "XBI",
-   "source": "etf-proxy",
+   "source": "tradingview-index",
    "hist": [
     {
      "date": "2026-09-29",
@@ -1646,88 +1632,82 @@
    "key": "nbi",
    "label": "纳指生物",
    "code": "NBI",
-   "chgPct": -2.11,
-   "price": 6874.01,
+   "chgPct": -2.31,
+   "price": 6860.24,
    "rtCode": "usNBI",
    "viaEtf": false,
    "etfName": null,
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-09-29",
-     "chgPct": 0.16
-    },
-    {
      "date": "2026-09-30",
-     "chgPct": -0.24
+     "chgPct": -0.26
     },
     {
      "date": "2026-10-01",
-     "chgPct": -2.17
+     "chgPct": -2.09
     },
     {
      "date": "2026-10-02",
-     "chgPct": -0.33
+     "chgPct": -0.26
     },
     {
      "date": "2026-10-05",
-     "chgPct": 1.3
+     "chgPct": 1.07
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": -2.31
     }
-   ],
-   "histViaEtf": true
+   ]
   },
   {
    "key": "spx",
    "label": "标普500",
    "code": "SPX",
-   "chgPct": 0.67,
-   "price": 7825.99,
+   "chgPct": 0.58,
+   "price": 7818.93,
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-09-29",
-     "chgPct": -0.18
-    },
-    {
      "date": "2026-09-30",
-     "chgPct": -0.21
+     "chgPct": -0.25
     },
     {
      "date": "2026-10-01",
-     "chgPct": 0.18
+     "chgPct": 0.19
     },
     {
      "date": "2026-10-02",
-     "chgPct": 0.74
+     "chgPct": 0.73
     },
     {
      "date": "2026-10-05",
-     "chgPct": 0.67
+     "chgPct": 0.66
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.58
     }
-   ],
-   "histViaEtf": true
+   ]
   },
   {
    "key": "ndx",
    "label": "纳指100",
    "code": "NDX",
-   "chgPct": 0.65,
-   "price": 31279.54,
+   "chgPct": 0.48,
+   "price": 31224.69,
    "rtCode": "usNDX",
    "viaEtf": false,
    "etfName": null,
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-09-29",
-     "chgPct": 0.19
-    },
-    {
      "date": "2026-09-30",
-     "chgPct": 0.25
+     "chgPct": 0.23
     },
     {
      "date": "2026-10-01",
@@ -1735,20 +1715,23 @@
     },
     {
      "date": "2026-10-02",
-     "chgPct": 1.02
+     "chgPct": 1
     },
     {
      "date": "2026-10-05",
-     "chgPct": 0.88
+     "chgPct": 0.87
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.48
     }
-   ],
-   "histViaEtf": true
+   ]
   }
  ],
  "sources": {
   "usHistory": "api.nasdaq.com (日收盘价)",
   "cnHistory": "腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)",
-  "jpHistory": "已验证快照(Yahoo 6/25-7/24) + minkabu.jp 最新(2026-10-06)",
+  "jpHistory": "unavailable",
   "fx": "chinamoney.com.cn 人民币汇率中间价",
   "realtime": "qt.gtimg.cn 腾讯实时行情",
   "officialNav": "东方财富 fund.eastmoney.com 官方公布净值"
