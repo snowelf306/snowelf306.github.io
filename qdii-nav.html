@@ -270,7 +270,7 @@ function renderAll() {
   // 而不是跟着全局最新日期走导致该行整行 '-'
   const cols = [...new Set(rows5d.flatMap(r => r.hist.map(h => h.date).sort().slice(-5)))].sort().slice(-10);
   const etfHistRows = (D.indices || []).filter(ix => ix.histViaEtf && Array.isArray(ix.hist) && ix.hist.length).map(ix => ix.label);
-  let h5html = '<h3>近日涨幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
+  let h5html = '<h3>近期涨幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
     + (etfHistRows.length ? ' · ' + etfHistRows.join('、') + ' 的5日历史按跟踪 ETF 收盘计算' : '') + '</span></h3>';
   if (cols.length) {
     h5html += '<table><thead><tr><th>指数 / LOF</th>' + cols.map(d => '<th>' + d.slice(5).replace('-', '/') + '</th>').join('') + '</tr></thead><tbody>';
