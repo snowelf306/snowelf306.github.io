@@ -71,6 +71,7 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-strip .ichip.proxy .tick{color:#f59e0baa}
 .idx-strip .ichip em.pv-warn{color:#fbbf24}
 .idx-strip .note{flex-basis:100%;font-size:11px;color:var(--muted)}
+.idx-strip .sec-title{flex-basis:100%;font-size:14px;font-weight:600;color:var(--text)}
 .idx-5d{margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;overflow-x:auto}
 .idx-5d h3{font-size:14px;color:var(--text);font-weight:600;margin:0 0 8px}
 .idx-5d .hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:8px}
@@ -246,7 +247,7 @@ function renderAll() {
     { title: '生物医药', items: [byKey('sp_bio'), byKey('nbi')] },
     { title: '大盘基准', items: [byKey('spx'), byKey('ndx')] },
   ];
-  strip.innerHTML = groups.map(g => {
+  strip.innerHTML = '<h3 class="sec-title">市场盘面</h3>' + groups.map(g => {
     const inner = g.lof
       ? D.funds.map((f, i) =>
           '<span class="ichip lof">' + f.nameShort
@@ -269,7 +270,7 @@ function renderAll() {
   // 而不是跟着全局最新日期走导致该行整行 '-'
   const cols = [...new Set(rows5d.flatMap(r => r.hist.map(h => h.date).sort().slice(-5)))].sort().slice(-10);
   const etfHistRows = (D.indices || []).filter(ix => ix.histViaEtf && Array.isArray(ix.hist) && ix.hist.length).map(ix => ix.label);
-  let h5html = '<h3>最近5个交易日涨跌幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
+  let h5html = '<h3>近日涨幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
     + (etfHistRows.length ? ' · ' + etfHistRows.join('、') + ' 的5日历史按跟踪 ETF 收盘计算' : '') + '</span></h3>';
   if (cols.length) {
     h5html += '<table><thead><tr><th>指数 / LOF</th>' + cols.map(d => '<th>' + d.slice(5).replace('-', '/') + '</th>').join('') + '</tr></thead><tbody>';
