@@ -99,14 +99,13 @@ const ALL_CN = [...new Set(FUNDS.flatMap(f => f.holdings.filter(h => h.market ==
 // SPSIBI(S&P生物科技精选行业, 各数据源通用符号)、NBI(纳斯达克生物技术)、SPX、NDX。
 // 数据源自动降级：腾讯实时(NBI/SPX/NDX) → CNBC(.SPLRCT/NDXTMC, 实测可取真实板块指数)
 // → TradingView(机房环境) → Yahoo cookie/crumb → 跟踪同指数ETF表征(XLK/QTEC/XBI, 前端标"ETF替代")
-// histSym：Yahoo 5日历史用的代码；histEtf：Yahoo 限流/失败时用该跟踪 ETF 的 Nasdaq 日线兜底
 const INDICES = [
-  { key: 'sp_it',    label: '标普信息科技', code: 'S5INFT',  cnbcSym: '.SPLRCT',    tvSym: 'SP:S5INFT', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK',  histSym: '^SP500-45', histEtf: 'XLK' },
-  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC', histSym: 'QTEC',      histEtf: 'QTEC' },
-  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI',  histSym: '^SPSIBI',   histEtf: 'XBI' },
-  { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI',      histSym: '^NBI',       histEtf: 'IBB' },
-  { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX',      histSym: '^GSPC',      histEtf: 'SPY' },
-  { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX',      histSym: '^NDX',       histEtf: 'QQQ' },
+  { key: 'sp_it',    label: '标普信息科技', code: 'S5INFT',  cnbcSym: '.SPLRCT',    tvSym: 'SP:S5INFT', yahooSym: '^SP500-45', etfCode: 'usXLK',  etfName: 'XLK' },
+  { key: 'ndx_tech', label: '纳指科技',     code: 'NDXTMC',   cnbcSym: 'NDXTMC',    tvSym: 'NASDAQ:NDXTMC', etfCode: 'usQTEC', etfName: 'QTEC' },
+  { key: 'sp_bio',   label: '标普生物',     code: 'SPSIBI',   tvSym: 'SP:SPSIBI',   yahooSym: '^SPSIBI',   etfCode: 'usXBI',  etfName: 'XBI' },
+  { key: 'nbi',      label: '纳指生物',     code: 'NBI',      rtCode: 'usNBI' },
+  { key: 'spx',      label: '标普500',      code: 'SPX',      rtCode: 'usINX' },
+  { key: 'ndx',      label: '纳指100',      code: 'NDX',      rtCode: 'usNDX' },
 ];
 
 async function fetchCnbcIndex(sym) {
@@ -184,110 +183,7 @@ async function fetchYahooIdxChg(symbol) {
   throw lastErr || new Error('yahoo unreachable');
 }
 
-// 抓取某符号近一个月日收盘价，返回 { date: close, ... }（键为 'YYYY-MM-DD'）
-// 供指数5日涨跌幅缓存使用；抓不到则抛错，由调用方兜底
-async function fetchYahooIdxCloses(symbol) {
-  const UA = { 'User-Agent': BROWSER_UA };
-  await fetchRaw('https://fc.yahoo.com', UA, 8000).catch(() => null);
-  const r0 = await fetchRaw('https://finance.yahoo.com', UA, 8000);
-  const cookie = r0.setCookie.map(c => c.split(';')[0]).join('; ');
-  let crumb = '';
-  if (cookie) {
-    const r1 = await fetchRaw('https://query2.finance.yahoo.com/v1/test/getcrumb', { ...UA, Cookie: cookie, Referer: 'https://finance.yahoo.com/' }, 8000);
-    if (r1.status === 200 && r1.body && r1.body.length < 24) crumb = r1.body.trim();
-  }
-  const suffix = crumb ? '&crumb=' + encodeURIComponent(crumb) : '';
-  const path = '/v8/finance/chart/' + encodeURIComponent(symbol) + '?range=1mo&interval=1d' + suffix;
-  const hosts = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
-  const proxies = [
-    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
-    u => 'https://api.cors.lol/?url=' + encodeURIComponent(u),
-  ];
-  let lastErr;
-  const attempts = [
-    () => fetchRaw(hosts[0] + path, { ...UA, Cookie: cookie }),
-    () => fetchRaw(hosts[1] + path, { ...UA, Cookie: cookie }),
-    ...[0, 1, 2].map(i => () => fetchRaw(proxies[i](hosts[0] + path))),
-  ];
-  for (const attempt of attempts) {
-    try {
-      const r = await attempt();
-      if (r.status !== 200) throw new Error('HTTP ' + r.status);
-      const res = JSON.parse(r.body).chart.result[0];
-      const ts = res.timestamp || [];
-      const cl = (res.indicators.quote[0].close || []);
-      const map = {}; // date -> close
-      for (let i = 0; i < ts.length; i++) {
-        const v = cl[i];
-        if (v == null || !isFinite(v)) continue;
-        map[new Date(ts[i] * 1000).toISOString().slice(0, 10)] = v;
-      }
-      if (Object.keys(map).length >= 2) return map;
-      lastErr = new Error('not enough closes');
-    } catch (e) { lastErr = e instanceof Error ? e : new Error(String(e)); }
-    await sleep(300);
-  }
-  throw lastErr || new Error('yahoo unreachable');
-}
-
-// 由日期->收盘价映射计算最近5个交易日的每日涨跌幅（时间升序）
-function closesToHist(map, n = 5) {
-  const ds = Object.keys(map).sort();
-  const lastN1 = ds.slice(-(n + 1));
-  const hist = [];
-  for (let i = 1; i < lastN1.length; i++) {
-    const prev = map[lastN1[i - 1]];
-    if (prev > 0) hist.push({ date: lastN1[i], chgPct: Math.round((map[lastN1[i]] / prev - 1) * 10000) / 100 });
-  }
-  return hist;
-}
-
-/* ---- 指数5日涨跌幅缓存：抓取成功才落盘，随仓库提交跨构建复用 ---- */
-const IDX_HIST_CACHE = path.join(__dirname, 'idx_hist_cache.json');
-function loadIdxHistCache() { try { return JSON.parse(fs.readFileSync(IDX_HIST_CACHE, 'utf8')); } catch (e) { return {}; } }
-function saveIdxHistCache(c) { try { fs.writeFileSync(IDX_HIST_CACHE, JSON.stringify(c, null, 1), 'utf8'); } catch (e) { log('WARN idx cache write failed:', e.message); } }
-
-// 最近一个已收盘的美股交易日（收盘按 21:00 UTC 保守估计：夏令时 20:00 收盘只会让判定晚 1 小时）
-function lastUsClosedSession() {
-  const now = Date.now();
-  for (let i = 0; i < 6; i++) {
-    const d = new Date(now - i * 86400e3);
-    if (d.getUTCDay() === 0 || d.getUTCDay() === 6) continue;
-    if (now >= Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 21)) return d.toISOString().slice(0, 10);
-  }
-  return null;
-}
-
-// 获取某指数最近5日涨跌幅。缓存已覆盖最近一个已收盘交易日 → 直接复用，不访问数据源；
-// 否则抓取并合并落盘（增量只补缺失交易日）；抓取失败不写缓存，保留旧数据兜底，下次构建重试。
-async function getIdxHistCached(sym) {
-  const cache = loadIdxHistCache();
-  const series = cache[sym] || {}; // date -> close
-  const cachedDates = Object.keys(series).sort();
-  const cacheMax = cachedDates[cachedDates.length - 1] || null;
-  const expected = lastUsClosedSession();
-  if (cacheMax && expected && cacheMax >= expected) {
-    log('idx hist cache hit:', sym, 'through', cacheMax);
-    return closesToHist(series, 5);
-  }
-  try {
-    const fetched = await fetchYahooIdxCloses(sym);
-    Object.assign(series, fetched); // 抓取的新日期覆盖进 series
-    const ds = Object.keys(series).sort();
-    const keep = ds.slice(-10); // 只保留最近10个交易日
-    const trimmed = {};
-    keep.forEach(d => { trimmed[d] = series[d]; });
-    cache[sym] = trimmed;
-    saveIdxHistCache(cache);
-    return closesToHist(trimmed, 5);
-  } catch (e) {
-    log('WARN index hist fetch failed for', sym, '-', String(e.message).slice(0, 50), '(失败不落盘，下次重试；当前用缓存兜底)');
-    return closesToHist(series, 5);
-  }
-}
-
-function assembleIndices(rt, usMaps, lastUsCloseDate) {
+function assembleIndices(rt) {
   return Promise.all(INDICES.map(async ix => {
     // 1) 腾讯实时（真实指数）
     let out = null;
@@ -331,32 +227,8 @@ function assembleIndices(rt, usMaps, lastUsCloseDate) {
     }
     if (!out) { log('WARN index missing:', ix.label); return null; }
     return { key: ix.key, label: ix.label, code: ix.code, chgPct: out.chgPct, price: out.price ?? null,
-      rtCode: out.rtCode || null, viaEtf: !!out.viaEtf, etfName: ix.etfName || null, source: out.source, hist: null, histSym: ix.histSym || null, histEtf: ix.histEtf || null };
-  })).then(async a => {
-    // 5日历史必须串行抓取：6 个符号并行打 Yahoo 会立刻触发 429 限流
-    for (const ix of a) {
-      if (ix.histSym) {
-        try { ix.hist = await getIdxHistCached(ix.histSym); }
-        catch (e) { log('WARN index hist failed for', ix.label, ix.histSym, '-', String(e.message).slice(0, 50)); }
-        await sleep(1200);
-      }
-      // Yahoo 取不到（限流/代码不可用），或缓存兜底数据止步于 lastUsCloseDate 之前（滞后一个
-      // 交易日）时，用跟踪 ETF 的 Nasdaq 日线兜底计算——nasdaq 与截齐边界同源，窗口必然对齐
-      const histShort = !Array.isArray(ix.hist) || !ix.hist.length
-        || (lastUsCloseDate && ix.hist[ix.hist.length - 1].date < lastUsCloseDate);
-      if (histShort && ix.histEtf) {
-        try {
-          const m = (usMaps[ix.histEtf] && Object.keys(usMaps[ix.histEtf]).length) ? usMaps[ix.histEtf] : await fetchNasdaqHist(ix.histEtf);
-          const h = closesToHist(m, 5);
-          if (h.length) { ix.hist = h; ix.histViaEtf = true; log('idx hist fallback via nasdaq ETF', ix.histEtf, '->', ix.label, '(' + h.length + 'd)'); }
-        } catch (e) { log('WARN idx hist ETF fallback failed for', ix.label, '-', String(e.message).slice(0, 60)); }
-      }
-      // histSym 本身就是 ETF（如 QTEC）时，5日历史同样是 ETF 口径
-      if (ix.hist && ix.hist.length && ix.histSym && !ix.histSym.startsWith('^')) ix.histViaEtf = true;
-    }
-    // histSym/histEtf 是内部抓取代码，不下发给前端
-    return a.map(({ histSym, histEtf, ...ix }) => ix);
-  });
+      rtCode: out.rtCode || null, viaEtf: !!out.viaEtf, etfName: ix.etfName || null, source: out.source };
+  })).then(a => a.filter(Boolean));
 }
 
 /* ---------------- fetchers ---------------- */
@@ -543,14 +415,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
   const rt = await fetchRealtimeQuotes(rtCodes);
   const rtSample = rt['usARKK'];
   log('rt sample usARKK:', JSON.stringify(rtSample));
-  // 统一截齐边界：lastUsCloseDate = 纳斯达克历史接口已入库的最后一个美股收盘日。
-  // Yahoo 收盘后几分钟就有当日 bar，nasdaq 滞后 1 小时+，若不截齐，5 日表会出现
-  // "指数行多一天、LOF 行少一天" 的稀疏末列。指数 hist 与基金估算序列共用这一边界。
-  const lastUsCloseDate = (() => { let mx = null; for (const m of Object.values(usMaps)) for (const k of Object.keys(m)) if (!mx || k > mx) mx = k; return mx; })();
-  const indicesOut = await assembleIndices(rt, usMaps, lastUsCloseDate);
-  if (lastUsCloseDate) for (const ix of indicesOut) {
-    if (Array.isArray(ix.hist)) ix.hist = ix.hist.filter(h => h.date <= lastUsCloseDate);
-  }
+  const indicesOut = await assembleIndices(rt);
   log('indices strip:', indicesOut.map(i => i.label + '(' + i.code + (i.viaEtf ? '~' + i.etfName : '') + ') ' + (i.chgPct > 0 ? '+' : '') + i.chgPct + '%').join(' | '));
 
   log('fetching official NAV series (eastmoney)...');
@@ -732,21 +597,6 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     const lastOffA = (() => { const m = offMaps[f.codeA]; if (!m) return null; const ks = Object.keys(m).filter(k => k <= dates[dates.length - 1]).sort(); return ks.length ? { date: ks[ks.length - 1], navA: m[ks[ks.length - 1]] } : null; })();
     const lastOffC = (() => { const m = offMaps[f.codeC]; if (!m) return null; const ks = Object.keys(m).filter(k => k <= dates[dates.length - 1]).sort(); return ks.length ? { date: ks[ks.length - 1], navC: m[ks[ks.length - 1]] } : null; })();
 
-    // 最近5个交易日每日涨跌幅（估算净值口径，{date, chgPct} 升序）
-    // 只统计到 lastUsCloseDate（与指数 5 日历史共用同一截齐边界，见 indices 处注释），
-    // 盘中构建时当日尚未收盘（估算净值=前收平推），截齐后表格 8 行窗口一一对应
-    const hist5 = (() => {
-      const pts = series.filter(p => p.estNavA != null && (!lastUsCloseDate || p.date <= lastUsCloseDate));
-      if (pts.length < 2) return null;
-      const last6 = pts.slice(-6);
-      const out = [];
-      for (let i = 1; i < last6.length; i++) {
-        const prev = last6[i - 1].estNavA;
-        if (prev > 0) out.push({ date: last6[i].date, chgPct: Math.round((last6[i].estNavA / prev - 1) * 10000) / 100 });
-      }
-      return out;
-    })();
-
     fundsOut.push({
       key: f.key, nameFull: f.nameFull, nameShort: f.nameShort,
       codeA: f.codeA, codeC: f.codeC, reportDate: f.reportDate,
@@ -757,7 +607,6 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
       holdings: holdingsOut,
       residual: { fv0: residualFV, note: '报告未披露的其余基金持仓（按已披露持仓平均涨幅估算）' },
       series,
-      hist5,
       live: {
         estNavA: estNavA_live, estNavC: estNavC_live,
         chgSinceReportA: +((estNavA_live / f.navA0 - 1) * 100).toFixed(2),
