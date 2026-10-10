@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-11 01:42:53 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-11 01:47:30 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -1153,379 +1153,379 @@
     },
     {
      "date": "2026-07-27",
-     "estNavA": 3.0337,
-     "estNavC": 2.9929,
+     "estNavA": 3.0338,
+     "estNavC": 2.993,
      "officialA": 3.0334,
      "officialC": 2.9917
     },
     {
      "date": "2026-07-28",
-     "estNavA": 2.8854,
-     "estNavC": 2.8466,
+     "estNavA": 2.8793,
+     "estNavC": 2.8405,
      "officialA": 2.8762,
      "officialC": 2.8366
     },
     {
      "date": "2026-07-29",
-     "estNavA": 2.7615,
-     "estNavC": 2.7243,
+     "estNavA": 2.7512,
+     "estNavC": 2.7142,
      "officialA": 2.749,
      "officialC": 2.7111
     },
     {
      "date": "2026-07-30",
-     "estNavA": 2.8955,
-     "estNavC": 2.8565,
+     "estNavA": 2.8861,
+     "estNavC": 2.8472,
      "officialA": 2.8789,
      "officialC": 2.8392
     },
     {
      "date": "2026-07-31",
-     "estNavA": 2.9217,
-     "estNavC": 2.8824,
+     "estNavA": 2.9181,
+     "estNavC": 2.8789,
      "officialA": 2.9136,
      "officialC": 2.8735
     },
     {
      "date": "2026-08-03",
-     "estNavA": 2.9075,
-     "estNavC": 2.8684,
+     "estNavA": 2.9055,
+     "estNavC": 2.8664,
      "officialA": 2.8915,
      "officialC": 2.8515
     },
     {
      "date": "2026-08-04",
-     "estNavA": 3.0632,
-     "estNavC": 3.022,
+     "estNavA": 3.0629,
+     "estNavC": 3.0217,
      "officialA": 3.0485,
      "officialC": 3.0063
     },
     {
      "date": "2026-08-05",
-     "estNavA": 3.0529,
-     "estNavC": 3.0118,
+     "estNavA": 3.0553,
+     "estNavC": 3.0142,
      "officialA": 3.0484,
      "officialC": 3.0062
     },
     {
      "date": "2026-08-06",
-     "estNavA": 3.0711,
-     "estNavC": 3.0298,
+     "estNavA": 3.071,
+     "estNavC": 3.0297,
      "officialA": 3.0665,
      "officialC": 3.024
     },
     {
      "date": "2026-08-07",
-     "estNavA": 3.1386,
-     "estNavC": 3.0964,
+     "estNavA": 3.1363,
+     "estNavC": 3.0941,
      "officialA": 3.1363,
      "officialC": 3.0928
     },
     {
      "date": "2026-08-10",
-     "estNavA": 3.0695,
-     "estNavC": 3.0282,
+     "estNavA": 3.0688,
+     "estNavC": 3.0275,
      "officialA": 3.0698,
      "officialC": 3.0272
     },
     {
      "date": "2026-08-11",
-     "estNavA": 3.0851,
-     "estNavC": 3.0436,
+     "estNavA": 3.0844,
+     "estNavC": 3.0429,
      "officialA": 3.0832,
      "officialC": 3.0403
     },
     {
      "date": "2026-08-12",
-     "estNavA": 3.1543,
-     "estNavC": 3.1118,
+     "estNavA": 3.1539,
+     "estNavC": 3.1115,
      "officialA": 3.152,
      "officialC": 3.1081
     },
     {
      "date": "2026-08-13",
-     "estNavA": 3.1599,
-     "estNavC": 3.1174,
+     "estNavA": 3.161,
+     "estNavC": 3.1185,
      "officialA": 3.156,
      "officialC": 3.112
     },
     {
      "date": "2026-08-14",
-     "estNavA": 3.1648,
-     "estNavC": 3.1222,
+     "estNavA": 3.1661,
+     "estNavC": 3.1235,
      "officialA": 3.1611,
      "officialC": 3.117
     },
     {
      "date": "2026-08-17",
-     "estNavA": 3.2335,
-     "estNavC": 3.19,
+     "estNavA": 3.2367,
+     "estNavC": 3.1932,
      "officialA": 3.2346,
      "officialC": 3.1894
     },
     {
      "date": "2026-08-18",
-     "estNavA": 3.1105,
-     "estNavC": 3.0687,
+     "estNavA": 3.1107,
+     "estNavC": 3.0688,
      "officialA": 3.1126,
      "officialC": 3.0691
     },
     {
      "date": "2026-08-19",
-     "estNavA": 3.0057,
-     "estNavC": 2.9652,
+     "estNavA": 3.0025,
+     "estNavC": 2.9621,
      "officialA": 2.999,
      "officialC": 2.957
     },
     {
      "date": "2026-08-20",
-     "estNavA": 3.0053,
-     "estNavC": 2.9648,
+     "estNavA": 3.0027,
+     "estNavC": 2.9623,
      "officialA": 2.9979,
      "officialC": 2.9559
     },
     {
      "date": "2026-08-21",
-     "estNavA": 3.0006,
-     "estNavC": 2.9602,
+     "estNavA": 2.9982,
+     "estNavC": 2.9579,
      "officialA": 2.9937,
      "officialC": 2.9517
     },
     {
      "date": "2026-08-24",
-     "estNavA": 2.9222,
-     "estNavC": 2.8829,
+     "estNavA": 2.9193,
+     "estNavC": 2.8801,
      "officialA": 2.9112,
      "officialC": 2.8703
     },
     {
      "date": "2026-08-25",
-     "estNavA": 2.9545,
-     "estNavC": 2.9148,
+     "estNavA": 2.952,
+     "estNavC": 2.9123,
      "officialA": 2.9431,
      "officialC": 2.9017
     },
     {
      "date": "2026-08-26",
-     "estNavA": 2.9649,
-     "estNavC": 2.925,
+     "estNavA": 2.9623,
+     "estNavC": 2.9224,
      "officialA": 2.9546,
      "officialC": 2.913
     },
     {
      "date": "2026-08-27",
-     "estNavA": 3.0353,
-     "estNavC": 2.9945,
+     "estNavA": 3.0329,
+     "estNavC": 2.9921,
      "officialA": 3.0282,
      "officialC": 2.9855
     },
     {
      "date": "2026-08-28",
-     "estNavA": 2.9409,
-     "estNavC": 2.9013,
+     "estNavA": 2.9382,
+     "estNavC": 2.8987,
      "officialA": 2.9318,
      "officialC": 2.8905
     },
     {
      "date": "2026-08-31",
-     "estNavA": 2.9579,
-     "estNavC": 2.9181,
+     "estNavA": 2.9546,
+     "estNavC": 2.9149,
      "officialA": 2.9488,
      "officialC": 2.9072
     },
     {
      "date": "2026-09-01",
-     "estNavA": 2.8962,
-     "estNavC": 2.8572,
+     "estNavA": 2.8923,
+     "estNavC": 2.8534,
      "officialA": 2.885,
      "officialC": 2.8442
     },
     {
      "date": "2026-09-02",
-     "estNavA": 2.9014,
-     "estNavC": 2.8624,
+     "estNavA": 2.8959,
+     "estNavC": 2.8569,
      "officialA": 2.8876,
      "officialC": 2.8467
     },
     {
      "date": "2026-09-03",
-     "estNavA": 2.9029,
-     "estNavC": 2.8639,
+     "estNavA": 2.8978,
+     "estNavC": 2.8588,
      "officialA": 2.8884,
      "officialC": 2.8475
     },
     {
      "date": "2026-09-04",
-     "estNavA": 2.9624,
-     "estNavC": 2.9225,
+     "estNavA": 2.9588,
+     "estNavC": 2.919,
      "officialA": 2.9466,
      "officialC": 2.9048
     },
     {
      "date": "2026-09-07",
-     "estNavA": 2.9758,
-     "estNavC": 2.9358,
+     "estNavA": 2.9747,
+     "estNavC": 2.9346,
      "officialA": 2.963,
      "officialC": 2.9209
     },
     {
      "date": "2026-09-08",
-     "estNavA": 3.0071,
-     "estNavC": 2.9666,
+     "estNavA": 3.0055,
+     "estNavC": 2.9651,
      "officialA": 2.9924,
      "officialC": 2.9498
     },
     {
      "date": "2026-09-09",
-     "estNavA": 3.0099,
-     "estNavC": 2.9694,
+     "estNavA": 3.0073,
+     "estNavC": 2.9669,
      "officialA": 2.9945,
      "officialC": 2.9519
     },
     {
      "date": "2026-09-10",
-     "estNavA": 2.9483,
-     "estNavC": 2.9086,
+     "estNavA": 2.9463,
+     "estNavC": 2.9067,
      "officialA": 2.9333,
      "officialC": 2.8915
     },
     {
      "date": "2026-09-11",
-     "estNavA": 2.9813,
-     "estNavC": 2.9412,
+     "estNavA": 2.9769,
+     "estNavC": 2.9368,
      "officialA": 2.9633,
      "officialC": 2.921
     },
     {
      "date": "2026-09-14",
-     "estNavA": 2.8407,
-     "estNavC": 2.8025,
+     "estNavA": 2.8356,
+     "estNavC": 2.7975,
      "officialA": 2.8223,
      "officialC": 2.782
     },
     {
      "date": "2026-09-15",
-     "estNavA": 2.8528,
-     "estNavC": 2.8144,
+     "estNavA": 2.8476,
+     "estNavC": 2.8093,
      "officialA": 2.8359,
      "officialC": 2.7953
     },
     {
      "date": "2026-09-16",
-     "estNavA": 2.8882,
-     "estNavC": 2.8494,
+     "estNavA": 2.8835,
+     "estNavC": 2.8447,
      "officialA": 2.8757,
      "officialC": 2.8346
     },
     {
      "date": "2026-09-17",
-     "estNavA": 2.9474,
-     "estNavC": 2.9077,
+     "estNavA": 2.9418,
+     "estNavC": 2.9022,
      "officialA": 2.9336,
      "officialC": 2.8916
     },
     {
      "date": "2026-09-18",
-     "estNavA": 3.0247,
-     "estNavC": 2.984,
+     "estNavA": 3.0215,
+     "estNavC": 2.9809,
      "officialA": 3.0151,
      "officialC": 2.9719
     },
     {
      "date": "2026-09-21",
-     "estNavA": 3.1187,
-     "estNavC": 3.0767,
+     "estNavA": 3.1155,
+     "estNavC": 3.0736,
      "officialA": 3.1076,
      "officialC": 3.0629
     },
     {
      "date": "2026-09-22",
-     "estNavA": 3.1733,
-     "estNavC": 3.1306,
+     "estNavA": 3.1702,
+     "estNavC": 3.1275,
      "officialA": 3.1624,
      "officialC": 3.117
     },
     {
      "date": "2026-09-23",
-     "estNavA": 3.148,
-     "estNavC": 3.1057,
+     "estNavA": 3.1449,
+     "estNavC": 3.1026,
      "officialA": 3.1369,
      "officialC": 3.0918
     },
     {
      "date": "2026-09-24",
-     "estNavA": 3.1324,
-     "estNavC": 3.0903,
+     "estNavA": 3.1301,
+     "estNavC": 3.088,
      "officialA": 3.1203,
      "officialC": 3.0753
     },
     {
      "date": "2026-09-25",
-     "estNavA": 3.1646,
-     "estNavC": 3.1221,
+     "estNavA": 3.1634,
+     "estNavC": 3.1209,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-09-28",
-     "estNavA": 3.1024,
-     "estNavC": 3.0607,
+     "estNavA": 3.1007,
+     "estNavC": 3.059,
      "officialA": 3.0843,
      "officialC": 3.0398
     },
     {
      "date": "2026-09-29",
-     "estNavA": 3.1369,
-     "estNavC": 3.0947,
+     "estNavA": 3.1362,
+     "estNavC": 3.094,
      "officialA": 3.1189,
      "officialC": 3.0739
     },
     {
      "date": "2026-09-30",
-     "estNavA": 3.1284,
-     "estNavC": 3.0863,
+     "estNavA": 3.1287,
+     "estNavC": 3.0866,
      "officialA": 3.1066,
      "officialC": 3.0617
     },
     {
      "date": "2026-10-01",
-     "estNavA": 3.1668,
-     "estNavC": 3.1242,
+     "estNavA": 3.1705,
+     "estNavC": 3.1278,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-02",
-     "estNavA": 3.2252,
-     "estNavC": 3.1818,
+     "estNavA": 3.2289,
+     "estNavC": 3.1855,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-05",
-     "estNavA": 3.228,
-     "estNavC": 3.1845,
+     "estNavA": 3.2337,
+     "estNavC": 3.1902,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-06",
-     "estNavA": 3.2238,
-     "estNavC": 3.1805,
+     "estNavA": 3.2305,
+     "estNavC": 3.1871,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-07",
-     "estNavA": 3.19,
-     "estNavC": 3.1471,
+     "estNavA": 3.1955,
+     "estNavC": 3.1525,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-08",
-     "estNavA": 3.0926,
-     "estNavC": 3.051,
+     "estNavA": 3.097,
+     "estNavC": 3.0553,
      "officialA": 3.0659,
      "officialC": 3.0213
     },
@@ -1540,23 +1540,23 @@
    "hist5": [
     {
      "date": "2026-10-05",
-     "chgPct": 0.09
+     "chgPct": 0.15
     },
     {
      "date": "2026-10-06",
-     "chgPct": -0.13
+     "chgPct": -0.1
     },
     {
      "date": "2026-10-07",
-     "chgPct": -1.05
+     "chgPct": -1.08
     },
     {
      "date": "2026-10-08",
-     "chgPct": -3.05
+     "chgPct": -3.08
     },
     {
      "date": "2026-10-09",
-     "chgPct": -0.37
+     "chgPct": -0.51
     }
    ],
    "live": {
@@ -1790,7 +1790,7 @@
  "sources": {
   "usHistory": "api.nasdaq.com (日收盘价)",
   "cnHistory": "腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)",
-  "jpHistory": "已验证快照(Yahoo 6/25-7/24) + minkabu.jp 最新(2026-10-09)",
+  "jpHistory": "Yahoo Finance 直连 (2644.T 日收盘)",
   "fx": "chinamoney.com.cn 人民币汇率中间价",
   "realtime": "qt.gtimg.cn 腾讯实时行情",
   "indexHistory": "Google Finance 指数日线（真实指数收盘口径，失败退到跟踪 ETF 的 Nasdaq 日线）",
