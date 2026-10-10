@@ -92,6 +92,18 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-strip .ichip em.pv-warn{color:#fbbf24}
 .idx-strip .note{flex-basis:100%;font-size:11px;color:var(--muted)}
 .idx-strip .sec-title{flex-basis:100%;font-size:14px;font-weight:600;color:var(--text)}
+.idx-5d{margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;overflow-x:auto}
+.idx-5d h3{font-size:14px;color:var(--text);font-weight:600;margin:0 0 8px}
+.idx-5d .hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:8px}
+.idx-5d table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px}
+.idx-5d th{color:var(--muted);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+.idx-5d th:first-child{text-align:left}
+.idx-5d td{padding:6px 8px;border-bottom:1px solid #20263433;text-align:right;font-family:Consolas,"Courier New",monospace;white-space:nowrap}
+.idx-5d td:first-child{text-align:left;font-family:inherit;white-space:nowrap}
+.idx-5d tr:hover td{background:#ffffff08}
+.idx-5d .nm{font-weight:600}
+.idx-5d .lofrow td:first-child{color:#3b82f6}
+.idx-5d .muted{color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -107,6 +119,7 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
   </div>
 </header>
 <section id="idxStrip" class="idx-strip"></section>
+<section id="idx5d" class="idx-5d"></section>
 <div id="funds"></div>
 
 <div class="notes">
@@ -266,7 +279,31 @@ function renderAll() {
       ((D.indices || []).some(ix => ix.viaEtf || ix.source === 'etf-proxy')
         ? '注：<span style="color:#fbbf24;font-weight:700">琥珀色标注</span>的项——真实指数数据源当时不可达，显示为跟踪同一指数的 ETF（XLK/QTEC/XBI）涨幅。'
         : '注：全部为真实指数数据。')
-      + '数据源自动降级顺序：CNBC → TradingView → Yahoo → ETF替代。LOF 为估算净值较前一日。</span>';
+      + '数据源自动降级顺序：腾讯实时 → CNBC → TradingView → Yahoo → Google Finance → ETF替代。LOF 为估算净值较前一日。</span>';
+  // 最近5个交易日每日涨跌幅表格（6指数 + 2 LOF）
+  const idx5dEl = document.getElementById('idx5d');
+  const rows5d = [
+    ...(D.indices || []).map(ix => ({ name: ix.label, code: ix.code, hist: ix.hist || [], lof: false })),
+    ...D.funds.map(f => ({ name: f.nameShort, code: f.codeA, hist: f.hist5 || [], lof: true })),
+  ];
+  // 列 = 各行"自己最近5个交易日"窗口的并集（升序，最多10列）：个别行数据滞后时仍显示自己的5日，
+  // 而不是跟着全局最新日期走导致该行整行 '-'
+  const cols = [...new Set(rows5d.flatMap(r => r.hist.map(h => h.date).sort().slice(-5)))].sort().slice(-10);
+  const etfHistRows = (D.indices || []).filter(ix => ix.histViaEtf && Array.isArray(ix.hist) && ix.hist.length).map(ix => ix.label);
+  let h5html = '<h3>近期涨幅<span class="hint">单位 % · 指数为收盘口径，LOF 为估算净值口径'
+    + (etfHistRows.length ? ' · ' + etfHistRows.join('、') + ' 的5日历史按跟踪 ETF 收盘计算' : '') + '</span></h3>';
+  if (cols.length) {
+    h5html += '<table><thead><tr><th>指数 / LOF</th>' + cols.map(d => '<th>' + d.slice(5).replace('-', '/') + '</th>').join('') + '</tr></thead><tbody>';
+    rows5d.forEach(r => {
+      const map = {}; r.hist.forEach(h => map[h.date] = h.chgPct);
+      h5html += '<tr class="' + (r.lof ? 'lofrow' : '') + '"><td><span class="nm">' + r.name + '</span><span class="muted" style="font-size:11px;margin-left:6px">' + r.code + '</span></td>'
+        + cols.map(d => { const v = map[d]; return '<td class="' + (v == null ? 'muted' : cls(v)) + '">' + (v == null ? '-' : sign(v) + '%') + '</td>'; }).join('') + '</tr>';
+    });
+    h5html += '</tbody></table>';
+  } else {
+    h5html += '<div class="muted" style="font-size:12px">暂无历史数据</div>';
+  }
+  idx5dEl.innerHTML = h5html;
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');
