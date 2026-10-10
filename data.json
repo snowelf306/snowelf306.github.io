@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-11 01:47:30 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-11 02:24:03 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -1787,6 +1787,1179 @@
    "histViaEtf": false
   }
  ],
+ "weekAhead": {
+  "weekStart": "2026-10-12",
+  "weekEnd": "2026-10-16",
+  "windowDays": 30,
+  "events": [
+   {
+    "date": "2026-10-12T00:00:00.000Z",
+    "country": "US",
+    "title": "Columbus Day",
+    "indicator": "Holidays",
+    "category": "gov",
+    "period": null,
+    "unit": null,
+    "previous": null,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": null
+   },
+   {
+    "date": "2026-10-14T12:30:00.000Z",
+    "country": "US",
+    "title": "Core Inflation Rate MoM",
+    "indicator": "Core Inflation Rate MoM",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 0.3,
+    "forecast": 0.2,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-14T12:30:00.000Z",
+    "country": "US",
+    "title": "Core Inflation Rate YoY",
+    "indicator": "Core Inflation Rate",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 2.4,
+    "forecast": 2.5,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-14T12:30:00.000Z",
+    "country": "US",
+    "title": "Inflation Rate YoY",
+    "indicator": "Inflation Rate",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 3.4,
+    "forecast": 3.6,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-14T12:30:00.000Z",
+    "country": "US",
+    "title": "Inflation Rate MoM",
+    "indicator": "Inflation Rate Mom",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 0.4,
+    "forecast": 0.6,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "Continuing Jobless Claims",
+    "indicator": "Continuing Jobless Claims",
+    "category": "lbr",
+    "period": "Oct/03",
+    "unit": null,
+    "previous": 1716,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": "Department of Labour"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "PPI YoY",
+    "indicator": "Producer Prices Change",
+    "category": "prce",
+    "period": "Sep",
+    "unit": null,
+    "previous": 5.4,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "Core PPI YoY",
+    "indicator": "Core Producer Prices YoY",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 4.6,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": "Department of Labour"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "Initial Jobless Claims",
+    "indicator": "Initial Jobless Claims",
+    "category": "lbr",
+    "period": "Oct/10",
+    "unit": null,
+    "previous": 197,
+    "forecast": 197,
+    "actual": null,
+    "released": false,
+    "source": "Department of Labour"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "Core PPI MoM",
+    "indicator": "Core Producer Prices MoM",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 0.2,
+    "forecast": 0.3,
+    "actual": null,
+    "released": false,
+    "source": "Department of Labour"
+   },
+   {
+    "date": "2026-10-15T12:30:00.000Z",
+    "country": "US",
+    "title": "PPI MoM",
+    "indicator": "Producer Price Inflation MoM",
+    "category": "prce",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 0.4,
+    "forecast": 0.5,
+    "actual": null,
+    "released": false,
+    "source": "Bureau of Labour Statistics"
+   },
+   {
+    "date": "2026-10-15T13:30:00.000Z",
+    "country": "US",
+    "title": "Retail Sales YoY",
+    "indicator": "Retail Sales YoY",
+    "category": "cnsm",
+    "period": "Sep",
+    "unit": null,
+    "previous": 6,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": "Census Bureau"
+   },
+   {
+    "date": "2026-10-15T13:30:00.000Z",
+    "country": "US",
+    "title": "Retail Sales MoM",
+    "indicator": "Retail Sales MoM",
+    "category": "cnsm",
+    "period": "Sep",
+    "unit": "%",
+    "previous": 1.2,
+    "forecast": 0.3,
+    "actual": null,
+    "released": false,
+    "source": "Census Bureau"
+   },
+   {
+    "date": "2026-10-16T03:30:00.000Z",
+    "country": "US",
+    "title": "Fed Chair Warsh Speech",
+    "indicator": "Interest Rate",
+    "category": "mny",
+    "period": null,
+    "unit": null,
+    "previous": null,
+    "forecast": null,
+    "actual": null,
+    "released": false,
+    "source": "Federal Reserve"
+   }
+  ],
+  "otherCount": 76,
+  "earnings": [
+   {
+    "date": "2026-10-12",
+    "symbol": "MSS",
+    "name": "Maison Solutions Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.64",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-12",
+    "symbol": "NCPL",
+    "name": "Netcapital Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-12",
+    "symbol": "RMCF",
+    "name": "Rocky Mountain Chocolate Factory, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "C",
+    "name": "Citigroup Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$2.66",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "DPZ",
+    "name": "Domino's Pizza Inc",
+    "time": "time-pre-market",
+    "epsForecast": "$4.33",
+    "sector": "Consumer Discretionary",
+    "industry": "Restaurants",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "GS",
+    "name": "The Goldman Sachs Group, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$12.90",
+    "sector": "Financials",
+    "industry": "Investment Banking & Brokerage",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "JNJ",
+    "name": "Johnson & Johnson",
+    "time": "time-pre-market",
+    "epsForecast": "$2.53",
+    "sector": "Health Care",
+    "industry": "Pharmaceuticals",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "JPM",
+    "name": "J P Morgan Chase & Co",
+    "time": "time-pre-market",
+    "epsForecast": "$5.94",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "UNH",
+    "name": "UnitedHealth Group Incorporated",
+    "time": "time-pre-market",
+    "epsForecast": "$4.12",
+    "sector": "Health Care",
+    "industry": "Managed Health Care",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "WFC",
+    "name": "Wells Fargo & Company",
+    "time": "time-pre-market",
+    "epsForecast": "$1.85",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "ACI",
+    "name": "Albertsons Companies, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$0.31",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "ARTW",
+    "name": "Art's-Way Manufacturing Co., Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "AZZ",
+    "name": "AZZ Inc.",
+    "time": "time-after-hours",
+    "epsForecast": "$1.82",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "BMRA",
+    "name": "Biomerica, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "FBK",
+    "name": "FB Financial Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$1.21",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "FNGR",
+    "name": "FingerMotion, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-13",
+    "symbol": "UNTY",
+    "name": "Unity Bancorp, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": "$1.49",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "ASML",
+    "name": "ASML Holding N.V.",
+    "time": "time-pre-market",
+    "epsForecast": "$12.47",
+    "sector": "Technology",
+    "industry": "Industrial Machinery",
+    "tags": [
+     "纳指100",
+     "半导体"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "BAC",
+    "name": "Bank of America Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$1.11",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "BLK",
+    "name": "BlackRock, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$14.01",
+    "sector": "Financials",
+    "industry": "Asset Management & Custody Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "FAST",
+    "name": "Fastenal Company",
+    "time": "time-pre-market",
+    "epsForecast": "$0.34",
+    "sector": "Industrials",
+    "industry": "Construction & Materials",
+    "tags": [
+     "纳指100",
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "MS",
+    "name": "Morgan Stanley",
+    "time": "time-pre-market",
+    "epsForecast": "$2.83",
+    "sector": "Financials",
+    "industry": "Investment Banking & Brokerage",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "PGR",
+    "name": "Progressive Corporation (The)",
+    "time": "time-pre-market",
+    "epsForecast": "$4.37",
+    "sector": "Financials",
+    "industry": "Property & Casualty Insurance",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "STT",
+    "name": "State Street Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$3.63",
+    "sector": "Financials",
+    "industry": "Asset Management & Custody Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "EDUC",
+    "name": "Educational Development Corporation",
+    "time": "time-after-hours",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "EQBK",
+    "name": "Equity Bancshares, Inc.",
+    "time": "time-after-hours",
+    "epsForecast": "$1.31",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "HOMB",
+    "name": "Home BancShares, Inc.",
+    "time": "time-after-hours",
+    "epsForecast": "$0.63",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "NXTT",
+    "name": "Next Technology Holding Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-14",
+    "symbol": "SOTK",
+    "name": "Sono-Tek Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$0.05",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "BNY",
+    "name": "The Bank Of New York Mellon Corporation ",
+    "time": "time-pre-market",
+    "epsForecast": "$2.26",
+    "sector": "Financials",
+    "industry": "Asset Management & Custody Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "IBKR",
+    "name": "Interactive Brokers Group, Inc.",
+    "time": "time-after-hours",
+    "epsForecast": "$0.66",
+    "sector": "Financials",
+    "industry": "Investment Banking & Brokerage",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "JBHT",
+    "name": "J.B. Hunt Transport Services, Inc.",
+    "time": "time-after-hours",
+    "epsForecast": "$1.95",
+    "sector": "Industrials",
+    "industry": "Cargo Ground Transportation",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "MRSH",
+    "name": "Marsh",
+    "time": "time-pre-market",
+    "epsForecast": "$1.96",
+    "sector": "Financials",
+    "industry": "Insurance Brokers",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "PLD",
+    "name": "Prologis, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$1.58",
+    "sector": "Real Estate",
+    "industry": "Industrial REITs",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "PNC",
+    "name": "PNC Financial Services Group, Inc. (The)",
+    "time": "time-pre-market",
+    "epsForecast": "$4.97",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "SCHW",
+    "name": "The Charles Schwab Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$1.66",
+    "sector": "Financials",
+    "industry": "Investment Banking & Brokerage",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "TSM",
+    "name": "Taiwan Semiconductor Manufacturing Company Ltd.",
+    "time": "time-pre-market",
+    "epsForecast": "$4.45",
+    "sector": null,
+    "industry": null,
+    "tags": [
+     "半导体"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "USB",
+    "name": "U.S. Bancorp",
+    "time": "time-pre-market",
+    "epsForecast": "$1.32",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "AA",
+    "name": "Alcoa Corporation",
+    "time": "time-after-hours",
+    "epsForecast": "$1.65",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "ALOY",
+    "name": "REalloys Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "BSVN",
+    "name": "Bank7 Corp.",
+    "time": "time-pre-market",
+    "epsForecast": "$1",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "CMC",
+    "name": "Commercial Metals Company",
+    "time": "time-pre-market",
+    "epsForecast": "$1.97",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "CMMB",
+    "name": "Chemomab Therapeutics Ltd. ",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "CNS",
+    "name": "Cohen & Steers Inc",
+    "time": "time-after-hours",
+    "epsForecast": "$0.88",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "CTW",
+    "name": "CTW",
+    "time": "time-after-hours",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "CWBC",
+    "name": "Community West Bancshares",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.65",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "ERIC",
+    "name": "Ericsson",
+    "time": "time-pre-market",
+    "epsForecast": "$0.14",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "FHN",
+    "name": "First Horizon Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$0.53",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "INDB",
+    "name": "Independent Bank Corp.",
+    "time": "time-after-hours",
+    "epsForecast": "$1.84",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "INFY",
+    "name": "Infosys Limited",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.21",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "MAN",
+    "name": "ManpowerGroup",
+    "time": "time-pre-market",
+    "epsForecast": "$1.01",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "PULM",
+    "name": "Pulmatrix, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "SFNC",
+    "name": "Simmons First National Corporation",
+    "time": "time-after-hours",
+    "epsForecast": "$0.53",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "WABC",
+    "name": "Westamerica Bancorporation",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "WAFD",
+    "name": "WaFd, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.83",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-15",
+    "symbol": "WIT",
+    "name": "Wipro Limited",
+    "time": "time-pre-market",
+    "epsForecast": "$0.04",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "CFG",
+    "name": "Citizens Financial Group, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$1.38",
+    "sector": "Financials",
+    "industry": "Regional Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "MTB",
+    "name": "M&T Bank Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$4.98",
+    "sector": "Financials",
+    "industry": "Regional Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "RF",
+    "name": "Regions Financial Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$0.67",
+    "sector": "Financials",
+    "industry": "Regional Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "TFC",
+    "name": "Truist Financial Corporation",
+    "time": "time-pre-market",
+    "epsForecast": "$1.17",
+    "sector": "Financials",
+    "industry": "Diversified Banks",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "TRV",
+    "name": "The Travelers Companies, Inc.",
+    "time": "time-pre-market",
+    "epsForecast": "$6.86",
+    "sector": "Financials",
+    "industry": "Property & Casualty Insurance",
+    "tags": [
+     "标普500"
+    ],
+    "key": true
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "ATLO",
+    "name": "Ames National Corporation",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.68",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "BANF",
+    "name": "BancFirst Corporation",
+    "time": "time-not-supplied",
+    "epsForecast": "$1.93",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "BVFL",
+    "name": "BV Financial, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "HDB",
+    "name": "HDFC Bank Limited",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.40",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "HOST",
+    "name": "Host Digital Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "IBN",
+    "name": "ICICI Bank Limited",
+    "time": "time-not-supplied",
+    "epsForecast": "$0.40",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "MCBS",
+    "name": "MetroCity Bankshares, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": null,
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "PBAM",
+    "name": "Private Bancorp of America, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": "$2.07",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   },
+   {
+    "date": "2026-10-16",
+    "symbol": "RBCAA",
+    "name": "Republic Bancorp, Inc.",
+    "time": "time-not-supplied",
+    "epsForecast": "$1.66",
+    "sector": null,
+    "industry": null,
+    "tags": [],
+    "key": false
+   }
+  ],
+  "changes": [
+   {
+    "index": "标普500",
+    "total": 411,
+    "cutoff": "2026-09-10",
+    "dropped": 405,
+    "kept": [
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-10-06",
+      "added": {
+       "ticker": "TWLO",
+       "name": "Twilio"
+      },
+      "removed": {
+       "ticker": "WBD",
+       "name": "Warner Bros. Discovery"
+      },
+      "reason": "Paramount Skydance acquired Warner Bros. Discovery",
+      "ref": "press.spglobal.com/2026-10-01-Vylor-Added-to-the-S-P-500-Twilio-Set-to-Join-S-P-500-Others-to-Join-S-P-MidCap-400-and-S-P-SmallCap-600"
+     },
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-10-06",
+      "added": null,
+      "removed": {
+       "ticker": "CTVA",
+       "name": "Corteva"
+      },
+      "reason": "Market capitalization changes.",
+      "ref": null
+     },
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-10-01",
+      "added": {
+       "ticker": "VYLR",
+       "name": "Vylor"
+      },
+      "removed": null,
+      "reason": "Corteva completed the corporate spin-off of Vylor",
+      "ref": null
+     },
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-09-21",
+      "added": {
+       "ticker": "BE",
+       "name": "Bloom Energy"
+      },
+      "removed": {
+       "ticker": "TAP",
+       "name": "Molson Coors"
+      },
+      "reason": "Market capitalization changes.",
+      "ref": "www.spglobal.com/spdji/en/documents/indexnews/announcements/20260904-1484999/1484999_shuffle5461-sept2026.pdf"
+     },
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-09-21",
+      "added": {
+       "ticker": "P",
+       "name": "Everpure"
+      },
+      "removed": {
+       "ticker": "TTD",
+       "name": "The Trade Desk"
+      },
+      "reason": "Market capitalization changes.",
+      "ref": null
+     },
+     {
+      "index": "标普500",
+      "effectiveDate": "2026-09-21",
+      "added": {
+       "ticker": "ILMN",
+       "name": "Illumina, Inc."
+      },
+      "removed": {
+       "ticker": "BLDR",
+       "name": "Builders FirstSource"
+      },
+      "reason": "Market capitalization changes.",
+      "ref": null
+     }
+    ]
+   },
+   {
+    "index": "纳指100",
+    "total": 228,
+    "cutoff": "2026-09-10",
+    "dropped": 226,
+    "kept": [
+     {
+      "index": "纳指100",
+      "effectiveDate": "2026-10-09",
+      "added": {
+       "ticker": "MRNA",
+       "name": "Moderna"
+      },
+      "removed": {
+       "ticker": "WBD",
+       "name": "Warner Bros. Discovery"
+      },
+      "reason": null,
+      "ref": "ir.nasdaq.com/news-releases/news-release-details/moderna-inc-join-nasdaq-100-indexr-beginning-october-9-2026"
+     },
+     {
+      "index": "纳指100",
+      "effectiveDate": "2026-09-14",
+      "added": null,
+      "removed": {
+       "ticker": "KHC",
+       "name": "Kraft Heinz"
+      },
+      "reason": "Kraft Heinz moved its stock listing to the NYSE.",
+      "ref": null
+     }
+    ]
+   }
+  ],
+  "nextWindows": [
+   {
+    "name": "标普500 季度权重再平衡",
+    "date": "2026-12-18",
+    "note": "按 S&P DJI 季度再平衡惯例推算（3/6/9/12 月第三个周五）；成分股增删为不定期公告，见下方变动表"
+   },
+   {
+    "name": "纳指100 年度重构",
+    "date": "2026-12-18",
+    "note": "按 Nasdaq 指数方法推算（每年 12 月第三个周五生效，公告通常 12 月初）；成分股增删另有不定期公告"
+   }
+  ],
+  "sources": {
+   "calendar": "TradingView 经济日历 (economic-calendar.tradingview.com，仅美国)",
+   "earnings": "Nasdaq 财报日历 (api.nasdaq.com)",
+   "changes": "Wikipedia：Historical components of the S&P 500 / Nasdaq-100（变动表 Refs 列为 S&P DJI / Nasdaq 官方公告）",
+   "constituents": "Wikipedia：List of S&P 500 companies / List of NASDAQ-100 companies（用于给财报标注行业与所属指数）"
+  }
+ },
  "sources": {
   "usHistory": "api.nasdaq.com (日收盘价)",
   "cnHistory": "腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)",
@@ -1794,6 +2967,7 @@
   "fx": "chinamoney.com.cn 人民币汇率中间价",
   "realtime": "qt.gtimg.cn 腾讯实时行情",
   "indexHistory": "Google Finance 指数日线（真实指数收盘口径，失败退到跟踪 ETF 的 Nasdaq 日线）",
+  "weekAhead": "「下周大事」：TradingView 经济日历(仅美国) / Nasdaq 财报日历 / Wikipedia 指数成分股变动(公告源自 S&P DJI·Nasdaq)",
   "officialNav": "东方财富 fund.eastmoney.com 官方公布净值"
  }
 }
