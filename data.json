@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10 08:52:32 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-11 01:42:53 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -768,10 +768,32 @@
     },
     {
      "date": "2026-10-09",
-     "estNavA": 2.4793,
-     "estNavC": 2.4584,
+     "estNavA": 2.5189,
+     "estNavC": 2.4976,
      "officialA": null,
      "officialC": null
+    }
+   ],
+   "hist5": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 2.15
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": -2.36
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -1.67
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -1.39
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 1.6
     }
    ],
    "live": {
@@ -1131,388 +1153,410 @@
     },
     {
      "date": "2026-07-27",
-     "estNavA": 3.0338,
-     "estNavC": 2.993,
+     "estNavA": 3.0337,
+     "estNavC": 2.9929,
      "officialA": 3.0334,
      "officialC": 2.9917
     },
     {
      "date": "2026-07-28",
-     "estNavA": 2.8793,
-     "estNavC": 2.8405,
+     "estNavA": 2.8854,
+     "estNavC": 2.8466,
      "officialA": 2.8762,
      "officialC": 2.8366
     },
     {
      "date": "2026-07-29",
-     "estNavA": 2.7512,
-     "estNavC": 2.7142,
+     "estNavA": 2.7615,
+     "estNavC": 2.7243,
      "officialA": 2.749,
      "officialC": 2.7111
     },
     {
      "date": "2026-07-30",
-     "estNavA": 2.8861,
-     "estNavC": 2.8472,
+     "estNavA": 2.8955,
+     "estNavC": 2.8565,
      "officialA": 2.8789,
      "officialC": 2.8392
     },
     {
      "date": "2026-07-31",
-     "estNavA": 2.9181,
-     "estNavC": 2.8789,
+     "estNavA": 2.9217,
+     "estNavC": 2.8824,
      "officialA": 2.9136,
      "officialC": 2.8735
     },
     {
      "date": "2026-08-03",
-     "estNavA": 2.9055,
-     "estNavC": 2.8664,
+     "estNavA": 2.9075,
+     "estNavC": 2.8684,
      "officialA": 2.8915,
      "officialC": 2.8515
     },
     {
      "date": "2026-08-04",
-     "estNavA": 3.0629,
-     "estNavC": 3.0217,
+     "estNavA": 3.0632,
+     "estNavC": 3.022,
      "officialA": 3.0485,
      "officialC": 3.0063
     },
     {
      "date": "2026-08-05",
-     "estNavA": 3.0553,
-     "estNavC": 3.0142,
+     "estNavA": 3.0529,
+     "estNavC": 3.0118,
      "officialA": 3.0484,
      "officialC": 3.0062
     },
     {
      "date": "2026-08-06",
-     "estNavA": 3.071,
-     "estNavC": 3.0297,
+     "estNavA": 3.0711,
+     "estNavC": 3.0298,
      "officialA": 3.0665,
      "officialC": 3.024
     },
     {
      "date": "2026-08-07",
-     "estNavA": 3.1363,
-     "estNavC": 3.0941,
+     "estNavA": 3.1386,
+     "estNavC": 3.0964,
      "officialA": 3.1363,
      "officialC": 3.0928
     },
     {
      "date": "2026-08-10",
-     "estNavA": 3.0688,
-     "estNavC": 3.0275,
+     "estNavA": 3.0695,
+     "estNavC": 3.0282,
      "officialA": 3.0698,
      "officialC": 3.0272
     },
     {
      "date": "2026-08-11",
-     "estNavA": 3.0844,
-     "estNavC": 3.0429,
+     "estNavA": 3.0851,
+     "estNavC": 3.0436,
      "officialA": 3.0832,
      "officialC": 3.0403
     },
     {
      "date": "2026-08-12",
-     "estNavA": 3.1539,
-     "estNavC": 3.1115,
+     "estNavA": 3.1543,
+     "estNavC": 3.1118,
      "officialA": 3.152,
      "officialC": 3.1081
     },
     {
      "date": "2026-08-13",
-     "estNavA": 3.161,
-     "estNavC": 3.1185,
+     "estNavA": 3.1599,
+     "estNavC": 3.1174,
      "officialA": 3.156,
      "officialC": 3.112
     },
     {
      "date": "2026-08-14",
-     "estNavA": 3.1661,
-     "estNavC": 3.1235,
+     "estNavA": 3.1648,
+     "estNavC": 3.1222,
      "officialA": 3.1611,
      "officialC": 3.117
     },
     {
      "date": "2026-08-17",
-     "estNavA": 3.2367,
-     "estNavC": 3.1932,
+     "estNavA": 3.2335,
+     "estNavC": 3.19,
      "officialA": 3.2346,
      "officialC": 3.1894
     },
     {
      "date": "2026-08-18",
-     "estNavA": 3.1107,
-     "estNavC": 3.0688,
+     "estNavA": 3.1105,
+     "estNavC": 3.0687,
      "officialA": 3.1126,
      "officialC": 3.0691
     },
     {
      "date": "2026-08-19",
-     "estNavA": 3.0025,
-     "estNavC": 2.9621,
+     "estNavA": 3.0057,
+     "estNavC": 2.9652,
      "officialA": 2.999,
      "officialC": 2.957
     },
     {
      "date": "2026-08-20",
-     "estNavA": 3.0027,
-     "estNavC": 2.9623,
+     "estNavA": 3.0053,
+     "estNavC": 2.9648,
      "officialA": 2.9979,
      "officialC": 2.9559
     },
     {
      "date": "2026-08-21",
-     "estNavA": 2.9982,
-     "estNavC": 2.9579,
+     "estNavA": 3.0006,
+     "estNavC": 2.9602,
      "officialA": 2.9937,
      "officialC": 2.9517
     },
     {
      "date": "2026-08-24",
-     "estNavA": 2.9193,
-     "estNavC": 2.8801,
+     "estNavA": 2.9222,
+     "estNavC": 2.8829,
      "officialA": 2.9112,
      "officialC": 2.8703
     },
     {
      "date": "2026-08-25",
-     "estNavA": 2.952,
-     "estNavC": 2.9123,
+     "estNavA": 2.9545,
+     "estNavC": 2.9148,
      "officialA": 2.9431,
      "officialC": 2.9017
     },
     {
      "date": "2026-08-26",
-     "estNavA": 2.9623,
-     "estNavC": 2.9224,
+     "estNavA": 2.9649,
+     "estNavC": 2.925,
      "officialA": 2.9546,
      "officialC": 2.913
     },
     {
      "date": "2026-08-27",
-     "estNavA": 3.0329,
-     "estNavC": 2.9921,
+     "estNavA": 3.0353,
+     "estNavC": 2.9945,
      "officialA": 3.0282,
      "officialC": 2.9855
     },
     {
      "date": "2026-08-28",
-     "estNavA": 2.9382,
-     "estNavC": 2.8987,
+     "estNavA": 2.9409,
+     "estNavC": 2.9013,
      "officialA": 2.9318,
      "officialC": 2.8905
     },
     {
      "date": "2026-08-31",
-     "estNavA": 2.9546,
-     "estNavC": 2.9149,
+     "estNavA": 2.9579,
+     "estNavC": 2.9181,
      "officialA": 2.9488,
      "officialC": 2.9072
     },
     {
      "date": "2026-09-01",
-     "estNavA": 2.8923,
-     "estNavC": 2.8534,
+     "estNavA": 2.8962,
+     "estNavC": 2.8572,
      "officialA": 2.885,
      "officialC": 2.8442
     },
     {
      "date": "2026-09-02",
-     "estNavA": 2.8959,
-     "estNavC": 2.8569,
+     "estNavA": 2.9014,
+     "estNavC": 2.8624,
      "officialA": 2.8876,
      "officialC": 2.8467
     },
     {
      "date": "2026-09-03",
-     "estNavA": 2.8978,
-     "estNavC": 2.8588,
+     "estNavA": 2.9029,
+     "estNavC": 2.8639,
      "officialA": 2.8884,
      "officialC": 2.8475
     },
     {
      "date": "2026-09-04",
-     "estNavA": 2.9588,
-     "estNavC": 2.919,
+     "estNavA": 2.9624,
+     "estNavC": 2.9225,
      "officialA": 2.9466,
      "officialC": 2.9048
     },
     {
      "date": "2026-09-07",
-     "estNavA": 2.9747,
-     "estNavC": 2.9346,
+     "estNavA": 2.9758,
+     "estNavC": 2.9358,
      "officialA": 2.963,
      "officialC": 2.9209
     },
     {
      "date": "2026-09-08",
-     "estNavA": 3.0055,
-     "estNavC": 2.9651,
+     "estNavA": 3.0071,
+     "estNavC": 2.9666,
      "officialA": 2.9924,
      "officialC": 2.9498
     },
     {
      "date": "2026-09-09",
-     "estNavA": 3.0073,
-     "estNavC": 2.9669,
+     "estNavA": 3.0099,
+     "estNavC": 2.9694,
      "officialA": 2.9945,
      "officialC": 2.9519
     },
     {
      "date": "2026-09-10",
-     "estNavA": 2.9463,
-     "estNavC": 2.9067,
+     "estNavA": 2.9483,
+     "estNavC": 2.9086,
      "officialA": 2.9333,
      "officialC": 2.8915
     },
     {
      "date": "2026-09-11",
-     "estNavA": 2.9769,
-     "estNavC": 2.9368,
+     "estNavA": 2.9813,
+     "estNavC": 2.9412,
      "officialA": 2.9633,
      "officialC": 2.921
     },
     {
      "date": "2026-09-14",
-     "estNavA": 2.8356,
-     "estNavC": 2.7975,
+     "estNavA": 2.8407,
+     "estNavC": 2.8025,
      "officialA": 2.8223,
      "officialC": 2.782
     },
     {
      "date": "2026-09-15",
-     "estNavA": 2.8476,
-     "estNavC": 2.8093,
+     "estNavA": 2.8528,
+     "estNavC": 2.8144,
      "officialA": 2.8359,
      "officialC": 2.7953
     },
     {
      "date": "2026-09-16",
-     "estNavA": 2.8835,
-     "estNavC": 2.8447,
+     "estNavA": 2.8882,
+     "estNavC": 2.8494,
      "officialA": 2.8757,
      "officialC": 2.8346
     },
     {
      "date": "2026-09-17",
-     "estNavA": 2.9418,
-     "estNavC": 2.9022,
+     "estNavA": 2.9474,
+     "estNavC": 2.9077,
      "officialA": 2.9336,
      "officialC": 2.8916
     },
     {
      "date": "2026-09-18",
-     "estNavA": 3.0215,
-     "estNavC": 2.9809,
+     "estNavA": 3.0247,
+     "estNavC": 2.984,
      "officialA": 3.0151,
      "officialC": 2.9719
     },
     {
      "date": "2026-09-21",
-     "estNavA": 3.1155,
-     "estNavC": 3.0736,
+     "estNavA": 3.1187,
+     "estNavC": 3.0767,
      "officialA": 3.1076,
      "officialC": 3.0629
     },
     {
      "date": "2026-09-22",
-     "estNavA": 3.1702,
-     "estNavC": 3.1275,
+     "estNavA": 3.1733,
+     "estNavC": 3.1306,
      "officialA": 3.1624,
      "officialC": 3.117
     },
     {
      "date": "2026-09-23",
-     "estNavA": 3.1449,
-     "estNavC": 3.1026,
+     "estNavA": 3.148,
+     "estNavC": 3.1057,
      "officialA": 3.1369,
      "officialC": 3.0918
     },
     {
      "date": "2026-09-24",
-     "estNavA": 3.1301,
-     "estNavC": 3.088,
+     "estNavA": 3.1324,
+     "estNavC": 3.0903,
      "officialA": 3.1203,
      "officialC": 3.0753
     },
     {
      "date": "2026-09-25",
-     "estNavA": 3.1634,
-     "estNavC": 3.1209,
+     "estNavA": 3.1646,
+     "estNavC": 3.1221,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-09-28",
-     "estNavA": 3.1007,
-     "estNavC": 3.059,
+     "estNavA": 3.1024,
+     "estNavC": 3.0607,
      "officialA": 3.0843,
      "officialC": 3.0398
     },
     {
      "date": "2026-09-29",
-     "estNavA": 3.1362,
-     "estNavC": 3.094,
+     "estNavA": 3.1369,
+     "estNavC": 3.0947,
      "officialA": 3.1189,
      "officialC": 3.0739
     },
     {
      "date": "2026-09-30",
-     "estNavA": 3.1287,
-     "estNavC": 3.0866,
+     "estNavA": 3.1284,
+     "estNavC": 3.0863,
      "officialA": 3.1066,
      "officialC": 3.0617
     },
     {
      "date": "2026-10-01",
-     "estNavA": 3.1705,
-     "estNavC": 3.1278,
+     "estNavA": 3.1668,
+     "estNavC": 3.1242,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-02",
-     "estNavA": 3.2289,
-     "estNavC": 3.1855,
+     "estNavA": 3.2252,
+     "estNavC": 3.1818,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-05",
-     "estNavA": 3.2337,
-     "estNavC": 3.1902,
+     "estNavA": 3.228,
+     "estNavC": 3.1845,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-06",
-     "estNavA": 3.2305,
-     "estNavC": 3.1871,
+     "estNavA": 3.2238,
+     "estNavC": 3.1805,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-07",
-     "estNavA": 3.1955,
-     "estNavC": 3.1525,
+     "estNavA": 3.19,
+     "estNavC": 3.1471,
      "officialA": null,
      "officialC": null
     },
     {
      "date": "2026-10-08",
-     "estNavA": 3.097,
-     "estNavC": 3.0553,
+     "estNavA": 3.0926,
+     "estNavC": 3.051,
      "officialA": 3.0659,
      "officialC": 3.0213
     },
     {
      "date": "2026-10-09",
-     "estNavA": 3.0965,
-     "estNavC": 3.0548,
+     "estNavA": 3.0813,
+     "estNavC": 3.0399,
      "officialA": null,
      "officialC": null
+    }
+   ],
+   "hist5": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 0.09
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": -0.13
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -1.05
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -3.05
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": -0.37
     }
    ],
    "live": {
@@ -1543,22 +1587,68 @@
    "label": "标普信息科技",
    "code": "S5INFT",
    "chgPct": 0.36,
-   "price": 7380.99,
+   "price": null,
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XLK",
-   "source": "tradingview-index"
+   "source": "cnbc-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 0.72
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.55
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -0.1
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -1.78
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 0.36
+    }
+   ],
+   "histViaEtf": false
   },
   {
    "key": "ndx_tech",
    "label": "纳指科技",
    "code": "NDXTMC",
-   "chgPct": 0.71,
-   "price": 331.55,
-   "rtCode": "usQTEC",
-   "viaEtf": true,
+   "chgPct": 0.31,
+   "price": null,
+   "rtCode": null,
+   "viaEtf": false,
    "etfName": "QTEC",
-   "source": "etf-proxy"
+   "source": "cnbc-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 0.84
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.28
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -0.16
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -1.67
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 0.31
+    }
+   ],
+   "histViaEtf": false
   },
   {
    "key": "sp_bio",
@@ -1569,7 +1659,30 @@
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XBI",
-   "source": "tradingview-index"
+   "source": "tradingview-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 1.11
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": -3.35
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -0.43
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -0.61
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 2.95
+    }
+   ],
+   "histViaEtf": false
   },
   {
    "key": "nbi",
@@ -1580,7 +1693,30 @@
    "rtCode": "usNBI",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 1.07
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": -2.31
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": 0.28
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -1.1
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 2.82
+    }
+   ],
+   "histViaEtf": false
   },
   {
    "key": "spx",
@@ -1591,7 +1727,30 @@
    "rtCode": "usINX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 0.66
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.58
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -0.22
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -0.47
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 0.59
+    }
+   ],
+   "histViaEtf": false
   },
   {
    "key": "ndx",
@@ -1602,15 +1761,39 @@
    "rtCode": "usNDX",
    "viaEtf": false,
    "etfName": null,
-   "source": "tencent-index"
+   "source": "tencent-index",
+   "hist": [
+    {
+     "date": "2026-10-05",
+     "chgPct": 0.87
+    },
+    {
+     "date": "2026-10-06",
+     "chgPct": 0.48
+    },
+    {
+     "date": "2026-10-07",
+     "chgPct": -0.21
+    },
+    {
+     "date": "2026-10-08",
+     "chgPct": -1.39
+    },
+    {
+     "date": "2026-10-09",
+     "chgPct": 0.51
+    }
+   ],
+   "histViaEtf": false
   }
  ],
  "sources": {
   "usHistory": "api.nasdaq.com (日收盘价)",
   "cnHistory": "腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)",
-  "jpHistory": "Yahoo Finance via CORS proxy (2644.T 日收盘)",
+  "jpHistory": "已验证快照(Yahoo 6/25-7/24) + minkabu.jp 最新(2026-10-09)",
   "fx": "chinamoney.com.cn 人民币汇率中间价",
   "realtime": "qt.gtimg.cn 腾讯实时行情",
+  "indexHistory": "Google Finance 指数日线（真实指数收盘口径，失败退到跟踪 ETF 的 Nasdaq 日线）",
   "officialNav": "东方财富 fund.eastmoney.com 官方公布净值"
  }
 }
