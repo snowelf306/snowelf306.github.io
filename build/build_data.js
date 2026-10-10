@@ -780,7 +780,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
       '| 宏观', wc.events, '条(次要', wc.otherEvents, '条未列)',
       '| 重点财报', wc.keyEarnings, '/', wc.earnings,
       '| 成分股变动', wc.changes, '条',
-      '| 简报分节', weekAhead.brief.sections.length);
+      '| 简报模块', [weekAhead.brief.macro, weekAhead.brief.earnings, weekAhead.brief.changes].filter(Boolean).length);
   } catch (e) {
     log('WARN week ahead failed:', String(e.message).slice(0, 90));
   }

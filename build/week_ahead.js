@@ -541,21 +541,28 @@ function buildBrief({ weekStart, weekEnd, events, otherCount, earnings, changes,
   if (tech.length) sec2.push(`科技与半导体：${list(tech, 8)}`);
   if (other.length) sec2.push(`其他巨头：${list(other, 8)}`);
 
-  // ③ 指数成分股变动（窗口内 + 已公告未来生效），一条一行
+  // ③ 指数成分股变动（窗口内 + 已公告未来生效），一条一行；按反馈去掉"原因"，只留纳入/剔除
   const sec3 = [];
   for (const c of changes) for (const k of c.kept) {
     const a = k.added ? `纳入 ${k.added.ticker}${k.added.name ? `（${k.added.name}）` : ''}` : '';
     const r = k.removed ? `剔除 ${k.removed.ticker}${k.removed.name ? `（${k.removed.name}）` : ''}` : '';
-    const why = (k.reason || '').replace(/\s*\.\s*$/, '');
-    sec3.push(`${c.index} ${k.effectiveDate.slice(5).replace('-', '/')}：${[a, r].filter(Boolean).join('、')}${why ? ` —— ${why}` : ''}`);
+    sec3.push(`${c.index} ${k.effectiveDate.slice(5).replace('-', '/')}：${[a, r].filter(Boolean).join('、')}`);
   }
   const nextLine = nextWindows.map((w) => `下次预定调整窗口：${w.date} ${w.name} —— ${w.note}`);
 
-  const sections = [{ title: '1. 重要宏观经济事件与数据', items: sec1 }];
-  if (sec2.length) sections.push({ title: '2. 美股三季度财报季开幕', items: sec2 });
-  if (sec3.length) sections.push({ title: `${sections.length + 1}. 指数成分股变动（最近 ${CHANGE_WINDOW_DAYS} 天内生效 + 已公告未来生效）`, items: sec3, tail: nextLine });
-
-  return { intro, sections, otherCount };
+  // 拆成两个模块返回：左侧「下周大事」（宏观 + 财报），右侧「指数成分股变动」
+  return {
+    intro,
+    otherCount,
+    macro: { title: '1. 重要宏观经济事件与数据', items: sec1 },
+    earnings: sec2.length ? { title: '2. 美股三季度财报季开幕', items: sec2 } : null,
+    changes: {
+      title: '指数成分股变动',
+      hint: `最近 ${CHANGE_WINDOW_DAYS} 天内生效 + 已公告未来生效`,
+      items: sec3,
+      tail: nextLine,
+    },
+  };
 }
 
 /* ---------------- 汇总 ---------------- */

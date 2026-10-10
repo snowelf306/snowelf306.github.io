@@ -105,7 +105,10 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-5d .lofrow td:first-child{color:#3b82f6}
 .idx-5d .muted{color:var(--muted)}
 /* ---- 下周大事（简报体，不用表格；「未发生高亮」已按要求移除） ---- */
-.wk{margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+/* 左宽右窄两栏：左边「下周大事」，右边「指数成分股变动」；窄屏回落为上下单栏 */
+.wk-grid{display:grid;grid-template-columns:minmax(0,1.95fr) minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}
+@media (max-width:1100px){ .wk-grid{grid-template-columns:1fr} }
+.wk{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
 .wk h3{font-size:14px;color:var(--text);font-weight:600;margin:0 0 8px}
 .wk h4{font-size:13px;color:var(--text);font-weight:600;margin:14px 0 6px}
 .wk .hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:8px}
@@ -114,6 +117,8 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .wk ul li{margin:4px 0}
 .wk .muted{color:var(--muted)}
 .wk .wk-note{margin-top:8px;font-size:11.5px;color:var(--muted);line-height:1.7}
+.wk-narrow ul{font-size:12px}
+.wk-narrow ul li{margin:5px 0}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -130,7 +135,10 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 </header>
 <section id="idxStrip" class="idx-strip"></section>
 <section id="idx5d" class="idx-5d"></section>
-<section id="weekAhead" class="wk"></section>
+<div class="wk-grid">
+  <section id="weekAhead" class="wk"></section>
+  <section id="idxChanges" class="wk wk-narrow"></section>
+</div>
 <div id="funds"></div>
 
 <div class="notes">
@@ -316,29 +324,52 @@ function renderAll() {
   }
   idx5dEl.innerHTML = h5html;
 
-  // ---------- 下周大事（简报体：引言 + 分节条目；文字与数据都由 build/week_ahead.js 生成） ----------
+  // ---------- 左：下周大事（宏观 + 财报）；右：指数成分股变动 ----------
+  // 文字与数据都由 build/week_ahead.js 的 buildBrief() 生成，这里只负责渲染
   const wkEl = document.getElementById('weekAhead');
-  if (wkEl) {
+  const chgEl = document.getElementById('idxChanges');
+  const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const dayBj = (ymd) => ymd.slice(5).replace('-', '/') + ' ' + WD[new Date(ymd + 'T12:00:00Z').getUTCDay()];
+  // 条目文字含来自 Wikipedia 的公司名，做一次转义
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const secHtml = (s) => {
+    if (!s) return '';
+    let h = '<h4>' + esc(s.title) + (s.hint ? '<span class="hint">' + esc(s.hint) + '</span>' : '') + '</h4><ul>';
+    for (const it of s.items) h += '<li>' + esc(it) + '</li>';
+    h += '</ul>';
+    for (const t of (s.tail || [])) h += '<div class="wk-note">' + esc(t) + '</div>';
+    return h;
+  };
+  if (wkEl || chgEl) {
     const wk = D.weekAhead;
-    const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    const dayBj = (ymd) => ymd.slice(5).replace('-', '/') + ' ' + WD[new Date(ymd + 'T12:00:00Z').getUTCDay()];
-    // 条目文字含来自 Wikipedia 的原因描述，做一次转义
-    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    if (!wk || !wk.brief) {
-      wkEl.innerHTML = '<h3>下周大事</h3><div class="muted" style="font-size:12px">数据不可用（构建时抓取失败）</div>';
+    const b = wk && wk.brief;
+    if (!b) {
+      if (wkEl) wkEl.innerHTML = '<h3>下周大事</h3><div class="muted" style="font-size:12px">数据不可用（构建时抓取失败）</div>';
+      if (chgEl) chgEl.innerHTML = '<h3>指数成分股变动</h3><div class="muted" style="font-size:12px">数据不可用</div>';
     } else {
-      const b = wk.brief;
-      let h = '<h3>下周大事<span class="hint">' + dayBj(wk.weekStart) + ' – ' + dayBj(wk.weekEnd) + ' · 时间为北京时间</span></h3>';
-      h += '<p class="wk-intro">' + esc(b.intro) + '</p>';
-      for (const s of b.sections) {
-        h += '<h4>' + esc(s.title) + '</h4><ul>';
-        for (const it of s.items) h += '<li>' + esc(it) + '</li>';
-        h += '</ul>';
-        for (const t of (s.tail || [])) h += '<div class="wk-note">' + esc(t) + '</div>';
+      if (wkEl) {
+        let h = '<h3>下周大事<span class="hint">' + dayBj(wk.weekStart) + ' – ' + dayBj(wk.weekEnd) + ' · 时间为北京时间</span></h3>';
+        h += '<p class="wk-intro">' + esc(b.intro) + '</p>';
+        h += secHtml(b.macro);
+        h += secHtml(b.earnings);
+        if (b.otherCount) h += '<div class="wk-note">另有 ' + b.otherCount + ' 条次要美国数据（房地产、地区联储调查、进出口价格、委员讲话等）未列入。</div>';
+        h += '<div class="wk-note">经济数据与重点财报为程序抓取生成；人工补充条目写在 <code>build/week_notes.json</code>。</div>';
+        wkEl.innerHTML = h;
       }
-      if (b.otherCount) h += '<div class="wk-note">另有 ' + b.otherCount + ' 条次要美国数据（房地产、地区联储调查、进出口价格、委员讲话等）未列入。</div>';
-      h += '<div class="wk-note">经济数据与重点财报为程序抓取生成；指数成分股变动源自 S&P DJI / Nasdaq 官方公告；人工补充条目写在 <code>build/week_notes.json</code>。</div>';
-      wkEl.innerHTML = h;
+      if (chgEl) {
+        const c = b.changes;
+        let h = '<h3>' + esc(c.title) + '<span class="hint">' + esc(c.hint || '') + '</span></h3>';
+        if (c.items && c.items.length) {
+          h += '<ul>';
+          for (const it of c.items) h += '<li>' + esc(it) + '</li>';
+          h += '</ul>';
+        } else {
+          h += '<div class="muted" style="font-size:12px">窗口内无成分股变动</div>';
+        }
+        for (const t of (c.tail || [])) h += '<div class="wk-note">' + esc(t) + '</div>';
+        h += '<div class="wk-note">源自 S&P DJI / Nasdaq 官方公告。</div>';
+        chgEl.innerHTML = h;
+      }
     }
   }
 
