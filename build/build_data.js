@@ -2,7 +2,7 @@
 // Sources:
 //  - Nasdaq API      : US ETF daily closes (incl. 2026-06-30 base)
 //  - Tencent ifzq    : A-share ETF qfq daily klines
-//  - Yahoo via allorigins proxy : Japan ETF (2644.T) daily closes
+//  - Yahoo Finance   : Japan ETF (2644.T) daily closes (直连优先, cookie/crumb 与公共代理兜底)
 //  - chinamoney.com.cn : official RMB central parity (USD/CNY, 100JPY/CNY)
 //  - qt.gtimg.cn     : realtime quotes (US intraday + A-share close)
 //  - eastmoney pingzhongdata : official published NAV history
@@ -343,34 +343,85 @@ const JP_FALLBACK = {
   '2026-07-24': 4252,
 };
 
+// Yahoo 日线（日股 2644.T）：直连优先 → cookie+crumb → 公共 CORS 代理兜底。
+// 直连可用性：本地构建让 Node 走代理即可（见 README 的 NODE_USE_ENV_PROXY 说明；https.get 不读
+// HTTP_PROXY，漏设会静默退回直连然后超时），CI 在境外本就直连。Yahoo 会对机房 IP 返回 403，
+// 故保留 cookie+crumb 这一跳；三个公共 CORS 代理现已基本失效（allorigins 对 Yahoo 403、
+// codetabs 522、cors.lol 429），仅作最后退路，且不再用 20s 长等待去撞它们。
+// @returns {{map: Object, live: boolean, via: 'direct'|'direct+crumb'|'cors-proxy'}}
 async function fetchYahooProxy(symbol, offsetHours) {
+  const UA = { 'User-Agent': BROWSER_UA };
   const period1 = Math.floor(Date.UTC(2026, 5, 23) / 1000); // 2026-06-23
   const period2 = Math.floor(Date.now() / 1000) + 86400;
-  const target = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?period1=${period1}&period2=${period2}&interval=1d`;
+  const chartPath = (host, crumb) => host + '/v8/finance/chart/' + encodeURIComponent(symbol)
+    + `?period1=${period1}&period2=${period2}&interval=1d` + (crumb ? '&crumb=' + encodeURIComponent(crumb) : '');
+  const hosts = ['https://query1.finance.yahoo.com', 'https://query2.finance.yahoo.com'];
+
+  const parseChart = body => {
+    const res = JSON.parse(body).chart.result[0];
+    const ts = res.timestamp || [];
+    const cl = res.indicators.quote[0].close || [];
+    const map = {};
+    for (let i = 0; i < ts.length; i++) {
+      if (cl[i] == null) continue;
+      map[new Date((ts[i] + offsetHours * 3600) * 1000).toISOString().slice(0, 10)] = cl[i];
+    }
+    if (!Object.keys(map).length) throw new Error('yahoo no closes for ' + symbol);
+    return map;
+  };
+
+  // 1) 直连（不带 crumb）：本地经代理 / CI 在境外，通常这一跳就够了
+  for (const host of hosts) {
+    const r = await fetchRaw(chartPath(host), UA, 12000);
+    if (r.status === 200) {
+      try { return { map: parseChart(r.body), live: true, via: 'direct' }; }
+      catch (e) { log('WARN yahoo direct parse failed:', String(e.message).slice(0, 60)); }
+    } else {
+      log('  yahoo direct', host, 'HTTP', r.status);
+    }
+  }
+
+  // 2) 直连 + cookie/crumb（Yahoo 对我们返回 403 时使用）
+  const r0 = await fetchRaw('https://finance.yahoo.com', UA, 8000);
+  const cookie = (r0.setCookie || []).map(c => c.split(';')[0]).join('; ');
+  let crumb = '';
+  if (cookie) {
+    const r1 = await fetchRaw('https://query2.finance.yahoo.com/v1/test/getcrumb',
+      { ...UA, Cookie: cookie, Referer: 'https://finance.yahoo.com/' }, 8000);
+    if (r1.status === 200 && r1.body && r1.body.length < 24) crumb = r1.body.trim();
+  }
+  if (cookie || crumb) {
+    for (const host of hosts) {
+      const r = await fetchRaw(chartPath(host, crumb), { ...UA, Cookie: cookie }, 12000);
+      if (r.status === 200) {
+        try { return { map: parseChart(r.body), live: true, via: 'direct+crumb' }; }
+        catch (e) { log('WARN yahoo crumb parse failed:', String(e.message).slice(0, 60)); }
+      } else {
+        log('  yahoo crumb', host, 'HTTP', r.status);
+      }
+    }
+  } else {
+    log('  yahoo crumb: 未取到 cookie/crumb（Yahoo 未要求，通常是直连已被拒）');
+  }
+
+  // 3) 公共 CORS 代理兜底（可用性已大幅下降，只试一轮、短退避）
   const proxies = [
     u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
     u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
     u => 'https://api.cors.lol/?url=' + encodeURIComponent(u),
   ];
   let lastErr;
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const wrap = proxies[attempt % proxies.length];
-    try {
-      const r = await getRetry(wrap(target), {}, 1);
-      const j = JSON.parse(r.body);
-      const res = j.chart.result[0];
-      const ts = res.timestamp || [];
-      const cl = res.indicators.quote[0].close || [];
-      const map = {};
-      for (let i = 0; i < ts.length; i++) {
-        if (cl[i] == null) continue;
-        const dstr = new Date((ts[i] + offsetHours * 3600) * 1000).toISOString().slice(0, 10);
-        map[dstr] = cl[i];
-      }
-      return { map, live: true };
-    } catch (e) { lastErr = e; await sleep(20000); }
+  for (const wrap of proxies) {
+    const r = await fetchRaw(wrap(chartPath(hosts[0])), {}, 20000);
+    if (r.status === 200) {
+      try { return { map: parseChart(r.body), live: true, via: 'cors-proxy' }; }
+      catch (e) { lastErr = e; }
+    } else {
+      lastErr = new Error('HTTP ' + r.status);
+    }
+    await sleep(1200);
   }
-  throw lastErr;
+  throw lastErr || new Error('yahoo unreachable');
 }
 
 // Minkabu server-rendered quote page: latest close for Tokyo-listed ETF
@@ -456,8 +507,11 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
   let jpMap = null, jpSource = 'unavailable', jpLatest = null;
   try {
     const jp = await fetchYahooProxy('2644.T', 9); // Tokyo UTC+9
-    jpMap = jp.map; jpSource = 'Yahoo Finance via CORS proxy (2644.T 日收盘)';
-    log('JP 2644.T days', Object.keys(jpMap).length, 'jun30=', jpMap['2026-06-30']);
+    jpMap = jp.map;
+    const viaLabel = { direct: '直连', 'direct+crumb': '直连+cookie/crumb', 'cors-proxy': '公共 CORS 代理' }[jp.via] || jp.via;
+    jpSource = `Yahoo Finance ${viaLabel} (2644.T 日收盘)`;
+    const ks = Object.keys(jpMap).sort();
+    log('JP 2644.T days', ks.length, 'via', jp.via, 'last', ks[ks.length - 1], '=', jpMap[ks[ks.length - 1]], '| jun30=', jpMap['2026-06-30']);
   } catch (e) {
     log('WARN japan proxy failed, using captured snapshot + minkabu latest:', String(e.message).slice(0, 90));
     jpMap = { ...JP_FALLBACK };
