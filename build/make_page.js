@@ -104,6 +104,38 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .idx-5d .nm{font-weight:600}
 .idx-5d .lofrow td:first-child{color:#3b82f6}
 .idx-5d .muted{color:var(--muted)}
+/* ---- 下周大事 ---- */
+.wk{margin-top:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;overflow-x:auto}
+.wk h3{font-size:14px;color:var(--text);font-weight:600;margin:0 0 8px}
+.wk h4{font-size:13px;color:var(--text);font-weight:600;margin:14px 0 6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.wk .hint{font-size:11px;color:var(--muted);font-weight:400}
+.wk table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:560px}
+.wk th{color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+.wk td{padding:6px 8px;border-bottom:1px solid #20263433;vertical-align:top}
+.wk td.nw,.wk th.nw{white-space:nowrap;font-family:Consolas,"Courier New",monospace}
+.wk .wd{font-style:normal;color:var(--muted);font-size:10.5px;margin-left:6px}
+.wk .per{color:var(--muted);font-size:11px}
+.wk .badge{background:#f59e0b;color:#1a1a1a;font-size:10px;padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px}
+/* 「没发生过」的高亮：琥珀色左边条 + 加粗标题 + 待公布徽标 */
+.wk tr.wk-pending td{background:#f59e0b14}
+.wk tr.wk-pending td:first-child{box-shadow:inset 3px 0 0 #f59e0b}
+.wk tr.wk-pending td.ev{font-weight:600;color:#fbbf24}
+.wk tr.wk-done td{color:var(--muted)}
+.wk tr.wk-day td{background:#ffffff08;color:var(--text);font-weight:600;padding-top:9px}
+.wk .tk{font-family:Consolas,"Courier New",monospace;font-weight:700;white-space:nowrap}
+.wk .tag{font-style:normal;font-size:10.5px;padding:1px 6px;border-radius:4px;margin-left:4px;background:#1e2a3f;color:#93c5fd}
+.wk .tag.semi{background:#3b1d1d;color:#fca5a5}
+.wk .tag.idx{background:#1f2d1f;color:#86efac}
+.wk .tm{font-size:10.5px;color:var(--muted);margin-left:4px}
+.wk .ix{color:#fbbf24;white-space:nowrap;font-weight:600}
+.wk .rs{color:var(--muted);font-size:11.5px}
+.wk .rs a{color:#3b82f6}
+.wk ul{margin:0;padding-left:18px;font-size:12.5px}
+.wk ul li{margin:3px 0}
+.wk .muted{color:var(--muted)}
+.wk .wk-note{margin-top:10px;font-size:11.5px;color:var(--muted)}
+.wk .nextok{margin:6px 0 0;font-size:12px;color:#86efac}
+.wk .nextnone{margin:6px 0 0;font-size:12px;color:var(--muted)}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -120,6 +152,7 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 </header>
 <section id="idxStrip" class="idx-strip"></section>
 <section id="idx5d" class="idx-5d"></section>
+<section id="weekAhead" class="wk"></section>
 <div id="funds"></div>
 
 <div class="notes">
@@ -304,6 +337,99 @@ function renderAll() {
     h5html += '<div class="muted" style="font-size:12px">暂无历史数据</div>';
   }
   idx5dEl.innerHTML = h5html;
+
+  // ---------- 下周大事（仅美国重要数据 / 重点财报 / 指数成分股变动 / 下次预定窗口） ----------
+  const wkEl = document.getElementById('weekAhead');
+  if (wkEl) {
+    const wk = D.weekAhead;
+    const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    // 数据源是 UTC 的 ISO 字符串；页面面向中文读者，统一换算成北京时间(UTC+8)显示
+    const bj = (iso, withDay) => {
+      const d = new Date(new Date(iso).getTime() + 8 * 3600e3);
+      const s = d.toISOString().slice(5, 16).replace('T', ' ');
+      return withDay ? s + ' ' + WD[d.getUTCDay()] : s;
+    };
+    const dayBj = (ymd) => ymd.slice(5).replace('-', '/') + ' ' + WD[new Date(ymd + 'T12:00:00Z').getUTCDay()];
+    const num = (v, unit) => (v === null || v === undefined || v === '') ? '—' : (typeof v === 'number' ? (Math.round(v * 1000) / 1000) : v) + (unit || '');
+    const tagCls = (t) => t === '半导体' ? 'tag semi' : (t === '科技' ? 'tag' : 'tag idx');
+    const tmOf = (t) => !t ? '' : (/pre/i.test(t) ? '盘前' : (/after|post/i.test(t) ? '盘后' : ''));
+
+    if (!wk) {
+      wkEl.innerHTML = '<h3>下周大事</h3><div class="muted" style="font-size:12px">数据不可用（构建时抓取失败）</div>';
+    } else {
+      let h = '<h3>下周大事<span class="hint">' + dayBj(wk.weekStart) + ' – ' + dayBj(wk.weekEnd)
+        + ' · 时间为北京时间 · 未公布的高亮显示</span></h3>';
+
+      // ① 重要经济数据
+      h += '<h4>美国重要经济数据<span class="hint">只列重要数据' + (wk.otherCount ? '；另有 ' + wk.otherCount + ' 条次要数据未列出' : '') + '</span></h4>';
+      if (wk.events && wk.events.length) {
+        h += '<table><thead><tr><th class="nw">时间</th><th>数据</th><th>预期</th><th>前值</th><th>实际</th></tr></thead><tbody>';
+        for (const e of wk.events) {
+          const pending = !e.released;
+          h += '<tr class="' + (pending ? 'wk-pending' : 'wk-done') + '">'
+            + '<td class="nw">' + bj(e.date) + '</td>'
+            + '<td class="ev">' + e.title + (e.period ? ' <span class="per">' + e.period + '</span>' : '')
+            + (pending ? ' <b class="badge">待公布</b>' : '') + '</td>'
+            + '<td>' + num(e.forecast, e.unit) + '</td><td>' + num(e.previous, e.unit) + '</td><td>' + num(e.actual, e.unit) + '</td></tr>';
+        }
+        h += '</tbody></table>';
+      } else h += '<div class="muted" style="font-size:12px">本周无重要美国数据</div>';
+
+      // ② 重点财报（标注半导体/科技与所属指数）
+      const keyEarn = (wk.earnings || []).filter(e => e.key);
+      h += '<h4>重点财报<span class="hint">半导体/科技 或 标普500·纳指100 成分；全周共 ' + (wk.earnings || []).length + ' 家，列出 ' + keyEarn.length + ' 家</span></h4>';
+      if (keyEarn.length) {
+        const byDay = {};
+        for (const e of keyEarn) (byDay[e.date] = byDay[e.date] || []).push(e);
+        h += '<table><tbody>';
+        for (const d of Object.keys(byDay).sort()) {
+          h += '<tr class="wk-day"><td colspan="2">' + dayBj(d) + '</td></tr>';
+          for (const e of byDay[d]) {
+            h += '<tr><td class="tk">' + e.symbol + '</td><td>' + (e.name || '')
+              + (e.tags || []).map(t => '<i class="' + tagCls(t) + '">' + t + '</i>').join('')
+              + (tmOf(e.time) ? '<span class="tm">' + tmOf(e.time) + '</span>' : '')
+              + (e.industry ? '<span class="tm">' + e.industry + '</span>' : '')
+              + '</td></tr>';
+          }
+        }
+        h += '</tbody></table>';
+      } else h += '<div class="muted" style="font-size:12px">本周无重点财报</div>';
+
+      // ③ 指数成分股变动（窗口内的 + 已公告未来生效的）
+      const changes = wk.changes || [];
+      const inWeek = (d) => d >= wk.weekStart && d <= wk.weekEnd;
+      const allKept = changes.flatMap(c => c.kept.map(k => ({ ...k, index: c.index })));
+      const weekChanges = allKept.filter(k => inWeek(k.effectiveDate));
+      h += '<h4>指数成分股变动<span class="hint">保留最近 ' + wk.windowDays + ' 天生效的 + 已公告未来生效的；更早的已删除</span></h4>';
+      if (weekChanges.length) {
+        h += '<div class="nextok">下周（' + dayBj(wk.weekStart) + ' 起）有 ' + weekChanges.length + ' 项调整生效。</div>';
+      } else {
+        h += '<div class="nextnone">下周无成分股调整生效。以下为最近 ' + wk.windowDays + ' 天内的变动：</div>';
+      }
+      if (allKept.length) {
+        h += '<table><thead><tr><th>指数</th><th class="nw">生效日</th><th>纳入</th><th>剔除</th><th>原因 / 公告</th></tr></thead><tbody>';
+        for (const k of allKept) {
+          h += '<tr' + (inWeek(k.effectiveDate) ? ' class="wk-pending"' : '') + '>'
+            + '<td class="ix">' + k.index + '</td><td class="nw">' + k.effectiveDate.slice(5).replace('-', '/') + '</td>'
+            + '<td>' + (k.added ? '<b>' + k.added.ticker + '</b> ' + (k.added.name || '') : '—') + '</td>'
+            + '<td>' + (k.removed ? '<b>' + k.removed.ticker + '</b> ' + (k.removed.name || '') : '—') + '</td>'
+            + '<td class="rs">' + (k.reason || '—') + (k.ref ? ' <a href="https://' + k.ref + '" target="_blank" rel="noopener">公告</a>' : '') + '</td></tr>';
+        }
+        h += '</tbody></table>';
+      } else {
+        h += '<div class="muted" style="font-size:12px">窗口内无成分股变动</div>';
+      }
+
+      // ④ 下次预定调整窗口
+      h += '<h4>下次预定调整窗口<span class="hint">按指数规则推算，以官方公告为准</span></h4><ul>';
+      for (const w of (wk.nextWindows || [])) {
+        h += '<li><b>' + w.date.slice(5).replace('-', '/') + '</b> ' + w.name + '<span class="muted"> — ' + w.note + '</span></li>';
+      }
+      h += '</ul>';
+      wkEl.innerHTML = h;
+    }
+  }
+
   const fd = document.getElementById('funds');
   fd.classList.add('funds-grid');
   fd.innerHTML = D.funds.map(fundCard).join('');

@@ -10,6 +10,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { buildWeekAhead } = require('./week_ahead.js');
 
 const OUT_DIR = path.join(__dirname, '..'); // 生成 data.json 到仓库根目录（qdii-publish）
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -769,12 +770,26 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     log('fund computed:', f.nameShort, 'est NAV A now =', estNavA_live, '(reported', f.navA0, ') official latest:', JSON.stringify(lastOffA));
   }
 
+  // 「下周大事」：美国重要经济数据 / 重点财报 / 指数成分股变动 / 下次预定调整窗口
+  // 该模块失败不影响主看板：weekAhead 为 null 时页面显示"数据不可用"
+  let weekAhead = null;
+  try {
+    weekAhead = await buildWeekAhead();
+    log('week ahead:', weekAhead.weekStart, '~', weekAhead.weekEnd,
+      '| 重要数据', weekAhead.events.length, '(次要', weekAhead.otherCount, '条未列)',
+      '| 财报', weekAhead.earnings.length, '重点', weekAhead.earnings.filter(e => e.key).length,
+      '| 成分股变动', weekAhead.changes.map(c => c.index + ' ' + c.kept.length + '/' + c.total).join(' '));
+  } catch (e) {
+    log('WARN week ahead failed:', String(e.message).slice(0, 90));
+  }
+
   const data = {
     generatedAt: fmtNowCn(new Date()) + ' (北京时间, 构建时点)',
     disclaimer: '基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。',
     fx,
     funds: fundsOut,
     indices: indicesOut,
+    weekAhead,
     sources: {
       usHistory: 'api.nasdaq.com (日收盘价)',
       cnHistory: '腾讯行情 web.ifzq.gtimg.cn (前复权日线, 自动处理份额拆分)',
@@ -782,6 +797,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
       fx: 'chinamoney.com.cn 人民币汇率中间价',
       realtime: 'qt.gtimg.cn 腾讯实时行情',
       indexHistory: 'Google Finance 指数日线（真实指数收盘口径，失败退到跟踪 ETF 的 Nasdaq 日线）',
+      weekAhead: '「下周大事」：TradingView 经济日历(仅美国) / Nasdaq 财报日历 / Wikipedia 指数成分股变动(公告源自 S&P DJI·Nasdaq)',
       officialNav: '东方财富 fund.eastmoney.com 官方公布净值',
     },
   };
