@@ -419,6 +419,8 @@ const bjTime = (iso) => {   // UTC ISO -> 北京时间 HH:MM
   return d.toISOString().slice(11, 16);
 };
 const bjWeekday = (iso) => WD_CN[new Date(new Date(iso).getTime() + 8 * 3600e3).getUTCDay()];
+/** UTC ISO -> 北京日期（YYYY-MM-DD）；页面按这个日期分组与打标签 */
+const bjDate = (iso) => new Date(new Date(iso).getTime() + 8 * 3600e3).toISOString().slice(0, 10);
 const md = (ymdStr) => `${+ymdStr.slice(5, 7)} 月 ${+ymdStr.slice(8, 10)} 日`;
 /** 期间：'Sep' -> '9 月'；'Oct/03' -> '10/03 当周'；'2026-09' -> '9 月' */
 const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -490,76 +492,105 @@ function macroRemark(fam) {
 function buildBrief({ weekStart, weekEnd, events, otherCount, earnings, changes, nextWindows, notes }) {
   const intro = `下周（${md(weekStart)} 至 ${md(weekEnd)}）金融市场将迎来多个关键宏观数据与美股第三季度财报季的正式开幕：`;
 
-  // ① 宏观：按「家族 + 日期」合并，一个家族一天一条（CPI 的同比/环比/核心合并进同一条）
+  // ① 宏观：按「家族 + 北京日期」合并，一个家族一天一条（CPI 的同比/环比/核心合并进同一条）。
+  //    注意分组必须用**北京日期**：页面按日期打标签，而 UTC 16:00 之后的事件北京已是次日，
+  //    用 UTC 日期分组会把标签写错一天（时间文本本身已是北京时间）。
   const VARIANT_ORDER = ['同比', '环比', '核心同比', '核心环比', '初请', '续请'];
   const groups = new Map();
   for (const e of events) {
     if (e.indicator === 'Holidays') continue;
     const { fam, variant } = macroFamily(e.title, e.indicator);
-    const key = `${e.date}|${fam}`;
-    if (!groups.has(key)) groups.set(key, { date: e.date, fam, variants: [] });
+    const d = bjDate(e.date);
+    const key = `${d}|${fam}`;
+    if (!groups.has(key)) groups.set(key, { iso: e.date, date: d, fam, variants: [] });
     const num = (v) => (v === null || v === undefined) ? null : `${v}${e.unit || ''}`;
     const fc = num(e.forecast), pv = num(e.previous);
     const detail = [fc !== null ? `预期 ${fc}` : null, pv !== null ? `前值 ${pv}` : null].filter(Boolean).join('，');
     groups.get(key).variants.push({ variant, detail, period: perCN(e.period) });
   }
-  const sec1 = [...groups.values()]
-    .sort((a, b) => a.date.localeCompare(b.date) || a.fam.localeCompare(b.fam))
-    .map((g) => {
-      const vs = g.variants.slice().sort((x, y) => {
-        const ix = VARIANT_ORDER.indexOf(x.variant), iy = VARIANT_ORDER.indexOf(y.variant);
-        return (ix < 0 ? 99 : ix) - (iy < 0 ? 99 : iy);
-      });
-      const period = (vs.find((v) => v.period) || {}).period || '';
-      const body = vs.map((v) => (v.variant ? v.variant + (v.detail ? ' ' + v.detail : '') : v.detail)).filter(Boolean).join('、');
-      const remark = macroRemark(g.fam);
-      // 美联储自己的事不加"美国"前缀；家族名是英文时与"9 月"之间补空格（9 月 CPI / 9 月零售销售）
-      const noCountry = /^(美联储主席讲话|FOMC|美联储褐皮书)$/.test(g.fam);
-      const sep = period && /^[A-Za-z]/.test(g.fam) ? ' ' : '';
-      return `${noCountry ? '' : '美国 '}${period}${sep}${g.fam}（${bjWeekday(g.date)} ${bjTime(g.date)}）`
-        + (body ? `：${body}` : '') + (remark ? `。${remark}` : '');
+  // 条目文字：日期/周几由页面按日期分组后显示，这里只留时间（北京时间）
+  const macroByDay = new Map();
+  for (const g of [...groups.values()].sort((a, b) => a.date.localeCompare(b.date) || a.fam.localeCompare(b.fam))) {
+    const vs = g.variants.slice().sort((x, y) => {
+      const ix = VARIANT_ORDER.indexOf(x.variant), iy = VARIANT_ORDER.indexOf(y.variant);
+      return (ix < 0 ? 99 : ix) - (iy < 0 ? 99 : iy);
     });
-  // 休市日：TradingView 只给"休市"标记，具体哪个市场休市属人工补充——若补充里已写"休市"，就不再重复自动行
+    const period = (vs.find((v) => v.period) || {}).period || '';
+    const body = vs.map((v) => (v.variant ? v.variant + (v.detail ? ' ' + v.detail : '') : v.detail)).filter(Boolean).join('、');
+    const remark = macroRemark(g.fam);
+    // 美联储自己的事不加"美国"前缀；家族名是英文时与"9 月"之间补空格（9 月 CPI / 9 月零售销售）
+    const noCountry = /^(美联储主席讲话|FOMC|美联储褐皮书)$/.test(g.fam);
+    const sep = period && /^[A-Za-z]/.test(g.fam) ? ' ' : '';
+    const text = `${noCountry ? '' : '美国 '}${period}${sep}${g.fam}（${bjTime(g.iso)}）`
+      + (body ? `：${body}` : '') + (remark ? `。${remark}` : '');
+    if (!macroByDay.has(g.date)) macroByDay.set(g.date, []);
+    macroByDay.get(g.date).push(text);
+  }
+  // 休市日并入当天（TradingView 只给"休市"标记，具体哪个市场休市属人工补充——补充里写了就不再重复）
   const noteCoverHoliday = notes.some((n) => /休市/.test(n));
   for (const h of events.filter((e) => e.indicator === 'Holidays')) {
     if (noteCoverHoliday) continue;
-    sec1.push(`休市提示（${bjWeekday(h.date)}）：${md(h.date)} 为 ${h.title}`);
+    const d = bjDate(h.date);
+    if (!macroByDay.has(d)) macroByDay.set(d, []);
+    macroByDay.get(d).push(`休市提示：${h.title}`);
   }
-  for (const n of notes) sec1.push(n);
+  const macroGroups = [...macroByDay.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, items]) => ({ date, items }));
 
-  // ② 财报：金融 / 科技半导体 / 其他巨头（其他只保留真正的大市值名字，避免混进中小盘）
+  // ② 财报：按日期分组，组内再分 金融 / 科技与半导体 / 其他巨头
   const key = earnings.filter((e) => e.key);
   const fmt = (e) => `${e.cn}${e.exchange ? `（${e.exchange}:${e.symbol}）` : `（${e.symbol}）`}`;
   const list = (arr, max) => arr.slice(0, max).map(fmt).join('、') + (arr.length > max ? ' 等' : '');
-  const fin = key.filter((e) => e.cls === 'fin');
-  const tech = key.filter((e) => e.cls === 'tech');
-  const other = key.filter((e) => e.cls === 'other' && MEGA_CAPS.has(e.symbol));
-  const sec2 = [];
-  const hasBigBanks = fin.filter((e) => ['JPM', 'GS', 'BAC', 'C', 'WFC', 'MS'].includes(e.symbol)).length >= 3;
-  if (fin.length || tech.length) sec2.push(`${hasBigBanks ? '下周美股各大银行与科技巨头将陆续发布财报，拉开 Q3 财报季的序幕' : '下周重点财报'}：`);
-  if (fin.length) sec2.push(`金融巨头：${list(fin, 8)}`);
-  if (tech.length) sec2.push(`科技与半导体：${list(tech, 8)}`);
-  if (other.length) sec2.push(`其他巨头：${list(other, 8)}`);
-
-  // ③ 指数成分股变动（窗口内 + 已公告未来生效），一条一行；按反馈去掉"原因"，只留纳入/剔除
-  const sec3 = [];
-  for (const c of changes) for (const k of c.kept) {
-    const a = k.added ? `纳入 ${k.added.ticker}${k.added.name ? `（${k.added.name}）` : ''}` : '';
-    const r = k.removed ? `剔除 ${k.removed.ticker}${k.removed.name ? `（${k.removed.name}）` : ''}` : '';
-    sec3.push(`${c.index} ${k.effectiveDate.slice(5).replace('-', '/')}：${[a, r].filter(Boolean).join('、')}`);
+  const hasBigBanks = key.filter((e) => ['JPM', 'GS', 'BAC', 'C', 'WFC', 'MS'].includes(e.symbol)).length >= 3;
+  const earnByDay = new Map();
+  for (const e of key) {
+    if (!earnByDay.has(e.date)) earnByDay.set(e.date, []);
+    earnByDay.get(e.date).push(e);
   }
+  const earnGroups = [...earnByDay.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([date, arr]) => {
+      const fin = arr.filter((e) => e.cls === 'fin');
+      const tech = arr.filter((e) => e.cls === 'tech');
+      const other = arr.filter((e) => e.cls === 'other' && MEGA_CAPS.has(e.symbol));
+      const items = [];
+      if (fin.length) items.push(`金融：${list(fin, 8)}`);
+      if (tech.length) items.push(`科技与半导体：${list(tech, 8)}`);
+      if (other.length) items.push(`其他巨头：${list(other, 8)}`);
+      return { date, items };
+    })
+    .filter((g) => g.items.length);
+
+  // ③ 指数成分股变动：结构化返回，页面按 指数 / 纳入 / 剔除 分别着色。
+  //    同日同指数在 wiki 里会拆成多行（如 10/06 标普500 的 TWLO/WBD 与 CTVA），这里合并成一条。
+  const chgGroups = [];
+  for (const c of changes) for (const k of c.kept) {
+    const hit = chgGroups.find((x) => x.index === c.index && x.date === k.effectiveDate);
+    if (hit) {
+      if (k.added) hit.added.push(k.added);
+      if (k.removed) hit.removed.push(k.removed);
+    } else {
+      chgGroups.push({ index: c.index, date: k.effectiveDate, added: k.added ? [k.added] : [], removed: k.removed ? [k.removed] : [] });
+    }
+  }
+  chgGroups.sort((a, b) => b.date.localeCompare(a.date) || a.index.localeCompare(b.index));
   const nextLine = nextWindows.map((w) => `下次预定调整窗口：${w.date} ${w.name} —— ${w.note}`);
 
   // 拆成两个模块返回：左侧「下周大事」（宏观 + 财报），右侧「指数成分股变动」
   return {
     intro,
     otherCount,
-    macro: { title: '1. 重要宏观经济事件与数据', items: sec1 },
-    earnings: sec2.length ? { title: '2. 美股三季度财报季开幕', items: sec2 } : null,
+    macro: { title: '1. 重要宏观经济事件与数据', groups: macroGroups, notes },
+    earnings: earnGroups.length ? {
+      title: '2. 美股三季度财报季开幕',
+      lead: hasBigBanks ? '下周美股各大银行与科技巨头将陆续发布财报，拉开 Q3 财报季的序幕：' : '下周重点财报：',
+      groups: earnGroups,
+    } : null,
     changes: {
       title: '指数成分股变动',
       hint: `最近 ${CHANGE_WINDOW_DAYS} 天内生效 + 已公告未来生效`,
-      items: sec3,
+      groups: chgGroups,
       tail: nextLine,
     },
   };

@@ -118,7 +118,19 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 .wk .muted{color:var(--muted)}
 .wk .wk-note{margin-top:8px;font-size:11.5px;color:var(--muted);line-height:1.7}
 .wk-narrow ul{font-size:12px}
-.wk-narrow ul li{margin:5px 0}
+.wk-narrow ul li{margin:6px 0;line-height:1.6}
+/* 按日期分组：日期做成带色小标签，颜色由脚本按星期几给（周一~周五各一色） */
+.wk .wk-day{margin:9px 0 3px}
+.wk .dchip{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 9px;border:1px solid;border-radius:11px;letter-spacing:.3px}
+.wk .wk-day + ul{margin-top:2px}
+.wk .wk-lead{margin:0 0 2px;font-size:12.5px;color:var(--text);line-height:1.7}
+/* 指数成分股变动：指数名与纳入/剔除分别着色 */
+.wk .widx{font-weight:700;margin-right:7px}
+.wk .widx-sp{color:var(--accent)}
+.wk .widx-ndx{color:#bc8cff}
+.wk .wdate{color:var(--muted);font-size:11.5px;font-family:Consolas,"Courier New",monospace;margin-right:8px}
+.wk .wadd{color:var(--up);margin-right:9px;white-space:nowrap}
+.wk .wdel{color:var(--down);white-space:nowrap}
 @media (max-width:760px){ .kpi .value{font-size:19px} th,td{padding:6px 5px;font-size:12px} }
 </style>
 </head>
@@ -325,19 +337,29 @@ function renderAll() {
   idx5dEl.innerHTML = h5html;
 
   // ---------- 左：下周大事（宏观 + 财报）；右：指数成分股变动 ----------
-  // 文字与数据都由 build/week_ahead.js 的 buildBrief() 生成，这里只负责渲染
+  // 文字与数据都由 build/week_ahead.js 的 buildBrief() 生成，这里只负责分组排版与配色
   const wkEl = document.getElementById('weekAhead');
   const chgEl = document.getElementById('idxChanges');
   const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-  const dayBj = (ymd) => ymd.slice(5).replace('-', '/') + ' ' + WD[new Date(ymd + 'T12:00:00Z').getUTCDay()];
+  // 日期一律截到 YYYY-MM-DD；宏观分组的日期已是北京日期，财报/成分变动是各自来源的交易日
+  const d10 = (s) => String(s).slice(0, 10);
+  const dayBj = (ymd) => d10(ymd).slice(5).replace('-', '/') + ' ' + WD[new Date(d10(ymd) + 'T12:00:00Z').getUTCDay()];
+  const dayShort = (ymd) => d10(ymd).slice(5).replace('-', '/');
+  // 日期配色：周一~周五各一色，同一日期在两个模块里颜色一致
+  const DAY_COLORS = ['#f0883e', '#58a6ff', '#bc8cff', '#3fb950', '#f778ba'];
+  const dayColor = (ymd) => DAY_COLORS[((new Date(d10(ymd) + 'T12:00:00Z').getUTCDay() + 6) % 7) % DAY_COLORS.length];
+  const dayChip = (ymd) => '<div class="wk-day"><span class="dchip" style="color:' + dayColor(ymd) + ';border-color:' + dayColor(ymd) + '">'
+    + dayBj(ymd) + '</span></div>';
   // 条目文字含来自 Wikipedia 的公司名，做一次转义
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const secHtml = (s) => {
-    if (!s) return '';
-    let h = '<h4>' + esc(s.title) + (s.hint ? '<span class="hint">' + esc(s.hint) + '</span>' : '') + '</h4><ul>';
-    for (const it of s.items) h += '<li>' + esc(it) + '</li>';
-    h += '</ul>';
-    for (const t of (s.tail || [])) h += '<div class="wk-note">' + esc(t) + '</div>';
+  /** 按日期分组渲染：日期标签 + 该日条目 */
+  const dayGroupsHtml = (groups) => {
+    let h = '';
+    for (const g of (groups || [])) {
+      h += dayChip(g.date) + '<ul>';
+      for (const it of g.items) h += '<li>' + esc(it) + '</li>';
+      h += '</ul>';
+    }
     return h;
   };
   if (wkEl || chgEl) {
@@ -350,18 +372,39 @@ function renderAll() {
       if (wkEl) {
         let h = '<h3>下周大事<span class="hint">' + dayBj(wk.weekStart) + ' – ' + dayBj(wk.weekEnd) + ' · 时间为北京时间</span></h3>';
         h += '<p class="wk-intro">' + esc(b.intro) + '</p>';
-        h += secHtml(b.macro);
-        h += secHtml(b.earnings);
+        // ① 宏观：按日期分组
+        h += '<h4>' + esc(b.macro.title) + '</h4>';
+        h += dayGroupsHtml(b.macro.groups);
+        if (b.macro.notes && b.macro.notes.length) {
+          h += '<div class="wk-note">人工补充（<code>build/week_notes.json</code>）：</div><ul>';
+          for (const n of b.macro.notes) h += '<li>' + esc(n) + '</li>';
+          h += '</ul>';
+        }
+        // ② 财报：按日期分组
+        if (b.earnings) {
+          h += '<h4>' + esc(b.earnings.title) + '</h4>';
+          if (b.earnings.lead) h += '<p class="wk-lead">' + esc(b.earnings.lead) + '</p>';
+          h += dayGroupsHtml(b.earnings.groups);
+        }
         if (b.otherCount) h += '<div class="wk-note">另有 ' + b.otherCount + ' 条次要美国数据（房地产、地区联储调查、进出口价格、委员讲话等）未列入。</div>';
-        h += '<div class="wk-note">经济数据与重点财报为程序抓取生成；人工补充条目写在 <code>build/week_notes.json</code>。</div>';
         wkEl.innerHTML = h;
       }
       if (chgEl) {
         const c = b.changes;
         let h = '<h3>' + esc(c.title) + '<span class="hint">' + esc(c.hint || '') + '</span></h3>';
-        if (c.items && c.items.length) {
+        if (c.groups && c.groups.length) {
           h += '<ul>';
-          for (const it of c.items) h += '<li>' + esc(it) + '</li>';
+          for (const g of c.groups) {
+            h += '<li><span class="widx ' + (g.index === '纳指100' ? 'widx-ndx' : 'widx-sp') + '">' + esc(g.index) + '</span>'
+              + '<span class="wdate">' + dayShort(g.date) + '</span>';
+            if (g.added && g.added.length) {
+              h += '<span class="wadd">纳入 ' + g.added.map((a) => esc(a.ticker) + (a.name ? '（' + esc(a.name) + '）' : '')).join('、') + '</span>';
+            }
+            if (g.removed && g.removed.length) {
+              h += '<span class="wdel">剔除 ' + g.removed.map((a) => esc(a.ticker) + (a.name ? '（' + esc(a.name) + '）' : '')).join('、') + '</span>';
+            }
+            h += '</li>';
+          }
           h += '</ul>';
         } else {
           h += '<div class="muted" style="font-size:12px">窗口内无成分股变动</div>';
