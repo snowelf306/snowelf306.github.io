@@ -1878,41 +1878,26 @@
    },
    "earnings": {
     "title": "2. 美股三季度财报季开幕",
-    "lead": "下周重点财报：",
+    "lead": "下周财报以科技巨头与各行业龙头为主，银行、保险、券商等金融公司不列入：",
     "groups": [
-     {
-      "date": "2026-10-19",
-      "items": [
-       "金融：Fifth Third Bancorp（NYSE:FITB）、W.R. Berkley Corporation（NYSE:WRB）"
-      ]
-     },
      {
       "date": "2026-10-20",
       "items": [
-       "金融：Chubb Limited（NYSE:CB）、Capital One Financial Corporation（NYSE:COF）、KeyCorp（NYSE:KEY）、MSCI Inc.（NYSE:MSCI）、Synchrony Financial（NYSE:SYF）",
-       "其他巨头：GE Aerospace（NYSE:GE）、直觉外科（NASDAQ:ISRG）、3M Company（NYSE:MMM）、奈飞（NASDAQ:NFLX）、RTX Corporation（NYSE:RTX）"
+       "其他知名巨头：奈飞（NASDAQ:NFLX）、GE Aerospace（NYSE:GE）、RTX Corporation（NYSE:RTX）、直觉外科（NASDAQ:ISRG）、3M Company（NYSE:MMM）"
       ]
      },
      {
       "date": "2026-10-21",
       "items": [
-       "金融：CME Group Inc.（NASDAQ:CME）、Globe Life Inc.（NYSE:GL）、Moody's Corporation（NYSE:MCO）、Northern Trust Corporation（NASDAQ:NTRS）",
-       "科技与半导体：International Business Machines Corporation（NYSE:IBM）、泛林集团（NASDAQ:LRCX）、Meta（NASDAQ:META）、Teledyne Technologies Incorporated（NYSE:TDY）、德州仪器（NASDAQ:TXN）",
-       "其他巨头：Abbott Laboratories（NYSE:ABT）、Danaher Corporation（NYSE:DHR）、Elevance Health, Inc.（NYSE:ELV）、Philip Morris International Inc（NYSE:PM）、AT&T Inc.（NYSE:T）、Thermo Fisher Scientific Inc（NYSE:TMO）"
+       "科技与半导体：Meta（NASDAQ:META）、德州仪器（NASDAQ:TXN）、泛林集团（NASDAQ:LRCX）、International Business Machines Corporation（NYSE:IBM）、Teledyne Technologies Incorporated（NYSE:TDY）",
+       "其他知名巨头：AT&T Inc.（NYSE:T）、Thermo Fisher Scientific Inc（NYSE:TMO）、Abbott Laboratories（NYSE:ABT）、Danaher Corporation（NYSE:DHR）、Elevance Health, Inc.（NYSE:ELV）、Philip Morris International Inc（NYSE:PM）"
       ]
      },
      {
       "date": "2026-10-22",
       "items": [
-       "金融：Blackstone Inc.（NYSE:BX）、Huntington Bancshares Incorporated（NASDAQ:HBAN）、Nasdaq, Inc.（NASDAQ:NDAQ）",
        "科技与半导体：Roper Technologies, Inc.（NASDAQ:ROP）、VeriSign, Inc.（NASDAQ:VRSN）、Western Digital Corporation（NASDAQ:WDC）",
-       "其他巨头：康卡斯特（NASDAQ:CMCSA）、霍尼韦尔（NASDAQ:HON）、Lockheed Martin Corporation（NYSE:LMT）、Procter & Gamble Company (The)（NYSE:PG）"
-      ]
-     },
-     {
-      "date": "2026-10-23",
-      "items": [
-       "金融：American Express Company（NYSE:AXP）"
+       "其他知名巨头：Procter & Gamble Company (The)（NYSE:PG）、康卡斯特（NASDAQ:CMCSA）、霍尼韦尔（NASDAQ:HON）、Lockheed Martin Corporation（NYSE:LMT）"
       ]
      }
     ]

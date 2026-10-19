@@ -244,6 +244,23 @@ function parseExchanges(spWikitext) {
 /** 两个指数都不含、但常出现在财报里的名字，交易所单独标（TSM 是 NYSE 的 ADR） */
 const EXTRA_EXCHANGE = { TSM: 'NYSE', UMC: 'NYSE', ERIC: 'NASDAQ', INFY: 'NYSE', WIT: 'NYSE', HDB: 'NYSE', IBN: 'NYSE' };
 
+/**
+ * 财报条目的「知名度」排序表：越靠前越先列。
+ * 只影响同一分组内的先后，不决定是否入选（入选看下方 key / MEGA_CAPS / 金融排除）。
+ * 银行、保险、券商、支付等金融公司不在此表里 —— 它们整类不列入简报。
+ */
+const FAME_ORDER = [
+  // 科技 / 半导体超大盘
+  'NVDA', 'MSFT', 'AAPL', 'AMZN', 'GOOGL', 'GOOG', 'META', 'TSLA', 'AVGO', 'TSM', 'ASML', 'AMD', 'NFLX',
+  'ORCL', 'CRM', 'ADBE', 'QCOM', 'MU', 'INTC', 'TXN', 'AMAT', 'LRCX', 'KLAC', 'MRVL', 'ARM', 'PLTR', 'SMCI',
+  'ANET', 'CSCO', 'IBM', 'INTU', 'NOW', 'PANW', 'SNOW', 'SHOP', 'UBER', 'DDOG', 'CRWD', 'MSTR',
+  // 其他行业龙头
+  'COST', 'WMT', 'PG', 'KO', 'PEP', 'MCD', 'NKE', 'HD', 'LOW', 'TGT', 'SBUX', 'DIS', 'CMCSA', 'TMUS', 'T', 'VZ',
+  'XOM', 'CVX', 'BA', 'CAT', 'DE', 'GE', 'HON', 'LMT', 'RTX', 'UPS', 'UNH', 'LLY', 'JNJ', 'ABBV', 'MRK', 'PFE',
+  'BMY', 'TMO', 'ABT', 'DHR', 'AMGN', 'GILD', 'ISRG', 'ELV', 'CI', 'CVS', 'HCA', 'MDLZ', 'CL', 'EL',
+  'PM', 'MO', 'BKNG', 'ETN', 'EMR', 'ITW', 'MMM',
+];
+
 /** 「其他巨头」只保留真正的大市值名字，避免把中小盘银行/地方企业混进来 */
 const MEGA_CAPS = new Set([
   'UNH', 'JNJ', 'PG', 'KO', 'PEP', 'WMT', 'DIS', 'V', 'MA', 'HD', 'MCD', 'NKE', 'BA', 'CAT', 'HON', 'LMT', 'GE',
@@ -271,11 +288,29 @@ const CN_NAMES = {
 const cnName = (sym, fallback) => CN_NAMES[sym] || (fallback || sym);
 
 /** 财报分类：金融 / 科技半导体 / 其他巨头（用于简报分组） */
-const FIN_SECTOR = /Bank|Financial|Capital Markets|Insurance|Asset Management|Diversified Financials|Consumer Finance|Reinsurance|Mortgage/i;
+const FIN_SECTOR = /Bank|Financ|Capital Markets|Insurance|Asset Management|Reinsurance|Mortgage|Brokerage|Securit/i;
 function earnClass(e) {
   if (e.tags.includes('半导体') || e.tags.includes('科技')) return 'tech';
-  if (FIN_SECTOR.test(e.sector || '') || FIN_SECTOR.test(e.industry || '')) return 'fin';
+  if (isFinancial(e)) return 'fin';
   return 'other';
+}
+
+/**
+ * 银行 / 保险 / 券商 / 资管 / 支付等金融公司：简报整体不列（用户要求「不要银行等金融公司」）。
+ * 同时看 cls、GICS sector 与 industry —— sector 命中 Financials 的（V / MA / AXP / SPGI 等）也一律剔除。
+ */
+function isFinancial(e) {
+  if (e.cls === 'fin') return true;
+  return FIN_SECTOR.test(e.sector || '') || FIN_SECTOR.test(e.industry || '');
+}
+
+/** 知名度排序：命中 FAME_ORDER 的按表中位置，其余排最后（再按名称排序，保证输出稳定） */
+function fameRank(e) {
+  const i = FAME_ORDER.indexOf(e.symbol);
+  return i < 0 ? FAME_ORDER.length : i;
+}
+function byFame(a, b) {
+  return fameRank(a) - fameRank(b) || String(a.cn || a.symbol).localeCompare(String(b.cn || b.symbol), 'zh');
 }
 
 /** 人工补充（数据源覆盖不到的事件，如 IMF 年会、休市细节）；按周起始日归档，缺失即忽略 */
@@ -538,11 +573,11 @@ function buildBrief({ weekStart, weekEnd, events, otherCount, earnings, changes,
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([date, items]) => ({ date, items }));
 
-  // ② 财报：按日期分组，组内再分 金融 / 科技与半导体 / 其他巨头
-  const key = earnings.filter((e) => e.key);
+  // ② 财报：按日期分组；组内只列「巨头 + 有名公司」，银行等金融公司整类不列，
+  //    分组顺序为 科技与半导体 → 其他知名巨头，组内按 FAME_ORDER 的知名度先后。
+  const key = earnings.filter((e) => e.key && !isFinancial(e));
   const fmt = (e) => `${e.cn}${e.exchange ? `（${e.exchange}:${e.symbol}）` : `（${e.symbol}）`}`;
   const list = (arr, max) => arr.slice(0, max).map(fmt).join('、') + (arr.length > max ? ' 等' : '');
-  const hasBigBanks = key.filter((e) => ['JPM', 'GS', 'BAC', 'C', 'WFC', 'MS'].includes(e.symbol)).length >= 3;
   const earnByDay = new Map();
   for (const e of key) {
     if (!earnByDay.has(e.date)) earnByDay.set(e.date, []);
@@ -551,13 +586,11 @@ function buildBrief({ weekStart, weekEnd, events, otherCount, earnings, changes,
   const earnGroups = [...earnByDay.entries()]
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([date, arr]) => {
-      const fin = arr.filter((e) => e.cls === 'fin');
-      const tech = arr.filter((e) => e.cls === 'tech');
-      const other = arr.filter((e) => e.cls === 'other' && MEGA_CAPS.has(e.symbol));
+      const tech = arr.filter((e) => e.cls === 'tech').sort(byFame);
+      const other = arr.filter((e) => e.cls === 'other' && (MEGA_CAPS.has(e.symbol) || FAME_ORDER.includes(e.symbol))).sort(byFame);
       const items = [];
-      if (fin.length) items.push(`金融：${list(fin, 8)}`);
       if (tech.length) items.push(`科技与半导体：${list(tech, 8)}`);
-      if (other.length) items.push(`其他巨头：${list(other, 8)}`);
+      if (other.length) items.push(`其他知名巨头：${list(other, 8)}`);
       return { date, items };
     })
     .filter((g) => g.items.length);
@@ -584,7 +617,7 @@ function buildBrief({ weekStart, weekEnd, events, otherCount, earnings, changes,
     macro: { title: '1. 重要宏观经济事件与数据', groups: macroGroups, notes },
     earnings: earnGroups.length ? {
       title: '2. 美股三季度财报季开幕',
-      lead: hasBigBanks ? '下周美股各大银行与科技巨头将陆续发布财报，拉开 Q3 财报季的序幕：' : '下周重点财报：',
+      lead: '下周财报以科技巨头与各行业龙头为主，银行、保险、券商等金融公司不列入：',
       groups: earnGroups,
     } : null,
     changes: {
@@ -623,9 +656,9 @@ async function buildWeekAhead(now = new Date()) {
   try {
     earn = await fetchWeekEarnings(start, end, cons);
     log('earnings', earn.earnings.length, '| 重点', earn.earnings.filter((x) => x.key).length,
-      '| 金融', earn.earnings.filter((x) => x.key && x.cls === 'fin').length,
+      '| 金融(已排除)', earn.earnings.filter((x) => x.key && isFinancial(x)).length,
       '| 科技半导体', earn.earnings.filter((x) => x.key && x.cls === 'tech').length,
-      '| 其他', earn.earnings.filter((x) => x.key && x.cls === 'other').length);
+      '| 其他巨头', earn.earnings.filter((x) => x.key && x.cls === 'other' && MEGA_CAPS.has(x.symbol)).length);
   } catch (e) { log('WARN earnings failed:', String(e.message).slice(0, 80)); }
 
   const changes = [];
@@ -669,5 +702,5 @@ async function buildWeekAhead(now = new Date()) {
 
 module.exports = {
   buildWeekAhead, buildBrief, upcomingWeek, thirdFriday, parseChanges, pruneChanges,
-  fetchEconomicEvents, isHeadline, CHANGE_WINDOW_DAYS,
+  fetchEconomicEvents, isHeadline, isFinancial, FAME_ORDER, MEGA_CAPS, CHANGE_WINDOW_DAYS,
 };
