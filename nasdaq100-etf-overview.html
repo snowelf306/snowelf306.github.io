@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QDII 股票 ETF 一览</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --background: light-dark(#ffffff, #101012);
+    --foreground: light-dark(#18181b, #e4e4e7);
+    --muted-foreground: light-dark(#71717a, #a1a1aa);
+    --border: light-dark(#e4e4e7, #27272a);
+    --primary: light-dark(#2563eb, #60a5fa);
+    --red: light-dark(#dc2626, #f87171);
+    --orange: light-dark(#ea580c, #fb923c);
+    --green: light-dark(#16a34a, #4ade80);
+    --blue: light-dark(#2563eb, #60a5fa);
+    --purple: light-dark(#7c3aed, #a78bfa);
+    --card: light-dark(#ffffff, #17171a);
+    --muted: light-dark(#f4f4f5, #1e1e21);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px 20px 40px;
+    font: 14px/1.55 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+  }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+  h2 { font-size: 18px; font-weight: 500; margin: 0 0 6px; }
+  h3 { font-size: 15px; font-weight: 500; margin: 4px 0 2px; }
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--ac, var(--primary));
+    margin-right: 7px;
+  }
+  .text-small { font-size: 12px; }
+  .text-muted { color: var(--muted-foreground); }
+  .mod-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
+    gap: 18px 22px;
+    align-items: start;
+  }
+  .mod {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--ac, var(--border));
+    border-radius: 12px;
+    padding: 10px 14px 6px;
+    background: var(--card);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+  .mod-wide { grid-column: 1 / -1; }
+  .mod-note { margin: 0 0 8px; }
+  .table { width: 100%; border-collapse: collapse; }
+  .table th, .table td { padding: 6px 7px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; white-space: nowrap; }
+  .td-name { min-width: 150px; max-width: 170px; overflow: hidden; text-overflow: ellipsis; }
+  .table thead th { border-bottom: 1.5px solid var(--border); font-weight: 500; white-space: nowrap; background: var(--muted); }
+  .table thead th:first-child { border-top-left-radius: 8px; }
+  .table thead th:last-child { border-top-right-radius: 8px; }
+  .table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--muted) 45%, transparent); }
+  .table tbody tr:hover { background: color-mix(in srgb, var(--muted) 80%, transparent); }
+  .text-end { text-align: right !important; }
+  .num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .th-sort { background: none; border: 0; padding: 0; font: inherit; font-weight: 500; color: inherit; cursor: pointer; white-space: nowrap; }
+  .arrow { color: var(--muted-foreground); margin-left: 2px; }
+  th[aria-sort="ascending"] .arrow, th[aria-sort="descending"] .arrow { color: var(--primary); }
+  .prem-high { color: var(--red); font-weight: 500; }
+  .prem-mid { color: var(--orange); }
+  .prem-neg { color: var(--green); }
+  .foot { margin-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<div id="qdii-etf-overview">
+  <h2>QDII 场内基金一览（5 组 · 52 只）</h2>
+  <p class="text-small text-muted">溢价率：2026-10-23 收盘（市价 / 参考净值 − 1） · 净值：元，最新披露（悬停查看日期） · 净资产与股票占比：最新定期报告（悬停查看日期） · 来源：东方财富·天天基金</p>
+  <div class="mod-grid">
+
+    <section class="mod" style="--ac: var(--blue)">
+      <h3>其他美股（14 只）</h3>
+      <p class="text-small text-muted mod-note">道琼斯 · 纳指科技 · 纳指生物科技 · 标普生物科技 · 标普油气 · 标普消费 · 美国50 · 标普信息科技/生物科技LOF · 全球芯片 · 海外科技</p>
+      <div>
+        <table class="table" id="tbl-usother" aria-label="其他美股 ETF 数据表">
+          <thead>
+            <tr>
+              <th scope="col" data-key="code"><button type="button" class="th-sort">代码</button></th>
+              <th scope="col" data-key="name"><button type="button" class="th-sort">简称</button></th>
+              <th scope="col" class="text-end" data-key="nav"><button type="button" class="th-sort">净值</button></th>
+              <th scope="col" class="text-end" data-key="prem"><button type="button" class="th-sort">溢价率</button></th>
+              <th scope="col" class="text-end" data-key="stock"><button type="button" class="th-sort">股票占比</button></th>
+              <th scope="col" class="text-end" data-key="asset"><button type="button" class="th-sort">净资产</button></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-usother"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mod" style="--ac: var(--purple)">
+      <h3>纳指100（13 只）</h3>
+      <p class="text-small text-muted mod-note">跟踪纳斯达克100指数</p>
+      <div>
+        <table class="table" id="tbl-nasdaq100" aria-label="纳指100 ETF 数据表">
+          <thead>
+            <tr>
+              <th scope="col" data-key="code"><button type="button" class="th-sort">代码</button></th>
+              <th scope="col" data-key="name"><button type="button" class="th-sort">简称</button></th>
+              <th scope="col" class="text-end" data-key="nav"><button type="button" class="th-sort">净值</button></th>
+              <th scope="col" class="text-end" data-key="prem"><button type="button" class="th-sort">溢价率</button></th>
+              <th scope="col" class="text-end" data-key="stock"><button type="button" class="th-sort">股票占比</button></th>
+              <th scope="col" class="text-end" data-key="asset"><button type="button" class="th-sort">净资产</button></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-nasdaq100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mod" style="--ac: var(--green)">
+      <h3>标普500 ETF（4 只）</h3>
+      <p class="text-small text-muted mod-note">跟踪标普500指数</p>
+      <div>
+        <table class="table" id="tbl-sp500" aria-label="标普500 ETF 数据表">
+          <thead>
+            <tr>
+              <th scope="col" data-key="code"><button type="button" class="th-sort">代码</button></th>
+              <th scope="col" data-key="name"><button type="button" class="th-sort">简称</button></th>
+              <th scope="col" class="text-end" data-key="nav"><button type="button" class="th-sort">净值</button></th>
+              <th scope="col" class="text-end" data-key="prem"><button type="button" class="th-sort">溢价率</button></th>
+              <th scope="col" class="text-end" data-key="stock"><button type="button" class="th-sort">股票占比</button></th>
+              <th scope="col" class="text-end" data-key="asset"><button type="button" class="th-sort">净资产</button></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-sp500"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mod" style="--ac: var(--orange)">
+      <h3>日韩欧洲 ETF（9 只）</h3>
+      <p class="text-small text-muted mod-note">日经225 · 日本东证 · 德国DAX · 法国CAC40 · 中韩半导体</p>
+      <div>
+        <table class="table" id="tbl-asiaeu" aria-label="日韩欧洲 ETF 数据表">
+          <thead>
+            <tr>
+              <th scope="col" data-key="code"><button type="button" class="th-sort">代码</button></th>
+              <th scope="col" data-key="name"><button type="button" class="th-sort">简称</button></th>
+              <th scope="col" class="text-end" data-key="nav"><button type="button" class="th-sort">净值</button></th>
+              <th scope="col" class="text-end" data-key="prem"><button type="button" class="th-sort">溢价率</button></th>
+              <th scope="col" class="text-end" data-key="stock"><button type="button" class="th-sort">股票占比</button></th>
+              <th scope="col" class="text-end" data-key="asset"><button type="button" class="th-sort">净资产</button></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-asiaeu"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mod mod-wide" style="--ac: var(--red)">
+      <h3>T+0 LOF（12 只）</h3>
+      <p class="text-small text-muted mod-note">原油 · 黄金 · 抗通胀 · 石油油气 · 标普医疗保健 — 均支持 T+0 回转交易</p>
+      <div>
+        <table class="table" id="tbl-t0lof" aria-label="T+0 LOF 数据表">
+          <thead>
+            <tr>
+              <th scope="col" data-key="code"><button type="button" class="th-sort">代码</button></th>
+              <th scope="col" data-key="name"><button type="button" class="th-sort">简称</button></th>
+              <th scope="col" class="text-end" data-key="nav"><button type="button" class="th-sort">净值</button></th>
+              <th scope="col" class="text-end" data-key="prem"><button type="button" class="th-sort">溢价率</button></th>
+              <th scope="col" class="text-end" data-key="stock"><button type="button" class="th-sort">股票占比</button></th>
+              <th scope="col" class="text-end" data-key="asset"><button type="button" class="th-sort">净资产</button></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-t0lof"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+  <p class="text-small text-muted foot">带 * 为联接式持仓：直接持有境外 ETF 份额，显示的是基金份额占净值比而非直接持股。纳指科技ETF（159509）与全球芯片LOF（501225）溢价近 29% 为全场最高，追高需谨慎。T+0 LOF 无盘中 IOPV，溢价按最新公布净值计算（滞后一日，夜间行情会改变实际溢价）。港股、中概类基金未收录。每组默认按溢价率降序，点击表头切换排序。</p>
+</div>
+</div>
+<script>
+  (function () {
+    var MODULES = [
+      { id: 'nasdaq100', data: [
+        { code: '159659', name: '纳斯达克100ETF招商', nd: '2026-10-22', ad: '2026-06-30', nav: 2.0952, price: 2.37, iopv: 2.157, prem: 9.87, asset: 99.3578, stock: 97.72 },
+        { code: '513300', name: '纳斯达克ETF华夏', nd: '2026-10-22', ad: '2026-06-30', nav: 2.4045, price: 2.69, iopv: 2.451, prem: 9.75, asset: 132.8768, stock: 95.88 },
+        { code: '159660', name: '纳指ETF汇添富', nd: '2026-10-22', ad: '2026-06-30', nav: 2.1181, price: 2.376, iopv: 2.181, prem: 8.94, asset: 49.1045, stock: 94.75 },
+        { code: '513390', name: '纳指100ETF博时', nd: '2026-10-22', ad: '2026-06-30', nav: 2.1752, price: 2.397, iopv: 2.215, prem: 8.22, asset: 42.5026, stock: 93.82 },
+        { code: '513110', name: '纳指ETF华泰柏瑞', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2256, price: 2.447, iopv: 2.267, prem: 7.94, asset: 50.9792, stock: 93.22 },
+        { code: '159501', name: '纳指ETF嘉实', nd: '2026-10-22', ad: '2026-06-30', nav: 1.8208, price: 2.142, iopv: 1.875, prem: 14.24, asset: 124.1118, stock: 92.53 },
+        { code: '159696', name: '纳指ETF易方达', nd: '2026-10-22', ad: '2026-06-30', nav: 1.8051, price: 2.08, iopv: 1.859, prem: 11.89, asset: 50.1079, stock: 91.47 },
+        { code: '159941', name: '纳指ETF广发', nd: '2026-10-22', ad: '2026-06-30', nav: 1.4499, price: 1.668, iopv: 1.493, prem: 11.72, asset: 346.8166, stock: 90.92 },
+        { code: '159632', name: '纳斯达克ETF华安', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2025, price: 2.431, iopv: 2.268, prem: 7.19, asset: 113.0032, stock: 90.59 },
+        { code: '513870', name: '纳指ETF富国', nd: '2026-10-22', ad: '2026-06-30', nav: 1.8462, price: 2.08, iopv: 1.88, prem: 10.64, asset: 24.7117, stock: 90.18 },
+        { code: '513100', name: '纳指ETF国泰', nd: '2026-10-22', ad: '2026-06-30', nav: 1.9384, price: 2.243, iopv: 1.974, prem: 13.63, asset: 194.6827, stock: 89.34 },
+        { code: '159513', name: '纳斯达克100ETF大成', nd: '2026-10-22', ad: '2026-06-30', nav: 1.6148, price: 1.774, iopv: 1.663, prem: 6.67, asset: 73.8402, stock: 80.06 },
+        { code: '161130', name: '纳斯达克100LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 4.336, price: 4.649, iopv: 4.459, prem: 4.26, asset: 19.63, stock: 93.15, sk: 'jj' }
+      ] },
+      { id: 'sp500', data: [
+        { code: '513650', name: '标普500ETF南方', nd: '2026-10-22', ad: '2026-06-30', nav: 1.8552, price: 1.959, iopv: 1.867, prem: 4.93, asset: 76.9391, stock: 96.6 },
+        { code: '159655', name: '标普500ETF华夏', nd: '2026-10-22', ad: '2026-06-30', nav: 1.8619, price: 1.972, iopv: 1.887, prem: 4.5, asset: 39.3732, stock: 95.94 },
+        { code: '513500', name: '标普500ETF博时', nd: '2026-10-22', ad: '2026-06-30', nav: 2.4355, price: 2.605, iopv: 2.452, prem: 6.24, asset: 239.99, stock: 94.15 },
+        { code: '159612', name: '标普500ETF国泰', nd: '2026-10-22', ad: '2026-06-30', nav: 1.9107, price: 2.038, iopv: 1.935, prem: 5.32, asset: 8.4366, stock: 88.72 }
+      ] },
+      { id: 'usother', data: [
+        { code: '513350', name: '标普油气ETF富国', nd: '2026-10-22', ad: '2026-06-30', nav: 1.3856, price: 1.439, iopv: 1.408, prem: 2.2, asset: 8.8285, stock: 99.81 },
+        { code: '159502', name: '标普生物科技ETF嘉实', nd: '2026-10-22', ad: '2026-06-30', nav: 1.5037, price: 1.568, iopv: 1.514, prem: 3.57, asset: 17.7584, stock: 99.72 },
+        { code: '159518', name: '标普油气ETF嘉实', nd: '2026-10-22', ad: '2026-06-30', nav: 1.3208, price: 1.357, iopv: 1.335, prem: 1.65, asset: 19.2926, stock: 99.71 },
+        { code: '159529', name: '标普消费ETF景顺', nd: '2026-10-22', ad: '2026-06-30', nav: 1.2957, price: 1.369, iopv: 1.285, prem: 6.54, asset: 10.4353, stock: 99.17 },
+        { code: '159509', name: '纳指科技ETF景顺', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2085, price: 2.95, iopv: 2.288, prem: 28.93, asset: 151.2844, stock: 96.31 },
+        { code: '513400', name: '道琼斯ETF鹏华', nd: '2026-10-22', ad: '2026-06-30', nav: 1.2923, price: 1.318, iopv: 1.283, prem: 2.73, asset: 29.5507, stock: 94.67 },
+        { code: '513290', name: '纳指生物科技ETF汇添富', nd: '2026-10-22', ad: '2026-06-30', nav: 1.7015, price: 1.786, iopv: 1.711, prem: 4.38, asset: 15.2831, stock: 93.94 },
+        { code: '159577', name: '美国50ETF汇添富', nd: '2026-10-22', ad: '2026-06-30', nav: 1.5531, price: 1.664, iopv: 1.584, prem: 5.05, asset: 11.2597, stock: 93.66 },
+        { code: '513850', name: '美国50ETF易方达', nd: '2026-10-22', ad: '2026-06-30', nav: 1.7293, price: 1.859, iopv: 1.752, prem: 6.11, asset: 20.5626, stock: 92.37 },
+        { code: '501225', name: '全球芯片LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.6173, price: 3.518, iopv: 2.732, prem: 28.77, asset: 12.1185, stock: 93.35, sk: 'jj' },
+        { code: '161128', name: '标普信息科技LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 6.6235, price: 7.259, iopv: 6.817, prem: 6.48, asset: 42.6796, stock: 91.31 },
+        { code: '161127', name: '标普生物科技LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.9898, price: 1.983, iopv: 2.003, prem: -1.0, asset: 3.0151, stock: 94.71 },
+        { code: '162415', name: '美国消费LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.797, price: 2.782, iopv: 2.81, prem: -1.0, asset: 7.9232, stock: 94.63 },
+        { code: '501312', name: '海外科技LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2798, price: 2.301, iopv: 2.325, prem: -1.03, asset: 24.2128, stock: 84.72, sk: 'jj' }
+      ] },
+      { id: 'asiaeu', data: [
+        { code: '159866', name: '日经ETF工银', nd: '2026-10-23', ad: '2026-06-30', nav: 1.5814, price: 1.608, iopv: 1.573, prem: 2.23, asset: 13.9034, stock: 99.0, sk: 'jj' },
+        { code: '513520', name: '日经ETF华夏', nd: '2026-10-23', ad: '2026-06-30', nav: 2.0965, price: 2.18, iopv: 2.146, prem: 1.58, asset: 24.2893, stock: 98.75, sk: 'jj' },
+        { code: '513310', name: '中韩半导体ETF华泰柏瑞', nd: '2026-10-23', ad: '2026-06-30', nav: 3.6579, price: 3.752, iopv: 3.735, prem: 0.46, asset: 134.6494, stock: 98.58 },
+        { code: '513800', name: '日本东证指数ETF南方', nd: '2026-10-23', ad: '2026-06-30', nav: 1.8488, price: 1.837, iopv: 1.87, prem: -1.76, asset: 19.2934, stock: 97.48, sk: 'jj' },
+        { code: '159561', name: '德国ETF嘉实', nd: '2026-10-22', ad: '2026-06-30', nav: 1.2742, price: 1.272, iopv: 1.287, prem: -1.17, asset: 19.2112, stock: 96.97 },
+        { code: '513000', name: '日经225ETF易方达', nd: '2026-10-23', ad: '2026-06-30', nav: 2.114, price: 2.177, iopv: 2.158, prem: 0.88, asset: 22.6959, stock: 94.27, sk: 'jj' },
+        { code: '513880', name: '日经225ETF华安', nd: '2026-10-23', ad: '2026-06-30', nav: 1.9646, price: 2.055, iopv: 2.008, prem: 2.34, asset: 27.2996, stock: 91.92, sk: 'jj' },
+        { code: '513080', name: '法国ETF华安', nd: '2026-10-22', ad: '2026-06-30', nav: 1.5793, price: 1.602, iopv: 1.583, prem: 1.2, asset: 11.1241, stock: 91.38 },
+        { code: '513030', name: '德国ETF华安', nd: '2026-10-22', ad: '2026-06-30', nav: 1.7398, price: 1.752, iopv: 1.733, prem: 1.1, asset: 18.0025, stock: 91.22 }
+      ] },
+      { id: 't0lof', data: [
+        { code: '501018', name: '南方原油LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2176, price: 2.27, iopv: 2.183, prem: 3.99, asset: 13.4627, stock: 94.04, sk: 'jj' },
+        { code: '160723', name: '嘉实原油LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.5139, price: 2.574, iopv: 2.478, prem: 3.87, asset: 12.0099, stock: 93.13, sk: 'jj' },
+        { code: '161126', name: '标普医疗保健LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.2701, price: 2.312, iopv: 2.249, prem: 2.8, asset: 1.3058, stock: 94.71 },
+        { code: '162719', name: '石油LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 3.295, price: 3.315, iopv: 3.329, prem: -0.42, asset: 8.9617, stock: 91.83 },
+        { code: '162411', name: '华宝油气LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.0195, price: 1.025, iopv: 1.03, prem: -0.49, asset: 20.0701, stock: 94.71 },
+        { code: '161815', name: '抗通胀LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.145, price: 1.14, iopv: 1.147, prem: -0.61, asset: 7.6279, stock: 88.77, sk: 'jj' },
+        { code: '163208', name: '全球油气能源LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.498, price: 1.492, iopv: 1.504, prem: -0.8, asset: 2.6722, stock: 94.8, sk: 'jj' },
+        { code: '160416', name: '石油基金LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 2.3055, price: 2.305, iopv: 2.326, prem: -0.9, asset: 5.3206, stock: 88.47 },
+        { code: '164701', name: '黄金LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.546, price: 1.55, iopv: 1.588, prem: -2.39, asset: 8.52, stock: 95.59, sk: 'jj' },
+        { code: '160719', name: '嘉实黄金LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.779, price: 1.77, iopv: 1.819, prem: -2.69, asset: 3.5664, stock: 94.86, sk: 'jj' },
+        { code: '161116', name: '黄金主题LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 1.4763, price: 1.467, iopv: 1.513, prem: -3.04, asset: 3.9241, stock: 94.84, sk: 'jj' },
+        { code: '165513', name: '中信保诚商品LOF', nd: '2026-10-22', ad: '2026-06-30', nav: 0.9257, price: 0.925, iopv: 0.954, prem: -3.04, asset: 4.2093, stock: 90.89, sk: 'jj' }
+      ] }
+    ];
+    var KEYS = ['code', 'name', 'nav', 'prem', 'stock', 'asset'];
+    var state = {};
+    MODULES.forEach(function (m) { state[m.id] = { key: 'prem', dir: -1 }; });
+
+    function fmtPrem(d) {
+      var cls = d.prem >= 10 ? 'prem-high' : (d.prem >= 5 ? 'prem-mid' : (d.prem < 0 ? 'prem-neg' : ''));
+      var tip = '收盘价 ' + d.price.toFixed(3) + ' 元 / 参考净值 ' + d.iopv.toFixed(3) + ' 元（2026-10-23 收盘）';
+      return '<span class="num ' + cls + '" title="' + tip + '">' + (d.prem > 0 ? '+' : '') + d.prem.toFixed(2) + '%</span>';
+    }
+    function stockTip(d) {
+      if (d.sk === 'reit') return 'REIT 持仓计入其他资产（' + d.ad + '），股票占比极低';
+      return d.sk === 'jj' ? '以基金份额持有（联接式）· 基金占净值比（' + d.ad + '）' : d.ad + ' 定期报告';
+    }
+    function cellHtml(k, d) {
+      switch (k) {
+        case 'code': return '<a href="https://fund.eastmoney.com/' + d.code + '.html" target="_blank" rel="noopener">' + d.code + '</a>';
+        case 'name': return '<span title="' + d.name + '">' + d.name + '</span>';
+        case 'nav': return '<span class="num" title="净值日期 ' + d.nd + '">' + d.nav.toFixed(4) + '</span>';
+        case 'prem': return fmtPrem(d);
+        case 'asset': return d.asset == null ? '<span class="num">—</span>' : '<span class="num" title="' + d.ad + ' 定期报告">' + d.asset.toFixed(2) + '</span>';
+        case 'stock':
+          if (d.stock == null) return '<span class="num">—</span>';
+          return '<span class="num" title="' + stockTip(d) + '">' + d.stock.toFixed(2) + '%' + (d.sk === 'jj' ? '*' : '') + '</span>';
+        default: return '';
+      }
+    }
+    function sortVal(d, k) { return d[k]; }
+    function render(mid) {
+      var tbody = document.getElementById('tbody-' + mid);
+      var table = document.getElementById('tbl-' + mid);
+      if (!tbody || !table) return;
+      var data = null;
+      for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === mid) data = MODULES[i].data;
+      if (!data) return;
+      var st = state[mid];
+      var rows = data.slice().sort(function (a, b) {
+        var x = sortVal(a, st.key), y = sortVal(b, st.key);
+        if (x == null || y == null) return (x == null && y == null) ? 0 : (x == null ? 1 : -1);
+        var c = (typeof x === 'string') ? x.localeCompare(y, 'zh') : (x - y);
+        return c * (st.dir === -1 ? -1 : 1);
+      });
+      var html = '';
+      for (var r = 0; r < rows.length; r++) {
+        html += '<tr>';
+        for (var j = 0; j < KEYS.length; j++) {
+          var align = KEYS[j] === 'name' ? ' class="td-name"' : (KEYS[j] === 'code' ? '' : ' class="text-end"');
+          html += '<td' + align + '>' + cellHtml(KEYS[j], rows[r]) + '</td>';
+        }
+        html += '</tr>';
+      }
+      tbody.innerHTML = html;
+      var ths = table.querySelectorAll('th[data-key]');
+      for (var t = 0; t < ths.length; t++) {
+        var th = ths[t];
+        var btn = th.querySelector('.th-sort');
+        var active = th.getAttribute('data-key') === st.key;
+        th.setAttribute('aria-sort', active ? (st.dir === -1 ? 'descending' : 'ascending') : 'none');
+        var label = th.textContent.replace(/[▲▼△▽⇅]/g, '').trim();
+        btn.innerHTML = label + '<span class="arrow" aria-hidden="true">' + (active ? (st.dir === -1 ? '▼' : '▲') : '⇅') + '</span>';
+      }
+    }
+    var ths = document.querySelectorAll('#qdii-etf-overview th[data-key]');
+    for (var t = 0; t < ths.length; t++) {
+      (function (th) {
+        th.querySelector('.th-sort').addEventListener('click', function () {
+          var mid = th.closest('table').id.slice(4);
+          var k = th.getAttribute('data-key');
+          if (state[mid].key === k) { state[mid].dir = -state[mid].dir; } else { state[mid].key = k; state[mid].dir = -1; }
+          render(mid);
+        });
+      })(ths[t]);
+    }
+    MODULES.forEach(function (m) { render(m.id); });
+  })();
+</script>
+</body>
+</html>
