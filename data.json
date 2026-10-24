@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24 07:52:27 (北京时间, 构建时点)",
+ "generatedAt": "2026-10-25 07:13:39 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.8109,
@@ -838,8 +838,8 @@
     },
     {
      "date": "2026-10-23",
-     "estNavA": 2.3353,
-     "estNavC": 2.3156,
+     "estNavA": 2.3435,
+     "estNavC": 2.3237,
      "officialA": null,
      "officialC": null
     }
@@ -863,7 +863,7 @@
     },
     {
      "date": "2026-10-23",
-     "chgPct": 0
+     "chgPct": 0.35
     }
    ],
    "live": {
@@ -1671,8 +1671,8 @@
     },
     {
      "date": "2026-10-23",
-     "estNavA": 2.6561,
-     "estNavC": 2.6203,
+     "estNavA": 2.67,
+     "estNavC": 2.6341,
      "officialA": null,
      "officialC": null
     }
@@ -1696,7 +1696,7 @@
     },
     {
      "date": "2026-10-23",
-     "chgPct": 0.47
+     "chgPct": 0.99
     }
    ],
    "live": {
@@ -1727,16 +1727,12 @@
    "label": "标普信息科技",
    "code": "S5INFT",
    "chgPct": 0.35,
-   "price": 6893.28,
+   "price": null,
    "rtCode": null,
    "viaEtf": false,
    "etfName": "XLK",
-   "source": "tradingview-index",
+   "source": "cnbc-index",
    "hist": [
-    {
-     "date": "2026-10-16",
-     "chgPct": -2.54
-    },
     {
      "date": "2026-10-19",
      "chgPct": 1.19
@@ -1752,6 +1748,10 @@
     {
      "date": "2026-10-22",
      "chgPct": -3
+    },
+    {
+     "date": "2026-10-23",
+     "chgPct": 0.35
     }
    ],
    "histViaEtf": false
@@ -1761,11 +1761,11 @@
    "label": "纳指科技",
    "code": "NDXTMC",
    "chgPct": 0.17,
-   "price": 2906.3093,
+   "price": null,
    "rtCode": null,
    "viaEtf": false,
    "etfName": "QTEC",
-   "source": "google-finance",
+   "source": "cnbc-index",
    "hist": [
     {
      "date": "2026-10-19",
@@ -1802,10 +1802,6 @@
    "source": "tradingview-index",
    "hist": [
     {
-     "date": "2026-10-16",
-     "chgPct": -3.72
-    },
-    {
      "date": "2026-10-19",
      "chgPct": 2.49
     },
@@ -1820,6 +1816,10 @@
     {
      "date": "2026-10-22",
      "chgPct": -0.67
+    },
+    {
+     "date": "2026-10-23",
+     "chgPct": -1.38
     }
    ],
    "histViaEtf": false
@@ -1870,10 +1870,6 @@
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-10-16",
-     "chgPct": -1.09
-    },
-    {
      "date": "2026-10-19",
      "chgPct": 0.41
     },
@@ -1888,6 +1884,10 @@
     {
      "date": "2026-10-22",
      "chgPct": -1.21
+    },
+    {
+     "date": "2026-10-23",
+     "chgPct": -0.52
     }
    ],
    "histViaEtf": false
@@ -1928,19 +1928,31 @@
   }
  ],
  "weekAhead": {
-  "weekStart": "2026-10-19",
-  "weekEnd": "2026-10-23",
+  "weekStart": "2026-10-26",
+  "weekEnd": "2026-10-30",
   "windowDays": 30,
   "brief": {
-   "intro": "下周（10 月 19 日 至 10 月 23 日）金融市场将迎来多个关键宏观数据与美股第三季度财报季的正式开幕：",
-   "otherCount": 52,
+   "intro": "下周（10 月 26 日 至 10 月 30 日）金融市场将迎来多个关键宏观数据与美股第三季度财报季的正式开幕：",
+   "otherCount": 71,
    "macro": {
     "title": "1. 重要宏观经济事件与数据",
     "groups": [
      {
-      "date": "2026-10-22",
+      "date": "2026-10-27",
       "items": [
-       "美国 10/17 当周失业金申请（20:30）：初请 预期 200，前值 200、续请 预期 1720，前值 1703。就业数据是美联储决策的关键输入"
+       "美国 9 月耐用品订单（20:30）：前值 0.1、预期 0.6%，前值 0.3%、预期 0.6%，前值 0%"
+      ]
+     },
+     {
+      "date": "2026-10-29",
+      "items": [
+       "美国 Q3 GDP（20:30）：前值 2.8%、预期 3.5%，前值 6.1%、预期 3.2%，前值 2.2%。增长动能",
+       "美国 9 月 PCE Price Index MoM（20:30）：预期 0.5%，前值 0.3%",
+       "美国 9 月 PCE Price Index YoY（20:30）：前值 3.4%",
+       "美国 9 月个人收入（20:30）：预期 0.3%，前值 0.2%",
+       "美国 9 月个人消费支出（20:30）：预期 0.3%，前值 0.9%",
+       "美国 10/24 当周失业金申请（20:30）：初请 预期 196，前值 194、续请 前值 1728。就业数据是美联储决策的关键输入",
+       "美国 Q3核心 PCE（20:30）：前值 3.3%、预期 3.1%，前值 3%、预期 0.3%，前值 0.2%"
       ]
      }
     ],
@@ -1951,23 +1963,37 @@
     "lead": "下周财报以科技巨头与各行业龙头为主，银行、保险、券商等金融公司不列入：",
     "groups": [
      {
-      "date": "2026-10-20",
+      "date": "2026-10-26",
       "items": [
-       "其他知名巨头：奈飞（NASDAQ:NFLX）、GE Aerospace（NYSE:GE）、RTX Corporation（NYSE:RTX）、直觉外科（NASDAQ:ISRG）、3M Company（NYSE:MMM）"
+       "科技与半导体：Cadence Design Systems, Inc.（NASDAQ:CDNS）、Rambus, Inc.（RMBS）",
+       "其他知名巨头：Verizon Communications Inc.（NYSE:VZ）"
       ]
      },
      {
-      "date": "2026-10-21",
+      "date": "2026-10-27",
       "items": [
-       "科技与半导体：Meta（NASDAQ:META）、德州仪器（NASDAQ:TXN）、泛林集团（NASDAQ:LRCX）、International Business Machines Corporation（NYSE:IBM）、Teledyne Technologies Incorporated（NYSE:TDY）",
-       "其他知名巨头：特斯拉（NASDAQ:TSLA）、AT&T Inc.（NYSE:T）、Thermo Fisher Scientific Inc（NYSE:TMO）、Abbott Laboratories（NYSE:ABT）、Danaher Corporation（NYSE:DHR）、Elevance Health, Inc.（NYSE:ELV）、Philip Morris International Inc（NYSE:PM）"
+       "科技与半导体：恩智浦（NASDAQ:NXPI）、Corning Incorporated（NYSE:GLW）、F5, Inc.（NASDAQ:FFIV）、Seagate Technology Holdings PLC（NASDAQ:STX）、Teradyne, Inc.（NASDAQ:TER）",
+       "其他知名巨头：Coca-Cola Company (The)（NYSE:KO）、Boeing Company (The)（NYSE:BA）、United Parcel Service, Inc.（NYSE:UPS）、HCA Healthcare, Inc.（NYSE:HCA）、Illinois Tool Works Inc.（NYSE:ITW）"
       ]
      },
      {
-      "date": "2026-10-22",
+      "date": "2026-10-28",
       "items": [
-       "科技与半导体：Roper Technologies, Inc.（NASDAQ:ROP）、VeriSign, Inc.（NASDAQ:VRSN）、Western Digital Corporation（NASDAQ:WDC）",
-       "其他知名巨头：Procter & Gamble Company (The)（NYSE:PG）、康卡斯特（NASDAQ:CMCSA）、霍尼韦尔（NASDAQ:HON）、Lockheed Martin Corporation（NYSE:LMT）"
+       "科技与半导体：微软（NASDAQ:MSFT）、科天半导体（NASDAQ:KLAC）、ServiceNow, Inc.（NYSE:NOW）、Amphenol Corporation（NYSE:APH）、Flex Ltd.（NASDAQ:FLEX）、FormFactor, Inc.（FORM）、Fortinet, Inc.（NASDAQ:FTNT）、Gen Digital Inc.（NASDAQ:GEN） 等",
+       "其他知名巨头：谷歌（NASDAQ:GOOGL）、Alphabet Inc.（NASDAQ:GOOG）、T-Mobile（NASDAQ:TMUS）"
+      ]
+     },
+     {
+      "date": "2026-10-29",
+      "items": [
+       "科技与半导体：英特尔（NASDAQ:INTC）、AXT Inc（AXTI）、Cognizant Technology Solutions Corporation（NASDAQ:CTSH）、Entegris, Inc.（ENTG）、First Solar, Inc.（NASDAQ:FSLR）、GoDaddy Inc.（NYSE:GDDY）、Monolithic Power（NASDAQ:MPWR）、Sandisk Corporation（NASDAQ:SNDK） 等",
+       "其他知名巨头：亚马逊（NASDAQ:AMZN）、Strategy Inc（NASDAQ:MSTR）、Starbucks Corporation（NASDAQ:SBUX）、卡特彼勒（NYSE:CAT）、Eli Lilly and Company（NYSE:LLY）、Merck & Company, Inc.（NYSE:MRK）、Bristol-Myers Squibb Company（NYSE:BMY）、吉利德（NASDAQ:GILD） 等"
+      ]
+     },
+     {
+      "date": "2026-10-30",
+      "items": [
+       "其他知名巨头：ExxonMobil Holdings Corporation（NYSE:XOM）、Chevron Corporation（NYSE:CVX）、AbbVie Inc.（NYSE:ABBV）、Colgate-Palmolive Company（NYSE:CL）"
       ]
      }
     ]
@@ -2031,10 +2057,10 @@
    }
   },
   "counts": {
-   "events": 2,
-   "otherEvents": 52,
-   "earnings": 359,
-   "keyEarnings": 77,
+   "events": 15,
+   "otherEvents": 71,
+   "earnings": 851,
+   "keyEarnings": 187,
    "changes": 4
   },
   "notes": [],
