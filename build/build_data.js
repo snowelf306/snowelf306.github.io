@@ -1,6 +1,6 @@
 // Build dataset for QDII fund NAV estimation dashboard
 // Sources:
-//  - Nasdaq API      : US ETF daily closes (incl. 2026-06-30 base)
+//  - Nasdaq API      : US ETF daily closes (incl. 2026-09-30 base)
 //  - Tencent ifzq    : A-share ETF qfq daily klines
 //  - Yahoo Finance   : Japan ETF (2644.T) daily closes (直连优先, cookie/crumb 与公共代理兜底)
 //  - chinamoney.com.cn : official RMB central parity (USD/CNY, 100JPY/CNY)
@@ -51,22 +51,22 @@ const FUNDS = [
     nameFull: '华宝海外科技股票型证券投资基金（QDII-LOF）',
     nameShort: '海外科技LOF',
     codeA: '501312', codeC: '017204',
-    reportDate: '2026-06-30',
-    navA0: 2.4362, navC0: 2.4156,
-    sharesA: 764363856.79, sharesC: 231456739.57,
-    netAssetsA: 1862166774.88, netAssetsC: 559113004.06,
-    totalAssets: 2585548235.16, fundInvestments: 2051362956.72,
+    reportDate: '2026-09-30',
+    navA0: 2.4897, navC0: 2.4668,
+    sharesA: 540558674.39, sharesC: 200392359.45,
+    netAssetsA: 1345832724.51, netAssetsC: 494327512.36,
+    totalAssets: 1855842511.96, fundInvestments: 1742031311.59,
     holdings: [
-      { name: 'ARK Innovation ETF', ticker: 'ARKK', market: 'US', fv0: 447521490.59, p0: 80.82 },
-      { name: 'ARK Genomic Revolution ETF', ticker: 'ARKG', market: 'US', fv0: 409830940.68, p0: 42.06 },
-      { name: 'ARK Autonomous Technology & Robotics ETF', ticker: 'ARKQ', market: 'US', fv0: 245725082.53, p0: 132.22 },
-      { name: 'Global X Artificial Intelligence & Technology ETF', ticker: 'AIQ', market: 'US', fv0: 153129276.45, p0: 65.61 },
-      { name: 'Global X Robotics & Artificial Intelligence ETF', ticker: 'BOTZ', market: 'US', fv0: 122360710.95, p0: 37.94 },
-      { name: 'ARK Space & Defense Innovation ETF', ticker: 'ARKX', market: 'US', fv0: 121125457.80, p0: 34.12 },
-      { name: 'Technology Select Sector SPDR Fund', ticker: 'XLK', market: 'US', fv0: 113098622.53, p0: 190.52 },
-      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 106395331.00, p0: 655.89 },
-      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 80736817.25, p0: 640.76 },
-      { name: 'Invesco QQQ Trust Series 1', ticker: 'QQQ', market: 'US', fv0: 79245638.81, p0: 736.40 },
+      { name: 'ARK Genomic Revolution ETF', ticker: 'ARKG', market: 'US', fv0: 362735912.94, p0: 54.22 },
+      { name: 'ARK Innovation ETF', ticker: 'ARKK', market: 'US', fv0: 344527925.03, p0: 89.10 },
+      { name: 'ARK Autonomous Technology & Robotics ETF', ticker: 'ARKQ', market: 'US', fv0: 201675160.89, p0: 121.25 },
+      { name: 'Global X Artificial Intelligence & Technology ETF', ticker: 'AIQ', market: 'US', fv0: 173771533.29, p0: 65.16 },
+      { name: 'Global X Robotics & Artificial Intelligence ETF', ticker: 'BOTZ', market: 'US', fv0: 143727093.40, p0: 35.23 },
+      { name: 'State Street Technology Select Sector SPDR ETF', ticker: 'XLK', market: 'US', fv0: 114910061.71, p0: 195.75 },
+      { name: 'ARK Space & Defense Innovation ETF', ticker: 'ARKX', market: 'US', fv0: 111984170.27, p0: 31.90 },
+      { name: 'Invesco QQQ Trust Series 1', ticker: 'QQQ', market: 'US', fv0: 98153771.06, p0: 739.77 },
+      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 87099087.74, p0: 609.00 },
+      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 84256639.81, p0: 568.64 },
     ],
   },
   {
@@ -74,20 +74,20 @@ const FUNDS = [
     nameFull: '景顺长城全球半导体芯片产业股票型证券投资基金（QDII-LOF）',
     nameShort: '全球芯片LOF',
     codeA: '501225', codeC: '016668',
-    reportDate: '2026-06-30',
-    navA0: 3.7763, navC0: 3.7255,
-    sharesA: 239211983.86, sharesC: 82806748.09,
-    netAssetsA: 903349959.71, netAssetsC: 308499662.87,
-    totalAssets: 1223535652.64, fundInvestments: 1131215717.33,
+    reportDate: '2026-09-30',
+    navA0: 3.1066, navC0: 3.0617,
+    sharesA: 233206936.03, sharesC: 72114602.79,
+    netAssetsA: 724494323.70, netAssetsC: 220797345.05,
+    totalAssets: 948338412.60, fundInvestments: 885962181.53,
     holdings: [
-      { name: 'Invesco Dynamic Semiconductors ETF', ticker: 'PSI', market: 'US', fv0: 220636586.42, p0: 187.82 },
-      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 214581003.65, p0: 640.76 },
-      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 214358649.63, p0: 655.89 },
-      { name: 'Invesco PHLX Semiconductor ETF', ticker: 'SOXQ', market: 'US', fv0: 213589653.73, p0: 112.10 },
-      { name: '华夏国证半导体芯片ETF', ticker: '159995', symbol: 'sz159995', market: 'CN', fv0: 93762315.00, p0: 1.695 },
-      { name: '国泰CES半导体芯片行业ETF', ticker: '512760', symbol: 'sh512760', market: 'CN', fv0: 93052180.00, p0: 1.585 },
-      { name: '景顺长城中证芯片产业ETF', ticker: '159560', symbol: 'sz159560', market: 'CN', fv0: 60210668.80, p0: 1.648 },
-      { name: 'Global X Japan Semiconductor ETF', ticker: '2644.T', market: 'JP', currency: 'JPY', fv0: 21024660.10, p0: 4940 },
+      { name: 'Invesco Dynamic Semiconductors ETF', ticker: 'PSI', market: 'US', fv0: 175012631.99, p0: 152.47 },
+      { name: 'VanEck Semiconductor ETF', ticker: 'SMH', market: 'US', fv0: 171724864.91, p0: 609.00 },
+      { name: 'Invesco PHLX Semiconductor ETF', ticker: 'SOXQ', market: 'US', fv0: 171149065.04, p0: 99.40 },
+      { name: 'iShares Semiconductor ETF', ticker: 'SOXX', market: 'US', fv0: 170650334.39, p0: 568.64 },
+      { name: '景顺长城中证芯片产业ETF', ticker: '159560', symbol: 'sz159560', market: 'CN', fv0: 62788694.70, p0: 1.047 },
+      { name: '华夏国证半导体芯片ETF', ticker: '159995', symbol: 'sz159995', market: 'CN', fv0: 62626648.50, p0: 1.053 },
+      { name: '国泰CES半导体芯片行业ETF', ticker: '512760', symbol: 'sh512760', market: 'CN', fv0: 62276557.20, p0: 1.012 },
+      { name: 'Global X Japan Semiconductor ETF', ticker: '2644.T', market: 'JP', currency: 'JPY', fv0: 9733384.80, p0: 4149 },
     ],
   },
 ];
@@ -308,7 +308,7 @@ function assembleIndices(rt, lastUsCloseDate) {
 /* ---------------- fetchers ---------------- */
 
 async function fetchNasdaqHist(sym) {
-  const from = '2026-06-24', to = todayBJ();
+  const from = '2026-09-24', to = todayBJ();
   const url = `https://api.nasdaq.com/api/quote/${sym}/historical?assetclass=etf&fromdate=${from}&todate=${to}&limit=120`;
   const r = await getRetry(url, { headers: { 'User-Agent': BROWSER_UA, Accept: 'application/json' } });
   const j = JSON.parse(r.body);
@@ -323,7 +323,7 @@ async function fetchNasdaqHist(sym) {
 }
 
 async function fetchTencentKline(symbol) {
-  const url = `https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=${symbol},day,2026-06-24,${todayBJ()},120,qfq`;
+  const url = `https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=${symbol},day,2026-09-24,${todayBJ()},120,qfq`;
   const r = await getRetry(url);
   const j = JSON.parse(r.body);
   const d = j.data[symbol];
@@ -334,14 +334,9 @@ async function fetchTencentKline(symbol) {
   return map;
 }
 
-// Real Yahoo-via-proxy captures taken during source verification (fallback only).
+// 报告期末(2026-09-30)收盘快照（stockanalysis.com，与 Yahoo 日线一致）：Yahoo 不可达时兜底。
 const JP_FALLBACK = {
-  '2026-06-25': 5025, '2026-06-26': 4784, '2026-06-29': 4794, '2026-06-30': 4940,
-  '2026-07-01': 5172, '2026-07-02': 4833, '2026-07-03': 5009, '2026-07-06': 4886,
-  '2026-07-07': 4667, '2026-07-08': 4518, '2026-07-09': 4735, '2026-07-10': 4851,
-  '2026-07-13': 4728, '2026-07-14': 4739, '2026-07-15': 4917, '2026-07-16': 4671,
-  '2026-07-17': 4233, '2026-07-21': 4383, '2026-07-22': 4396, '2026-07-23': 4479,
-  '2026-07-24': 4252,
+  '2026-09-30': 4149,
 };
 
 // Yahoo 日线（日股 2644.T）：直连优先 → cookie+crumb → 公共 CORS 代理兜底。
@@ -352,7 +347,7 @@ const JP_FALLBACK = {
 // @returns {{map: Object, live: boolean, via: 'direct'|'direct+crumb'|'cors-proxy'}}
 async function fetchYahooProxy(symbol, offsetHours) {
   const UA = { 'User-Agent': BROWSER_UA };
-  const period1 = Math.floor(Date.UTC(2026, 5, 23) / 1000); // 2026-06-23
+  const period1 = Math.floor(Date.UTC(2026, 8, 24) / 1000); // 2026-09-24
   const period2 = Math.floor(Date.now() / 1000) + 86400;
   const chartPath = (host, crumb) => host + '/v8/finance/chart/' + encodeURIComponent(symbol)
     + `?period1=${period1}&period2=${period2}&interval=1d` + (crumb ? '&crumb=' + encodeURIComponent(crumb) : '');
@@ -454,7 +449,7 @@ async function fetchParity(currency) {
   // 6/20 至今跨约 70+ 个交易日，接口单页上限 50 条：分页抓到覆盖 6/30 报告期基准为止
   const map = {};
   for (let page = 1; page <= 4; page++) {
-    const qs = `lang=CN&startDate=2026-06-20&endDate=${todayBJ()}&currency=${encodeURIComponent(currency)}&pageNum=${page}&pageSize=50`;
+    const qs = `lang=CN&startDate=2026-09-20&endDate=${todayBJ()}&currency=${encodeURIComponent(currency)}&pageNum=${page}&pageSize=50`;
     const r = await getRetry('https://www.chinamoney.com.cn/ags/ms/cm-u-bk-ccpr/CcprHisNew?' + qs, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': BROWSER_UA, Referer: 'https://www.chinamoney.com.cn/chinese/bkccpr/' },
@@ -464,7 +459,7 @@ async function fetchParity(currency) {
     if (!records.length) break;
     for (const rec of records) map[rec.date] = parseFloat(rec.values[0]);
     const oldest = records.map(x => x.date).sort()[0];
-    if (records.length < 50 || oldest <= '2026-06-29') break; // 已覆盖报告期基准日
+    if (records.length < 50 || oldest <= '2026-09-29') break; // 已覆盖报告期基准日
     await sleep(400);
   }
   if (!Object.keys(map).length) throw new Error('parity empty for ' + currency);
@@ -512,7 +507,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     const viaLabel = { direct: '直连', 'direct+crumb': '直连+cookie/crumb', 'cors-proxy': '公共 CORS 代理' }[jp.via] || jp.via;
     jpSource = `Yahoo Finance ${viaLabel} (2644.T 日收盘)`;
     const ks = Object.keys(jpMap).sort();
-    log('JP 2644.T days', ks.length, 'via', jp.via, 'last', ks[ks.length - 1], '=', jpMap[ks[ks.length - 1]], '| jun30=', jpMap['2026-06-30']);
+    log('JP 2644.T days', ks.length, 'via', jp.via, 'last', ks[ks.length - 1], '=', jpMap[ks[ks.length - 1]], '| sep30=', jpMap['2026-09-30']);
   } catch (e) {
     log('WARN japan proxy failed, using captured snapshot + minkabu latest:', String(e.message).slice(0, 90));
     jpMap = { ...JP_FALLBACK };
@@ -526,9 +521,9 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
   log('fetching FX central parity...');
   const usdcnyMap = await fetchParity('USD/CNY');
   const jpycny100Map = await fetchParity('100JPY/CNY');
-  const fxBaseDate = '2026-06-30';
-  // 6/30 报告期末基准汇率（历史固定值，固化，不依赖每次抓取）
-  const usdcny0 = 6.8109, jp100_0 = 4.2045;
+  const fxBaseDate = '2026-09-30';
+  // 9/30 报告期末基准汇率（历史固定值，固化，不依赖每次抓取）
+  const usdcny0 = 6.7351, jp100_0 = 4.2727;
   const latestParDates = Object.keys(usdcnyMap).sort();
   const latestFxDate = latestParDates[latestParDates.length - 1];
   // 最新汇率抓不到时回退到 6/30 固化基准汇率
@@ -567,11 +562,11 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     source: '中国外汇交易中心人民币汇率中间价 (chinamoney.com.cn)',
   };
 
-  // master trading-date list: union of all maps, >= 2026-06-30, sorted
+  // master trading-date list: union of all maps, >= 2026-09-30, sorted
   const dateSet = new Set();
-  for (const m of [...Object.values(usMaps), ...Object.values(cnMaps)]) for (const d of Object.keys(m)) if (d >= '2026-06-30') dateSet.add(d);
-  if (jpMap) for (const d of Object.keys(jpMap)) if (d >= '2026-06-30') dateSet.add(d);
-  for (const d of latestParDates) if (d >= '2026-06-30') dateSet.add(d);
+  for (const m of [...Object.values(usMaps), ...Object.values(cnMaps)]) for (const d of Object.keys(m)) if (d >= '2026-09-30') dateSet.add(d);
+  if (jpMap) for (const d of Object.keys(jpMap)) if (d >= '2026-09-30') dateSet.add(d);
+  for (const d of latestParDates) if (d >= '2026-09-30') dateSet.add(d);
   const dates = [...dateSet].sort();
 
   // per-market fx on each date (parity; carry forward)
@@ -638,7 +633,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     const series = [];
     const carry = {}; // ticker -> last known {price, cur}
     for (const d of dates) {
-      let portVal = 0, disclosedVal = 0;
+      let portVal = 0;
       for (const h of holdingsOut) {
         const p = priceOf({ ticker: h.ticker, symbol: h.symbol, market: h.market }, d);
         const cur = h.currency;
@@ -650,10 +645,9 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
         if (!eff) continue;
         const valCny = h.qty * eff.p * eff.fxd;
         portVal += valCny;
-        disclosedVal += valCny;
       }
-      if (disclosedSum > 0 && residualFV > 0) portVal += residualFV * (disclosedVal / disclosedSum);
-      else if (residualFV > 0 && disclosedSum === 0) portVal += residualFV;
+      // 未披露持仓为现金或等价物：面值持有、不随股价波动
+      if (residualFV > 0) portVal += residualFV;
       const estTotal = otherNetAssets + portVal;
       series.push({
         date: d,
@@ -708,7 +702,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
       h.valLast = h.qty * eff.p * eff.fxd;
       portValLive += h.valLast; discValLive += h.valLast;
     }
-    const residLive = residualFV > 0 ? residualFV * (discValLive / disclosedSum) : 0;
+    const residLive = residualFV; // 现金或等价物，面值持有
     const estTotLive = otherNetAssets + portValLive + residLive;
     const estNavA_live = +(f.navA0 * estTotLive / netTotal).toFixed(4);
     const estNavC_live = +(f.navC0 * estTotLive / netTotal).toFixed(4);
@@ -717,13 +711,13 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
     for (const h of holdingsOut) h.weightNowPct = +(h.valLast / estTotLive * 100).toFixed(2);
     holdingsOut.sort((a, b) => b.weightNowPct - a.weightNowPct);
 
-    // 整个基金较前日收盘涨幅：组合市值 ÷ 前收市值 − 1（静态项不变，未披露持仓随组合平均）
+    // 整个基金较前日收盘涨幅：组合市值 ÷ 前收市值 − 1（静态项与未披露持仓均为现金口径，不波动）
     let portValPrev = 0;
     for (const h of holdingsOut) {
       const pc = (h.prevClose != null && h.prevClose > 0) ? h.prevClose : h.pLast;
       portValPrev += h.qty * pc * h.fxLast;
     }
-    const residPrev = residualFV > 0 ? residualFV * (portValPrev / (disclosedSum || 1)) : 0;
+    const residPrev = residualFV;
     const estTotPrev = otherNetAssets + portValPrev + residPrev;
     const fundDailyChgPct = +((estTotLive / estTotPrev - 1) * 100).toFixed(2);
     const estNavAPrev = +(f.navA0 * estTotPrev / netTotal).toFixed(4);
@@ -753,7 +747,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
       netAssetsTotal: netTotal, totalAssets: f.totalAssets, fundInvestments: f.fundInvestments,
       liabilities: liabTotal, otherNetAssets, disclosedSum, residualFV,
       holdings: holdingsOut,
-      residual: { fv0: residualFV, note: '报告未披露的其余基金持仓（按已披露持仓平均涨幅估算）' },
+      residual: { fv0: residualFV, note: '报告未披露的其余基金持仓（现金或等价物，按面值持有）' },
       series,
       hist5,
       live: {
@@ -787,7 +781,7 @@ function fmtNowCn(d) { return new Date(d.getTime() + 8 * 3600e3).toISOString().r
 
   const data = {
     generatedAt: fmtNowCn(new Date()) + ' (北京时间, 构建时点)',
-    disclaimer: '基于基金2026年第2季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。',
+    disclaimer: '基于基金2026年第3季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。',
     fx,
     funds: fundsOut,
     indices: indicesOut,

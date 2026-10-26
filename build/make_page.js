@@ -156,14 +156,14 @@ footer{margin-top:22px;color:#555f6b;font-size:11.5px;text-align:center}
 <div class="notes">
 <h3>计算方法与说明</h3>
 <ul>
-  <li><b>持仓来源：</b>两份《2026年第2季度报告》PDF（报告期截止 2026-06-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
+  <li><b>持仓来源：</b>两份《2026年第3季度报告》PDF（报告期截止 2026-09-30）中披露的"前十名基金投资明细"，含基金名称、管理人、公允价值（人民币元）及占基金资产净值比例。</li>
   <li><b>持仓数量推算：</b>季报未直接披露持有份数，按 <code>数量 = 报告期公允价值 ÷（报告期末收盘价 × 报告期末汇率中间价）</code> 推算。美国 ETF 价格取自 Nasdaq 日线（USD），A 股 ETF 取腾讯行情前复权日线（CNY，自动消除 159995 于 2026-07-07 的 1:2 份额拆分跳变），日本 2644.T 取 Yahoo Finance 日线（JPY）。</li>
-  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-06-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
-  <li><b>估算净值公式：</b><code>估算净值(t) = 报告期净值 × [净资产−基金投资 + Σ 数量ᵢ×价格ᵢ(t)×汇率ᵢ(t) + 未披露持仓×平均涨幅] ÷ 净资产</code>。其中"未披露持仓"= 季报基金投资合计 − 前十（八）大披露合计，按已披露持仓的平均涨幅估值。该公式在报告日恰好还原官方净值。</li>
+  <li><b>汇率折算：</b>采用中国外汇交易中心公布的<b>人民币汇率中间价</b>：2026-09-30 USD/CNY = ${data.fx.usdcny0}、100JPY/CNY = ${(data.fx.jpycny0 * 100).toFixed(4)}；最新中间价（${data.fx.usdcnyLastDate}）USD/CNY = ${data.fx.usdcnyLast}、100JPY/CNY = ${(data.fx.jpycnyLast * 100).toFixed(4)}。</li>
+  <li><b>估算净值公式：</b><code>估算净值(t) = 报告期净值 × [净资产−基金投资 + Σ 数量ᵢ×价格ᵢ(t)×汇率ᵢ(t) + 未披露持仓] ÷ 净资产</code>。其中"未披露持仓"= 季报基金投资合计 − 前十（八）大披露合计，为现金或等价物，按面值持有、不随股价波动。该公式在报告日恰好还原官方净值。</li>
   <li><b>银行存款 / 其他资产的处理：</b>季报中"银行存款和结算备付金""其他资产"（主要为应收证券清算款、应收申购款）扣除负债后并入公式的静态项，按面值持有、不随股价波动——该项占净值比例：海外科技约 ${pctHb}%，全球芯片约 ${pctJsq}%。此处理保证报告日还原精确。</li>
-  <li><b>申赎流量是最主要的误差来源：</b>海外科技LOF 持续开放申购，报告期份额大幅净增长（场内溢价吸引申购-卖出套利）。新申购款以现金形态停留数日（美元换汇+建仓时滞），摊薄了组合波动，而本估算按季报结构满仓计算，故官方净值常低于估算值；新资金随后的投向与建仓成本季报不再披露，构成无法从公开数据消除的偏差。全球芯片LOF 处于暂停申购状态、仅有小额持续赎回，赎回对每份净值中性，组合结构与季报基本一致，因此静态估算与官方净值高度贴合（残余偏差≈费用水平）。</li>
+  <li><b>申赎流量是最主要的误差来源：</b>本季度海外科技LOF 净赎回约 2.55 亿份（期初 9.96 亿份 → 期末 7.41 亿份，净赎回约 25.6%），大额赎回迫使组合持续变现持仓并留存现金，而本估算按季报结构满仓计算：赎回期间实际组合的现金比例升高会平抑波动，且变现的冲击成本与赎回款再投向季报不再披露，构成无法从公开数据消除的偏差。全球芯片LOF 延续暂停申购、净赎回约 0.17 亿份（约 5.2%），赎回对每份净值基本中性，组合结构与季报基本一致，静态估算与官方净值高度贴合（残余偏差≈费用水平）。</li>
   <li><b>最新价格时点：</b>美股为腾讯行情实时盘中价（美东时间），A 股 ETF 为最近收盘价，日本 ETF 为 minkabu.jp 收盘快照，美元/日元汇率用最近日中间价。点击右上角"刷新实时行情"可更新美股与 A 股价格并重算（汇率与日经持仓保持构建时点值）。</li>
-  <li><b>误差参考：</b>以同日官方净值对照：全球芯片偏差约 0.1%~0.5%（接近费用拖累水平），海外科技约 1%~2%（开放申购带来的现金摊薄与再建仓所致）。其余次要素级：基金调仓 &gt; 管理托管等费用（约 0.3%/两月，恒为正偏）&gt; 境内外估值时点差 &gt; 现金静态假设。估算结果不构成投资建议。</li>
+  <li><b>误差参考：</b>以同日官方净值对照：全球芯片（暂停申购、赎回温和）估算偏差通常在 1% 以内（接近费用拖累水平）；海外科技（本季度大额净赎回约 25.6%）偏差约 1%~3%（现金留存与再建仓成本所致）。其余次要素级：基金调仓 &gt; 管理托管等费用（约 0.45%/季，恒为正偏）&gt; 境内外估值时点差 &gt; 现金静态假设。估算结果不构成投资建议。</li>
 </ul>
 </div>
 <footer id="srcFooter"></footer>
@@ -201,11 +201,11 @@ function fundCard(f, fi) {
       + '</tr>';
   });
   if (f.residual && f.residual.fv0 > 0.5) {
-    const residVal = L.estTotalAssetsCny - f.otherNetAssets - f.holdings.reduce((s, h) => s + h.valLast, 0);
+    const residVal = f.residualFV;
     hrows += '<tr style="color:var(--muted)">'
-      + '<td>其余未披露基金持仓<small>（按已披露平均涨幅估算）</small></td>'
+      + '<td>其余未披露基金持仓<small>（现金或等价物，按面值持有）</small></td>'
       + '<td>-</td><td>-</td>'
-      + '<td>随组合平均</td>'
+      + '<td>现金</td>'
       + '<td>' + fmtWan(residVal) + '</td>'
       + '<td>' + (residVal / L.estTotalAssetsCny * 100).toFixed(2) + '%</td></tr>';
   }
@@ -482,9 +482,9 @@ function liveRefresh() {
           const pc = (prevClose != null && prevClose > 0) ? prevClose : price;
           portValPrev += h.qty * pc * h.fxLastLive;
         });
-        const residVal = f.residualFV > 0 ? f.residualFV * (discVal / (f.disclosedSum || 1)) : 0;
+        const residVal = f.residualFV;
         const estTot = f.otherNetAssets + portVal + residVal;
-        const residPrev = f.residualFV > 0 ? f.residualFV * (portValPrev / (f.disclosedSum || 1)) : 0;
+        const residPrev = f.residualFV;
         const estTotPrev = f.otherNetAssets + portValPrev + residPrev;
         f.liveLive = {
           estNavA: +(f.navA0 * estTot / f.netAssetsTotal).toFixed(4),
