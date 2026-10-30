@@ -1,0 +1,42 @@
+name: update-qdii-overview
+
+# 每个交易日晚 8 点（北京时间）更新 QDII 场内基金一览页：
+# 溢率率/净值/价格按当日收盘行情刷新；检测到新定期报告披露时自动更新股票占比与净资产
+# UTC 12:00 = 北京时间 20:00（周一至周五）；脚本在节假日/数据无变化时不产生提交
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch: {}   # 允许在 Actions 页面手动触发
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-qdii-overview
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch quotes and update page
+        run: python update_qdii.py
+
+      - name: Commit updated page
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nasdaq100-etf-overview.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: refresh QDII overview (premium/NAV) ($(date -u '+%F %H:%M') UTC)"
+            git push
+          fi
