@@ -198,41 +198,41 @@
     var PREM_DATE_LABEL = PREM_DATE.toISOString().slice(0, 10);
     var MODULES = [
       { id: 'nasdaq100', data: [
-        { code: '159659', name: '纳斯达克100ETF招商', nd: '2026-10-22', ad: '2026-09-30', nav: 2.0952, price: 2.37, iopv: 2.157, prem: 9.87, asset: 99.3578, stock: 97.72 },
+        { code: '159659', name: '纳斯达克100ETF招商', nd: '2026-10-29', ad: '2026-09-30', nav: 2.1254, price: 2.356, iopv: 2.156, prem: 9.28, asset: 99.3578, stock: 97.72 },
         { code: '513300', name: '纳斯达克ETF华夏', nd: '2026-10-29', ad: '2026-09-30', nav: 2.4365, price: 2.674, iopv: 2.46, prem: 8.7, asset: 132.8768, stock: 95.88 },
-        { code: '159660', name: '纳指ETF汇添富', nd: '2026-10-22', ad: '2026-09-30', nav: 2.1181, price: 2.376, iopv: 2.181, prem: 8.94, asset: 49.1045, stock: 94.75 },
-        { code: '513390', name: '纳指100ETF博时', nd: '2026-10-22', ad: '2026-09-30', nav: 2.1752, price: 2.397, iopv: 2.215, prem: 8.22, asset: 42.5026, stock: 93.82 },
-        { code: '513110', name: '纳指ETF华泰柏瑞', nd: '2026-10-22', ad: '2026-09-30', nav: 2.2256, price: 2.447, iopv: 2.267, prem: 7.94, asset: 50.9792, stock: 93.22 },
-        { code: '159501', name: '纳指ETF嘉实', nd: '2026-10-22', ad: '2026-09-30', nav: 1.8208, price: 2.142, iopv: 1.875, prem: 14.24, asset: 124.1118, stock: 92.53 },
-        { code: '159696', name: '纳指ETF易方达', nd: '2026-10-22', ad: '2026-09-30', nav: 1.8051, price: 2.08, iopv: 1.859, prem: 11.89, asset: 50.1079, stock: 91.47 },
+        { code: '159660', name: '纳指ETF汇添富', nd: '2026-10-29', ad: '2026-09-30', nav: 2.1488, price: 2.358, iopv: 2.179, prem: 8.21, asset: 49.1045, stock: 94.75 },
+        { code: '513390', name: '纳指100ETF博时', nd: '2026-10-29', ad: '2026-09-30', nav: 2.2066, price: 2.42, iopv: 2.226, prem: 8.72, asset: 42.5026, stock: 93.82 },
+        { code: '513110', name: '纳指ETF华泰柏瑞', nd: '2026-10-29', ad: '2026-09-30', nav: 2.2575, price: 2.455, iopv: 2.277, prem: 7.82, asset: 50.9792, stock: 93.22 },
+        { code: '159501', name: '纳指ETF嘉实', nd: '2026-10-29', ad: '2026-09-30', nav: 1.8471, price: 2.158, iopv: 1.873, prem: 15.22, asset: 124.1118, stock: 92.53 },
+        { code: '159696', name: '纳指ETF易方达', nd: '2026-10-29', ad: '2026-09-30', nav: 1.8313, price: 2.072, iopv: 1.857, prem: 11.58, asset: 50.1079, stock: 91.47 },
         { code: '159941', name: '纳指ETF广发', nd: '2026-10-29', ad: '2026-09-30', nav: 1.4706, price: 1.649, iopv: 1.492, prem: 10.52, asset: 346.8166, stock: 90.92 },
         { code: '159632', name: '纳斯达克ETF华安', nd: '2026-10-29', ad: '2026-09-30', nav: 2.2341, price: 2.434, iopv: 2.266, prem: 7.41, asset: 113.0032, stock: 90.59 },
-        { code: '513870', name: '纳指ETF富国', nd: '2026-10-22', ad: '2026-09-30', nav: 1.8462, price: 2.08, iopv: 1.88, prem: 10.64, asset: 24.7117, stock: 90.18 },
+        { code: '513870', name: '纳指ETF富国', nd: '2026-10-29', ad: '2026-09-30', nav: 1.873, price: 2.067, iopv: 1.89, prem: 9.37, asset: 24.7117, stock: 90.18 },
         { code: '513100', name: '纳指ETF国泰', nd: '2026-10-29', ad: '2026-09-30', nav: 1.9663, price: 2.239, iopv: 1.984, prem: 12.85, asset: 194.6827, stock: 89.34 },
         { code: '159513', name: '纳斯达克100ETF大成', nd: '2026-10-29', ad: '2026-09-30', nav: 1.6378, price: 1.781, iopv: 1.661, prem: 7.22, asset: 73.8402, stock: 80.06 },
-        { code: '161130', name: '纳斯达克100LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 4.336, price: 4.649, iopv: 4.459, prem: 4.26, asset: 19.63, stock: 93.15, sk: 'jj' }
+        { code: '161130', name: '纳斯达克100LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 4.3963, price: 4.631, iopv: 4.455, prem: 3.95, asset: 19.63, stock: 93.15, sk: 'jj' }
       ] },
       { id: 'sp500', data: [
-        { code: '513650', name: '标普500ETF南方', nd: '2026-10-22', ad: '2026-09-30', nav: 1.8552, price: 1.959, iopv: 1.867, prem: 4.93, asset: 76.9391, stock: 96.6 },
-        { code: '159655', name: '标普500ETF华夏', nd: '2026-10-22', ad: '2026-09-30', nav: 1.8619, price: 1.972, iopv: 1.887, prem: 4.5, asset: 39.3732, stock: 95.94 },
-        { code: '513500', name: '标普500ETF博时', nd: '2026-10-22', ad: '2026-09-30', nav: 2.4355, price: 2.605, iopv: 2.452, prem: 6.24, asset: 239.99, stock: 94.15 },
-        { code: '159612', name: '标普500ETF国泰', nd: '2026-10-22', ad: '2026-09-30', nav: 1.9107, price: 2.038, iopv: 1.935, prem: 5.32, asset: 8.4366, stock: 88.72 }
+        { code: '513650', name: '标普500ETF南方', nd: '2026-10-29', ad: '2026-09-30', nav: 1.8675, price: 1.982, iopv: 1.869, prem: 6.05, asset: 76.9391, stock: 96.6 },
+        { code: '159655', name: '标普500ETF华夏', nd: '2026-10-29', ad: '2026-09-30', nav: 1.872, price: 1.984, iopv: 1.879, prem: 5.59, asset: 39.3732, stock: 95.94 },
+        { code: '513500', name: '标普500ETF博时', nd: '2026-10-29', ad: '2026-09-30', nav: 2.451, price: 2.657, iopv: 2.453, prem: 8.32, asset: 239.99, stock: 94.15 },
+        { code: '159612', name: '标普500ETF国泰', nd: '2026-10-29', ad: '2026-09-30', nav: 1.9228, price: 2.047, iopv: 1.93, prem: 6.06, asset: 8.4366, stock: 88.72 }
       ] },
       { id: 'usother', data: [
-        { code: '513350', name: '标普油气ETF富国', nd: '2026-10-22', ad: '2026-09-30', nav: 1.3856, price: 1.439, iopv: 1.408, prem: 2.2, asset: 8.8285, stock: 99.81 },
-        { code: '159502', name: '标普生物科技ETF嘉实', nd: '2026-10-22', ad: '2026-09-30', nav: 1.5037, price: 1.568, iopv: 1.514, prem: 3.57, asset: 17.7584, stock: 99.72 },
-        { code: '159518', name: '标普油气ETF嘉实', nd: '2026-10-22', ad: '2026-09-30', nav: 1.3208, price: 1.357, iopv: 1.335, prem: 1.65, asset: 19.2926, stock: 99.71 },
-        { code: '159529', name: '标普消费ETF景顺', nd: '2026-10-22', ad: '2026-09-30', nav: 1.2957, price: 1.369, iopv: 1.285, prem: 6.54, asset: 10.4353, stock: 99.17 },
-        { code: '159509', name: '纳指科技ETF景顺', nd: '2026-10-22', ad: '2026-09-30', nav: 2.2085, price: 2.95, iopv: 2.288, prem: 28.93, asset: 151.2844, stock: 96.31 },
-        { code: '513400', name: '道琼斯ETF鹏华', nd: '2026-10-22', ad: '2026-09-30', nav: 1.2923, price: 1.318, iopv: 1.283, prem: 2.73, asset: 29.5507, stock: 94.67 },
-        { code: '513290', name: '纳指生物科技ETF汇添富', nd: '2026-10-22', ad: '2026-09-30', nav: 1.7015, price: 1.786, iopv: 1.711, prem: 4.38, asset: 15.2831, stock: 93.94 },
-        { code: '159577', name: '美国50ETF汇添富', nd: '2026-10-22', ad: '2026-09-30', nav: 1.5531, price: 1.664, iopv: 1.584, prem: 5.05, asset: 11.2597, stock: 93.66 },
-        { code: '513850', name: '美国50ETF易方达', nd: '2026-10-22', ad: '2026-09-30', nav: 1.7293, price: 1.859, iopv: 1.752, prem: 6.11, asset: 20.5626, stock: 92.37 },
-        { code: '501225', name: '全球芯片LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 2.6173, price: 3.518, iopv: 2.732, prem: 28.77, asset: 12.1185, stock: 93.35, sk: 'jj' },
-        { code: '161128', name: '标普信息科技LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 6.6235, price: 7.259, iopv: 6.817, prem: 6.48, asset: 42.6796, stock: 91.31 },
-        { code: '161127', name: '标普生物科技LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 1.9898, price: 1.983, iopv: 2.003, prem: -1.0, asset: 3.0151, stock: 94.71 },
-        { code: '162415', name: '美国消费LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 2.797, price: 2.782, iopv: 2.81, prem: -1.0, asset: 7.9232, stock: 94.63 },
-        { code: '501312', name: '海外科技LOF', nd: '2026-10-22', ad: '2026-09-30', nav: 2.2798, price: 2.301, iopv: 2.325, prem: -1.03, asset: 24.2128, stock: 84.72, sk: 'jj' }
+        { code: '513350', name: '标普油气ETF富国', nd: '2026-10-29', ad: '2026-09-30', nav: 1.4033, price: 1.532, iopv: 1.408, prem: 8.81, asset: 8.8285, stock: 99.81 },
+        { code: '159502', name: '标普生物科技ETF嘉实', nd: '2026-10-29', ad: '2026-09-30', nav: 1.563, price: 1.62, iopv: 1.56, prem: 3.85, asset: 17.7584, stock: 99.72 },
+        { code: '159518', name: '标普油气ETF嘉实', nd: '2026-10-29', ad: '2026-09-30', nav: 1.3375, price: 1.466, iopv: 1.344, prem: 9.08, asset: 19.2926, stock: 99.71 },
+        { code: '159529', name: '标普消费ETF景顺', nd: '2026-10-29', ad: '2026-09-30', nav: 1.2967, price: 1.363, iopv: 1.284, prem: 6.15, asset: 10.4353, stock: 99.17 },
+        { code: '159509', name: '纳指科技ETF景顺', nd: '2026-10-29', ad: '2026-09-30', nav: 2.2283, price: 3.005, iopv: 2.278, prem: 31.91, asset: 151.2844, stock: 96.31 },
+        { code: '513400', name: '道琼斯ETF鹏华', nd: '2026-10-29', ad: '2026-09-30', nav: 1.2787, price: 1.308, iopv: 1.28, prem: 2.19, asset: 29.5507, stock: 94.67 },
+        { code: '513290', name: '纳指生物科技ETF汇添富', nd: '2026-10-29', ad: '2026-09-30', nav: 1.757, price: 1.881, iopv: 1.718, prem: 9.49, asset: 15.2831, stock: 93.94 },
+        { code: '159577', name: '美国50ETF汇添富', nd: '2026-10-29', ad: '2026-09-30', nav: 1.562, price: 1.662, iopv: 1.577, prem: 5.39, asset: 11.2597, stock: 93.66 },
+        { code: '513850', name: '美国50ETF易方达', nd: '2026-10-29', ad: '2026-09-30', nav: 1.739, price: 1.857, iopv: 1.749, prem: 6.17, asset: 20.5626, stock: 92.37 },
+        { code: '501225', name: '全球芯片LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 2.7321, price: 3.34, iopv: 2.726, prem: 22.52, asset: 12.1185, stock: 93.35, sk: 'jj' },
+        { code: '161128', name: '标普信息科技LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 6.7998, price: 7.25, iopv: 6.86, prem: 5.69, asset: 42.6796, stock: 91.31 },
+        { code: '161127', name: '标普生物科技LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 2.0642, price: 2.05, iopv: 2.06, prem: -0.49, asset: 3.0151, stock: 94.71 },
+        { code: '162415', name: '美国消费LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 2.821, price: 2.81, iopv: 2.802, prem: 0.29, asset: 7.9232, stock: 94.63 },
+        { code: '501312', name: '海外科技LOF', nd: '2026-10-29', ad: '2026-09-30', nav: 2.4073, price: 2.339, iopv: 2.377, prem: -1.6, asset: 24.2128, stock: 84.72, sk: 'jj' }
       ] },
       { id: 'asiaeu', data: [
         { code: '159866', name: '日经ETF工银', nd: '2026-10-23', ad: '2026-09-30', nav: 1.5814, price: 1.608, iopv: 1.573, prem: 2.23, asset: 13.9034, stock: 99.0, sk: 'jj' },
