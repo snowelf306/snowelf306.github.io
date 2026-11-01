@@ -127,34 +127,43 @@ def main():
         except Exception as e:  # noqa: BLE001
             errors.append('%s 资产配置: %s' % (code, e))
 
-        if price is None or iopv is None or nav is None:
+        quote_ok = price is not None and iopv is not None
+        nav_ok = nav is not None
+        alloc_ok = bool(alloc and alloc[3] and alloc[3] >= g['ad']
+                        and alloc[0] is not None and alloc[2] is not None)
+        if not (quote_ok or nav_ok or alloc_ok):
             skipped += 1
             continue
 
-        prem = round((price / iopv - 1) * 100, 2)
-        nd_n = nd or g['nd']
-        ad_n, stock_n, sk_n, asset_n = g['ad'], g['stock'], g['skv'], g['asset']
-        if alloc and alloc[3] and alloc[3] != g['ad'] and alloc[0] is not None and alloc[2] is not None:
-            ad_n = alloc[3]
-            stock_n = json.dumps(alloc[0])
-            sk_n = alloc[1] or ''
-            asset_n = json.dumps(alloc[2])
+        if quote_ok:
+            price_n, iopv_n = json.dumps(price), json.dumps(iopv)
+            prem_n = json.dumps(round((price / iopv - 1) * 100, 2))
+        else:
+            price_n, iopv_n, prem_n = g['price'], g['iopv'], g['prem']
+        nav_n, nd_n = (json.dumps(nav), nd) if nav_ok else (g['nav'], g['nd'])
+        if alloc_ok:
+            ad_n, stock_n, sk_n, asset_n = alloc[3], json.dumps(alloc[0]), (alloc[1] or ''), json.dumps(alloc[2])
+        else:
+            ad_n, stock_n, sk_n, asset_n = g['ad'], g['stock'], g['skv'], g['asset']
 
         new_line = ("{ code: '%s', name: '%s', nd: '%s', ad: '%s', nav: %s, price: %s, "
                     "iopv: %s, prem: %s, asset: %s, stock: %s%s }" % (
-                        code, g['name'], nd_n, ad_n, json.dumps(nav), json.dumps(price),
-                        json.dumps(iopv), json.dumps(prem), asset_n, stock_n,
+                        code, g['name'], nd_n, ad_n, nav_n, price_n,
+                        iopv_n, prem_n, asset_n, stock_n,
                         (", sk: '%s'" % sk_n) if sk_n else ''))
 
         old_line = m.group(0)
         if new_line != old_line:
             new_html = new_html.replace(old_line, new_line, 1)
-            old_prem = g['prem']
-            detail = ['prem %s->%s' % (old_prem, prem)]
-            if g['nav'] != json.dumps(nav):
-                detail.append('nav %s->%s' % (g['nav'], nav))
+            detail = []
+            if prem_n != g['prem']:
+                detail.append('prem %s->%s' % (g['prem'], prem_n))
+            if nav_n != g['nav']:
+                detail.append('nav %s->%s' % (g['nav'], nav_n))
             if ad_n != g['ad']:
-                detail.append('报告期 %s->%s(股票占比 %s%%)' % (g['ad'], ad_n, stock_n))
+                detail.append('报告期->%s' % ad_n)
+            if stock_n != g['stock']:
+                detail.append('股票占比 %s%%->%s%%' % (g['stock'], stock_n))
             changed.append('%s %s: %s' % (code, g['name'], '; '.join(detail)))
         else:
             unchanged += 1
