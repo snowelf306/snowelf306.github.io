@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31 08:48:51 (北京时间, 构建时点)",
+ "generatedAt": "2026-11-01 08:07:42 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第3季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.7351,
@@ -411,8 +411,8 @@
     },
     {
      "date": "2026-10-30",
-     "estNavA": 2.4094,
-     "estNavC": 2.3873,
+     "estNavA": 2.2881,
+     "estNavC": 2.2671,
      "officialA": null,
      "officialC": null
     }
@@ -436,7 +436,7 @@
     },
     {
      "date": "2026-10-30",
-     "chgPct": 0
+     "chgPct": -5.03
     }
    ],
    "live": {
@@ -817,8 +817,8 @@
     },
     {
      "date": "2026-10-30",
-     "estNavA": 2.7094,
-     "estNavC": 2.6702,
+     "estNavA": 2.5549,
+     "estNavC": 2.5179,
      "officialA": null,
      "officialC": null
     }
@@ -842,7 +842,7 @@
     },
     {
      "date": "2026-10-30",
-     "chgPct": -0.96
+     "chgPct": -6.61
     }
    ],
    "live": {
@@ -948,10 +948,6 @@
    "source": "tradingview-index",
    "hist": [
     {
-     "date": "2026-10-23",
-     "chgPct": -1.38
-    },
-    {
      "date": "2026-10-26",
      "chgPct": 0.63
     },
@@ -966,6 +962,10 @@
     {
      "date": "2026-10-29",
      "chgPct": 0.23
+    },
+    {
+     "date": "2026-10-30",
+     "chgPct": -1.17
     }
    ],
    "histViaEtf": false
@@ -1016,10 +1016,6 @@
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-10-23",
-     "chgPct": -0.52
-    },
-    {
      "date": "2026-10-26",
      "chgPct": 0.7
     },
@@ -1034,6 +1030,10 @@
     {
      "date": "2026-10-29",
      "chgPct": -0.3
+    },
+    {
+     "date": "2026-10-30",
+     "chgPct": -1.82
     }
    ],
    "histViaEtf": false
@@ -1079,7 +1079,7 @@
   "windowDays": 30,
   "brief": {
    "intro": "下周（11 月 2 日 至 11 月 6 日）金融市场将迎来多个关键宏观数据与美股第三季度财报季的正式开幕：",
-   "otherCount": 75,
+   "otherCount": 74,
    "macro": {
     "title": "1. 重要宏观经济事件与数据",
     "groups": [
@@ -1188,17 +1188,6 @@
         "name": "Corteva"
        }
       ]
-     },
-     {
-      "index": "标普500",
-      "date": "2026-10-01",
-      "added": [
-       {
-        "ticker": "VYLR",
-        "name": "Vylor"
-       }
-      ],
-      "removed": []
      }
     ],
     "tail": [
@@ -1209,10 +1198,10 @@
   },
   "counts": {
    "events": 16,
-   "otherEvents": 75,
+   "otherEvents": 74,
    "earnings": 1649,
    "keyEarnings": 161,
-   "changes": 4
+   "changes": 3
   },
   "notes": [],
   "sources": {
