@@ -190,6 +190,14 @@ def main():
         sys.exit(1)
 
     if changed:
+        # 顶部"行情：……更新"标注 = 最近一次实际更新到数据的时间
+        ts_str = datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y-%m-%d %H:%M')
+        if '行情：' in new_html:
+            new_html = re.sub(r'行情：[^·]*?更新', '行情：%s 更新' % ts_str, new_html, count=1)
+        else:
+            new_html = new_html.replace('行情：每交易日收盘后自动更新',
+                                        '行情：%s 更新' % ts_str, 1)
         open(PAGE, 'w', encoding='utf-8', newline='').write(new_html)
         print('UPDATED %d 只基金已更新:' % len(changed))
         for line in changed:
