@@ -10,6 +10,7 @@ QDII 场内基金页面自动更新脚本
 用法：python update_qdii.py
 """
 import json
+import datetime
 import os
 import re
 import sys
@@ -61,12 +62,12 @@ def fnum(x):
 
 
 def get_quote(code):
-    """返回 (收盘价, 参考净值/IOPV)；未挂牌或停牌返回 (None, None)。"""
+    """返回 (最新价, 参考净值/IOPV, 行情时间戳)；未挂牌或停牌返回 (None, None, None)。"""
     mkt = '1' if code.startswith('5') else '0'
     url = ('https://push2.eastmoney.com/api/qt/stock/get?ut=%s&invt=2&fltt=2'
-           '&fields=f43,f130&secid=%s.%s' % (UT, mkt, code))
+           '&fields=f43,f130,f124&secid=%s.%s' % (UT, mkt, code))
     d = json.loads(fetch(url)).get('data') or {}
-    return fnum(d.get('f43')), fnum(d.get('f130'))
+    return fnum(d.get('f43')), fnum(d.get('f130')), fnum(d.get('f124'))
 
 
 def get_nav(code):
@@ -107,6 +108,8 @@ def main():
 
     changed, errors, unchanged, skipped = [], [], 0, 0
     new_html = html
+    max_nd = None
+    max_ad = None
     for code in CODES:
         m = found.get(code)
         if not m:
@@ -114,8 +117,9 @@ def main():
         g = m.groupdict()
         price = iopv = nav = None
         nd = alloc = None
+        quote_ts = None
         try:
-            price, iopv = get_quote(code)
+            price, iopv, quote_ts = get_quote(code)
         except Exception as e:  # noqa: BLE001
             errors.append('%s 行情: %s' % (code, e))
         try:
@@ -129,8 +133,12 @@ def main():
 
         quote_ok = price is not None and iopv is not None
         nav_ok = nav is not None
+        if nav_ok and (max_nd is None or nd > max_nd):
+            max_nd = nd
         alloc_ok = bool(alloc and alloc[3] and alloc[3] >= g['ad']
                         and alloc[0] is not None and alloc[2] is not None)
+        if alloc_ok and (max_ad is None or alloc[3] > max_ad):
+            max_ad = alloc[3]
         if not (quote_ok or nav_ok or alloc_ok):
             skipped += 1
             continue
@@ -168,6 +176,14 @@ def main():
         else:
             unchanged += 1
         time.sleep(0.4)
+
+    if max_nd:
+        # 净值披露日期与定期报告期取自数据本身，避免任何"假今日"标注
+        new_html = re.sub(r'最新披露截至 [^（]*', '最新披露截至 %s（' % max_nd, new_html, count=1)
+    if max_ad:
+        new_html = re.sub(r'最新定期报告（[^）]*）', '最新定期报告（%s）' % max_ad, new_html, count=1)
+        new_html = re.sub(r"var REPORT_DATE = '[^']*'",
+                          "var REPORT_DATE = '%s'" % max_ad, new_html, count=1)
 
     if errors and len(errors) >= len(CODES):
         print('ERROR 全部请求失败，最后错误: %s' % errors[-1])
