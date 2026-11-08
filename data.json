@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07 08:57:18 (北京时间, 构建时点)",
+ "generatedAt": "2026-11-08 08:35:29 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第3季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.7351,
@@ -446,8 +446,8 @@
     },
     {
      "date": "2026-11-06",
-     "estNavA": 2.0219,
-     "estNavC": 2.0033,
+     "estNavA": 2.0729,
+     "estNavC": 2.0539,
      "officialA": null,
      "officialC": null
     }
@@ -471,7 +471,7 @@
     },
     {
      "date": "2026-11-06",
-     "chgPct": 0
+     "chgPct": 2.52
     }
    ],
    "live": {
@@ -887,8 +887,8 @@
     },
     {
      "date": "2026-11-06",
-     "estNavA": 2.0242,
-     "estNavC": 1.995,
+     "estNavA": 2.0831,
+     "estNavC": 2.053,
      "officialA": null,
      "officialC": null
     }
@@ -912,7 +912,7 @@
     },
     {
      "date": "2026-11-06",
-     "chgPct": -0.83
+     "chgPct": 2.06
     }
    ],
    "live": {
@@ -950,10 +950,6 @@
    "source": "cnbc-index",
    "hist": [
     {
-     "date": "2026-10-30",
-     "chgPct": -4.24
-    },
-    {
      "date": "2026-11-02",
      "chgPct": -2.66
     },
@@ -968,6 +964,10 @@
     {
      "date": "2026-11-05",
      "chgPct": -7.3
+    },
+    {
+     "date": "2026-11-06",
+     "chgPct": 1.26
     }
    ],
    "histViaEtf": false
@@ -1018,10 +1018,6 @@
    "source": "tradingview-index",
    "hist": [
     {
-     "date": "2026-10-30",
-     "chgPct": -1.17
-    },
-    {
      "date": "2026-11-02",
      "chgPct": -2.52
     },
@@ -1036,6 +1032,10 @@
     {
      "date": "2026-11-05",
      "chgPct": -6.68
+    },
+    {
+     "date": "2026-11-06",
+     "chgPct": 2.54
     }
    ],
    "histViaEtf": false
@@ -1086,10 +1086,6 @@
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-10-30",
-     "chgPct": -1.82
-    },
-    {
      "date": "2026-11-02",
      "chgPct": -0.51
     },
@@ -1104,6 +1100,10 @@
     {
      "date": "2026-11-05",
      "chgPct": -4.36
+    },
+    {
+     "date": "2026-11-06",
+     "chgPct": 0.31
     }
    ],
    "histViaEtf": false
@@ -1187,6 +1187,12 @@
       ]
      },
      {
+      "date": "2026-11-10",
+      "items": [
+       "科技与半导体：Silicon Laboratories, Inc.（SLAB）"
+      ]
+     },
+     {
       "date": "2026-11-12",
       "items": [
        "科技与半导体：应用材料（NASDAQ:AMAT）、思科（NASDAQ:CSCO）"
@@ -1240,8 +1246,8 @@
   "counts": {
    "events": 12,
    "otherEvents": 132,
-   "earnings": 1170,
-   "keyEarnings": 15,
+   "earnings": 1194,
+   "keyEarnings": 16,
    "changes": 2
   },
   "notes": [],
