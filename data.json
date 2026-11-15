@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14 09:27:25 (北京时间, 构建时点)",
+ "generatedAt": "2026-11-15 09:01:31 (北京时间, 构建时点)",
  "disclaimer": "基于基金2026年第3季度报告披露的持仓，按各市场收盘价与官方汇率中间价折算持仓数量；最新净值为按最新可得价格推算的估算值，非官方公布净值。估算未考虑报告日后申购赎回、调仓、费用及披露滞后影响。",
  "fx": {
   "usdcny0": 6.7351,
@@ -481,8 +481,8 @@
     },
     {
      "date": "2026-11-13",
-     "estNavA": 2.1226,
-     "estNavC": 2.103,
+     "estNavA": 2.0836,
+     "estNavC": 2.0645,
      "officialA": null,
      "officialC": null
     }
@@ -506,7 +506,7 @@
     },
     {
      "date": "2026-11-13",
-     "chgPct": 0
+     "chgPct": -1.84
     }
    ],
    "live": {
@@ -957,8 +957,8 @@
     },
     {
      "date": "2026-11-13",
-     "estNavA": 2.2657,
-     "estNavC": 2.233,
+     "estNavA": 2.2113,
+     "estNavC": 2.1793,
      "officialA": null,
      "officialC": null
     }
@@ -982,7 +982,7 @@
     },
     {
      "date": "2026-11-13",
-     "chgPct": -0.42
+     "chgPct": -2.81
     }
    ],
    "live": {
@@ -1021,26 +1021,26 @@
    "hist": [
     {
      "date": "2026-11-09",
-     "chgPct": 2.87
+     "chgPct": 3.73
     },
     {
      "date": "2026-11-10",
-     "chgPct": -1.4
+     "chgPct": -1.15
     },
     {
      "date": "2026-11-11",
-     "chgPct": 2.71
+     "chgPct": 3.23
     },
     {
      "date": "2026-11-12",
-     "chgPct": -0.42
+     "chgPct": -0.34
     },
     {
      "date": "2026-11-13",
-     "chgPct": -1.7
+     "chgPct": -2.01
     }
    ],
-   "histViaEtf": false
+   "histViaEtf": true
   },
   {
    "key": "ndx_tech",
@@ -1088,10 +1088,6 @@
    "source": "tradingview-index",
    "hist": [
     {
-     "date": "2026-11-06",
-     "chgPct": 2.54
-    },
-    {
      "date": "2026-11-09",
      "chgPct": 2.99
     },
@@ -1106,6 +1102,10 @@
     {
      "date": "2026-11-12",
      "chgPct": -3.23
+    },
+    {
+     "date": "2026-11-13",
+     "chgPct": -0.43
     }
    ],
    "histViaEtf": false
@@ -1156,10 +1156,6 @@
    "source": "tencent-index",
    "hist": [
     {
-     "date": "2026-11-06",
-     "chgPct": 0.31
-    },
-    {
      "date": "2026-11-09",
      "chgPct": 2.35
     },
@@ -1174,6 +1170,10 @@
     {
      "date": "2026-11-12",
      "chgPct": -0.35
+    },
+    {
+     "date": "2026-11-13",
+     "chgPct": -0.4
     }
    ],
    "histViaEtf": false
